@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Protection Configurator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://animatedicons.co/scripts/embed-animated-icons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --color-background: #0A0A0A;
+            --color-text: #EAEAEA;
+            --color-text-muted: #888888;
+            --color-primary: #FFB700;
+            --color-surface: #141414;
+            --color-border: #2A2A2A;
+            --color-danger: #ff4d4d;
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* General Styles */
+        html {
+            box-sizing: border-box;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body {
+            background-color: var(--color-background);
+            color: var(--color-text);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            text-transform: uppercase;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+        }
+        
+        .widget-container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        #image-display-container {
+            flex: 1 1 40%;
+            position: sticky;
+            top: 50vh;
+            transform: translateY(-50%);
+            text-align: center;
+        }
+        #coverage-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            /* border: 1px solid var(--color-border); */
+            transition: filter 0.3s ease;
+            object-fit: contain;
+        }
+
+        #configurator-wrapper {
+            flex: 1 1 60%;
+            min-width: 0;
+        }
+
+        .panel {
+            background-color: var(--color-surface);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 0 0 1.5rem 0;
+            border: 1px solid var(--color-border);
+        }
+        
+        .form-step, #welcome-container, #thank-you-container {
+            display: none;
+        }
+        .form-step.active, #welcome-container.active, #thank-you-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .step-header h2 {
+            font-size: 2.25rem;
+            margin-top: 0;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-header p {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+            margin-top: 0;
+        }
+
+        .header-subtext-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem 1rem;
+        }
+        
+        .progress-bar {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 900px;
+            padding: 0 1rem;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: var(--bar-start-offset, 10%);
+            width: var(--bar-width, 80%);
+            height: 2px;
+            background-color: var(--color-border);
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: var(--bar-start-offset, 10%);
+            width: var(--progress-width, 0%);
+            height: 2px;
+            background-color: var(--color-primary);
+            transition: width 0.4s ease-in-out;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            transition: color 0.3s ease;
+            cursor: default;
+            padding-top: 20px;
+        }
+        
+        .step-node {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 10px;
+            background-color: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .progress-step.completed { color: var(--color-text); }
+        .progress-step.completed .step-node { background-color: var(--color-primary); border-color: var(--color-primary); }
+        .progress-step.active { color: var(--color-primary); }
+        .progress-step.active .step-node { border-color: var(--color-primary); }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            margin-bottom: .5rem;
+            font-weight: 600;
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--color-background);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-text);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+            flex-grow: 1;
+        }
+        .form-control:focus { outline: none; border-color: var(--color-primary); }
+        
+        .choice-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.75rem;
+        }
+
+        /* Service Tabs */
+        .service-tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-tab {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            background-color: transparent;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .service-tab.available:hover {
+             color: var(--color-text);
+             background-color: var(--color-border);
+        }
+
+        .service-tab.selected {
+            background-color: var(--color-primary);
+            color: white;
+            padding-right: 30px; /* Space for the X */
+        }
+        .service-tab.viewing {
+            color: var(--color-primary);
+            border-bottom: 2px solid var(--color-primary);
+            border-radius: 6px 6px 0 0;
+        }
+         .service-tab.selected.viewing {
+            background-color: transparent;
+            color: var(--color-primary);
+        }
+
+        .service-tab .close-btn {
+            display: none;
+            position: absolute;
+            top: 50%;
+            right: 6px;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            z-index: 2;
+            border-radius: 50%;
+        }
+        .service-tab .close-btn:hover {
+            background-color: rgba(0,0,0,0.2);
+        }
+        
+        .service-tab.selected .close-btn {
+            display: block;
+        }
+        .service-tab.selected.viewing .close-btn {
+            color: var(--color-text);
+        }
+        .service-tab.selected.viewing .close-btn:hover {
+            background-color: var(--color-border);
+        }
+
+        .choice-input { display: none; }
+        .choice-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 14px;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-text);
+            background-color: transparent;
+            border: 2px solid var(--color-border);
+            position: relative;
+            transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out;
+            cursor: pointer;
+            text-align: center;
+            min-height: 40px;
+            border-radius: 6px;
+        }
+        .choice-input:checked + .choice-label {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 1rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-text);
+            background-color: transparent;
+            border: 2px solid var(--color-border);
+            position: relative;
+            overflow: hidden;
+            transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out, border-color 0.4s ease-in-out;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            flex-grow: 1;
+            gap: 0.5rem;
+            z-index: 1;
+            border-radius: 6px;
+        }
+        .btn span, .choice-label span, .btn i, .btn animated-icons {
+            position: relative;
+            z-index: 2;
+        }
+        .btn span {
+            top: 1px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: var(--color-primary);
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: -1;
+        }
+        
+        .btn-primary {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+        .btn-primary:hover {
+            color: white;
+            border-color: var(--color-primary);
+        }
+        .btn-primary:hover::before {
+            width: 100%;
+        }
+
+        .btn:disabled {
+            border-color: var(--color-border);
+            color: var(--color-text-muted);
+            cursor: not-allowed;
+            background-color: var(--color-surface);
+        }
+        
+        .hidden-field { display: none !important; }
+
+        .estimate-summary { 
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+        }
+        .estimate-summary h3 { font-size: 1.25rem; margin: 0; }
+        .estimate-summary .total-price { font-size: 1.75rem; font-weight: 700; color: var(--color-primary); }
+        .estimate-summary .total-price.consultation { color: #888888; font-size: 1.25rem; }
+        
+        .call-link-container {
+            position: relative;
+            display: inline-flex;
+            justify-content: center;
+        }
+        
+        .call-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            text-transform: none;
+        }
+        .call-link:hover { color: var(--color-text); }
+        .call-link animated-icons { width: 22px !important; height: 22px !important; margin-right: 6px; }
+        .qr-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            margin-bottom: 12px;
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 0.75rem;
+            z-index: 10;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+            pointer-events: none;
+            width: auto;
+        }
+        .qr-tooltip.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+        .qr-tooltip::before, .info-tooltip::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px;
+            border-style: solid;
+            border-color: var(--color-border) transparent transparent transparent;
+        }
+        .qr-tooltip::after, .info-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: -1px;
+            border-width: 7px;
+            border-style: solid;
+            border-color: var(--color-surface) transparent transparent transparent;
+        }
+        
+        .info-tooltip-container {
+            position: relative;
+        }
+
+        .info-tooltip-container .info-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-15px);
+            margin-bottom: 5px;
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            z-index: 20;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            width: max-content;
+            font-size: 0.85rem;
+            color: var(--color-text);
+            font-family: var(--font-body);
+            text-transform: none;
+            font-weight: 400;
+        }
+        .info-tooltip-container:hover .info-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .slider-container {
+            padding: 1rem 0.5rem;
+        }
+
+        .tint-slider, .hue-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--color-border);
+            outline: none;
+            opacity: 0.9;
+            transition: opacity .2s;
+            border-radius: 2px;
+            margin: 0;
+        }
+
+        .tint-slider:hover, .hue-slider:hover { opacity: 1; }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+        }
+
+        .tint-slider::-webkit-slider-thumb, .hue-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--color-primary);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 3px solid var(--color-surface);
+            margin-top: -8px; /* Center thumb on track */
+            transition: box-shadow 0.3s ease;
+        }
+        .tint-slider.illegal-tint::-webkit-slider-thumb {
+            background-color: var(--color-danger);
+            animation: pulse-red 2s infinite;
+        }
+
+        .tint-slider::-moz-range-thumb, .hue-slider::-moz-range-thumb {
+            width: 14px; /* (20px - 3px*2) */
+            height: 14px;
+            background: var(--color-primary);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 3px solid var(--color-surface);
+            transition: box-shadow 0.3s ease;
+        }
+        .tint-slider.illegal-tint::-moz-range-thumb {
+            background-color: var(--color-danger);
+            box-shadow: 0 0 8px var(--color-danger);
+        }
+        .hue-slider::-webkit-slider-thumb {
+            background: #EAEAEA;
+        }
+        .hue-slider::-moz-range-thumb {
+            background: #EAEAEA;
+        }
+
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            margin-top: 0.75rem;
+        }
+
+        .slider-label {
+            color: var(--color-text-muted);
+            font-size: 0.8rem;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.3s ease;
+        }
+
+
+        @media (max-width: 992px) {
+             .widget-container {
+                flex-direction: column;
+            }
+            #image-display-container {
+                position: static;
+                transform: none;
+                width: 100%;
+                max-width: 40%;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 2rem;
+            }
+        }
+        @media (max-width: 640px) {
+            body { padding: 1rem 0; }
+            .panel { padding: 1rem; }
+            .step-header h2 { font-size: 2rem; }
+            .btn-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="widget-container">
+        <!-- Image Display Area -->
+        <div id="image-display-container">
+            <img id="coverage-image" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
+        </div>
+
+        <div id="configurator-wrapper">
+            <!-- Multi-Step Form -->
+            <div id="questionnaire-container" class="active">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-step active" data-step="1"><div class="step-node"></div>Selections</div>
+                    <div class="progress-step" data-step="2"><div class="step-node"></div>Contact</div>
+                </div>
+                
+                <form id="configurator-form">
+                    <!-- Step 1: Vehicle Type and Services -->
+                    <div id="step-1" class="form-step active">
+                        <div class="panel">
+                            <div class="step-header">
+                                <h2>VEHICLE PROTECTION CONFIGURATOR</h2>
+                                <div class="header-subtext-container">
+                                    <p id="welcome-message">Tell us what you drive and what you'd like to protect.</p>
+                                    <div class="call-link-container" id="call-link-welcome">
+                                        <a href="tel:4696251127" class="call-link">
+                                            <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                            <span>or give us a ring, we're open!</span>
+                                        </a>
+                                        <div class="qr-tooltip">
+                                            <canvas class="qr-code-canvas"></canvas>
+                                            <p>Scan to call us!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="estimate-summary">
+                                <h3>Starting At:</h3>
+                                <div id="price-display" class="total-price">$0.00</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Vehicle Type</label>
+                                <div class="choice-group">
+                                    <div><input type="radio" id="vehicle-2door" name="vehicle" value="2Door" class="choice-input" checked><label for="vehicle-2door" class="choice-label"><span>2 Door</span></label></div>
+                                    <div><input type="radio" id="vehicle-4door" name="vehicle" value="4Door" class="choice-input"><label for="vehicle-4door" class="choice-label"><span>4 Door</span></label></div>
+                                    <div><input type="radio" id="vehicle-suv" name="vehicle" value="SUV" class="choice-input"><label for="vehicle-suv" class="choice-label"><span>SUV</span></label></div>
+                                    <div><input type="radio" id="vehicle-oversize" name="vehicle" value="Oversize" class="choice-input"><label for="vehicle-oversize" class="choice-label"><span>Oversize</span></label></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Services</label>
+                                <div class="service-tabs-container" id="service-tabs-container">
+                                    <!-- Tabs will be dynamically controlled by JS -->
+                                </div>
+                            </div>
+                            <div id="dynamic-services-container"></div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary next-btn btn-right" id="selections-next-btn" disabled>
+                                    <span>Continue to Contact</span>
+                                    <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Contact Information -->
+                    <div id="step-2" class="form-step">
+                        <div class="panel">
+                            <div class="step-header"><h2>Contact an Expert</h2><p>Please provide your information below so we can get in touch.</p></div>
+                            <div class="form-group">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <label for="customer-first-name">First Name</label>
+                                        <input type="text" id="customer-first-name" name="customer_first_name" class="form-control" required placeholder="e.g., John">
+                                    </div>
+                                    <div>
+                                        <label for="customer-last-name">Last Name</label>
+                                        <input type="text" id="customer-last-name" name="customer_last_name" class="form-control" required placeholder="e.g., Doe">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-phone">Phone Number</label>
+                                <input type="tel" id="customer-phone" name="customer_phone" class="form-control" required placeholder="e.g., (469) 625-1127">
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-email">Email</label>
+                                <input type="email" id="customer-email" name="customer_email" class="form-control" required placeholder="e.g., john.doe@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-comments">Questions or Comments (Optional)</label>
+                                <textarea id="customer-comments" name="customer_comments" class="form-control" rows="3" placeholder="e.g., I'd like to discuss a custom design..."></textarea>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn prev-btn btn-left" id="contact-back-btn">
+                                    <animated-icons src="https://animatedicons.co/get-icon?name=Back&style=minimalistic&token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes='{"variationThumbColour":"#EAEAEA","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#EAEAEA","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                    <span>Back to Selections</span>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-right" id="submit-form-btn">
+                                    <span>Send Inquiry</span>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Thank You Screen -->
+            <div id="thank-you-container" class="hidden-field">
+                <div class="panel" style="text-align: center;">
+                    <div style="display: flex; justify-content: center;">
+                        <animated-icons
+                            src="https://animatedicons.co/get-icon?name=High%20Five&style=minimalistic&token=dfda27f9-e133-49e0-bf9e-4d952d0ab596"
+                            trigger="loop"
+                            attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#EAEAEA","background":"#141414"}}'
+                            height="200"
+                            width="200">
+                        </animated-icons>
+                    </div>
+                    <div class="step-header" style="margin-bottom: 1rem;">
+                        <h2 id="thank-you-title" style="margin-bottom: 0.5rem;">Thanks, <span class="user-name"></span>!</h2>
+                        <p id="thank-you-subtitle">We're excited to help you protect your ride.</p>
+                    </div>
+                    <div class="call-link-container" id="call-link-thank-you" style="justify-content: center;">
+                           <a href="tel:4696251127" class="call-link">
+                                <animated-icons
+                                    src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c"
+                                    trigger="loop"
+                                    attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}'
+                                    height="22"
+                                    width="22">
+                                </animated-icons>
+                                <span>Want to discuss your build now? Give us a ring, we’re open!</span>
+                            </a>
+                            <div class="qr-tooltip">
+                                <canvas class="qr-code-canvas"></canvas>
+                                <p>Scan to call us!</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const phoneNumber = '4696251127';
+            const pricingData = {
+                '2Door': {
+                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 6295.00, addons: { 'Add Ceramic Coating': 0 } } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 495.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 995.00, '2 Step Polish/PC': 1295.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 0 } } },
+                    'Vinyl': { 'Color Change': { price: 3495.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                },
+                '4Door': {
+                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 7095.00, addons: { 'Add Ceramic Coating': 0 } } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 595.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1195.00, '2 Step Polish/PC': 1545.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 335.00 } } },
+                    'Vinyl': { 'Color Change': { price: 3995.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                },
+                'SUV': {
+                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 7895.00, addons: { 'Add Ceramic Coating': 0 } } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 645.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1395.00, '2 Step Polish/PC': 1795.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 115.00, addons: { 'Add Side Windows': 375.00 } } },
+                    'Vinyl': { 'Color Change': { price: 4295.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                },
+                'Oversize': {
+                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 8795.00, addons: { 'Add Ceramic Coating': 0 } } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 695.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1495.00, '2 Step Polish/PC': 1995.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 425.00 } } },
+                    'Vinyl': { 'Color Change': { price: 4995.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                }
+            };
+            
+            const ppfImageMap = {
+                'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859',
+                'Full Front': 'https://wikdwraps.com/cdn/shop/files/Full_Front.webp?v=1738085245&width=535',
+                'Track Pack': 'https://wikdwraps.com/cdn/shop/files/Track_Pack.webp?v=1738085280&width=535',
+                'Full Car': 'https://wikdwraps.com/cdn/shop/files/Full_Wrap.webp?v=1738074454&width=535'
+            };
+
+            const allServices = ['PPF', 'Tint', 'Coating', 'Vinyl'];
+            let servicesState = {};
+            let currentlyViewingService = null;
+            let userSelections = { selectedItems: [] };
+            let currentStep = 1;
+            let userFirstName = '';
+
+            // --- UI & FORM ELEMENTS ---
+            const form = document.getElementById('configurator-form');
+            const welcomeMessageEl = document.getElementById('welcome-message');
+            const nextBtns = document.querySelectorAll('.next-btn');
+            const prevBtns = document.querySelectorAll('.prev-btn');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const progressBar = document.getElementById('progress-bar');
+            const dynamicServicesContainer = document.getElementById('dynamic-services-container');
+            const serviceTabsContainer = document.getElementById('service-tabs-container');
+            const selectionsNextBtn = document.getElementById('selections-next-btn');
+            const priceDisplay = document.getElementById('price-display');
+            const thankYouContainer = document.getElementById('thank-you-container');
+            const coverageImage = document.getElementById('coverage-image');
+            const submitFormBtn = document.getElementById('submit-form-btn');
+            const callLinks = document.querySelectorAll('.call-link');
+            
+             // --- HELPER FUNCTIONS ---
+            function isMobileDevice() {
+                return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            }
+
+            function setCookie(name, value, days) {
+                let expires = "";
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Strict";
+            }
+
+            function getCookie(name) {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for(let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
+            
+            function checkAndDisplayCookie() {
+                const savedName = getCookie('userFirstName');
+                if (savedName) {
+                    welcomeMessageEl.innerHTML = `Welcome back, <span style="color:var(--color-primary);">${savedName}</span>! Tell us about your next project.`;
+                }
+            }
+
+            function validateAndStoreName() {
+                const name = document.getElementById('customer-first-name').value.trim();
+                userFirstName = name;
+                return name;
+            }
+            
+            function generateEmail() {
+                const firstName = document.getElementById('customer-first-name').value;
+                const lastName = document.getElementById('customer-last-name').value;
+                const phone = document.getElementById('customer-phone').value;
+                const email = document.getElementById('customer-email').value;
+                const comments = document.getElementById('customer-comments').value;
+
+                setCookie('userFirstName', firstName, 30);
+
+                let itemsText = 'No services selected.';
+                const total = priceDisplay.textContent;
+
+                if (userSelections.selectedItems && userSelections.selectedItems.length > 0) {
+                    itemsText = userSelections.selectedItems.map(item => {
+                        const price = typeof item.price === 'number' ? ` ($${item.price.toFixed(2)})` : ` (${item.price})`;
+                        return `${item.name}${price}`;
+                    }).join('\n');
+                }
+
+                const subject = `WIKD Wraps Estimate Inquiry from ${firstName} ${lastName}`;
+                const emailBody = `
+    Hello WIKD Wraps Team,
+    I have submitted an estimate request through your online configurator. I am interested in the following services for my vehicle:
+    Vehicle Type: ${document.querySelector('input[name="vehicle"]:checked').value}
+    Total Estimate: ${total}
+    Selected Services:
+    ${itemsText}
+    ---
+    Customer Details:
+    Name: ${firstName} ${lastName}
+    Phone: ${phone}
+    Email: ${email}
+    Comments:
+    ${comments || 'No additional comments provided.'}
+    Please get in touch with me to discuss this further.
+                `;
+                window.location.href = `mailto:sales@wikdwraps.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+            }
+
+            function updateStep(newStep) {
+                const questionnaireContainer = document.getElementById('questionnaire-container');
+                const thankYouContainer = document.getElementById('thank-you-container');
+
+                if (newStep > currentStep) {
+                    let isValid = true;
+                    if (currentStep === 1) {
+                        const selectedServices = getSelectedServices();
+                        if (selectedServices.length === 0 && newStep > 1) {
+                            isValid = false;
+                        } else {
+                            for (const service of selectedServices) {
+                                if (!servicesState[service].coverage) {
+                                    isValid = false;
+                                    const tab = serviceTabsContainer.querySelector(`[data-service="${service}"]`);
+                                    tab.style.borderColor = 'var(--color-danger)';
+                                    setTimeout(() => { tab.style.borderColor = 'transparent' }, 2000);
+                                    break;
+                                }
+                            }
+                        }
+                    } else if (currentStep === 2) {
+                        const contactForm = document.getElementById('step-2');
+                        const requiredInputs = contactForm.querySelectorAll('[required]');
+                        for(const input of requiredInputs) {
+                            if(!input.value) {
+                                isValid = false;
+                                input.style.borderColor = 'var(--color-danger)';
+                                setTimeout(() => { input.style.borderColor = 'var(--color-border)' }, 2000);
+                            }
+                        }
+                    }
+                    if (!isValid) return;
+                }
+
+                document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+                const newStepEl = document.getElementById(`step-${newStep}`);
+                if (newStepEl) {
+                    newStepEl.classList.add('active');
+                } else { // Thank you page
+                    document.getElementById('configurator-wrapper').style.display = 'none';
+                    document.getElementById('image-display-container').style.display = 'none';
+                    thankYouContainer.classList.remove('hidden-field');
+                    thankYouContainer.classList.add('active');
+                    thankYouContainer.style.flexGrow = 1;
+                    const thankYouNameSpan = thankYouContainer.querySelector('.user-name');
+                    const name = validateAndStoreName();
+                    if (thankYouNameSpan) { thankYouNameSpan.textContent = name; }
+                    window.scrollTo(0, 0);
+                    return;
+                }
+
+                const totalSteps = progressSteps.length;
+                const progressFraction = (newStep - 1) / (totalSteps - 1);
+                const barTotalWidth = 100 - (100 / totalSteps);
+                const fillWidth = progressFraction * barTotalWidth;
+
+                progressBar.style.setProperty('--bar-start-offset', `${(100 / totalSteps) / 2}%`);
+                progressBar.style.setProperty('--bar-width', `${barTotalWidth}%`);
+                progressBar.style.setProperty('--progress-width', `${fillWidth}%`);
+
+                progressSteps.forEach((step, index) => {
+                    const stepNumber = index + 1;
+                    step.classList.remove('active', 'completed');
+                    if (stepNumber < newStep) step.classList.add('completed');
+                    else if (stepNumber === newStep) step.classList.add('active');
+                });
+                currentStep = newStep;
+                window.scrollTo(0, 0);
+            }
+
+            // --- STATE MANAGEMENT ---
+            function initializeState() {
+                servicesState = {};
+                allServices.forEach(service => {
+                    servicesState[service] = {
+                        selected: false,
+                        coverage: '',
+                        addons: [],
+                        option: null
+                    };
+                });
+                currentlyViewingService = null;
+            }
+
+            // --- CORE LOGIC ---
+            function renderTabs() {
+                serviceTabsContainer.innerHTML = '';
+                allServices.forEach(service => {
+                    const state = servicesState[service];
+                    const tab = document.createElement('div');
+                    tab.className = 'service-tab';
+                    tab.dataset.service = service;
+                    tab.innerHTML = `${service} <span class="close-btn">&times;</span>`;
+                    
+                    if(state.selected) {
+                        tab.classList.add('selected');
+                    } else {
+                        tab.classList.add('available');
+                    }
+                    if(service === currentlyViewingService) {
+                        tab.classList.add('viewing');
+                    }
+                    serviceTabsContainer.appendChild(tab);
+                });
+            }
+
+            function renderServiceContent() {
+                dynamicServicesContainer.innerHTML = '';
+                if (!currentlyViewingService) return;
+
+                const service = currentlyViewingService;
+                const state = servicesState[service];
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const serviceData = pricingData[vehicleType][service];
+
+                const selectOptions = Object.keys(serviceData)
+                    .map(coverage => `<option value="${coverage}" ${state.coverage === coverage ? 'selected' : ''}>${coverage}</option>`)
+                    .join('');
+
+                const serviceHtml = `
+                    <div class="form-group service-section" data-service="${service}">
+                        <label for="coverage-${service}">${service} Options</label>
+                        <select id="coverage-${service}" name="coverage-${service}" class="coverage-select form-control" required>
+                            <option value="" disabled ${!state.coverage ? 'selected' : ''}>-- Select a coverage level --</option>
+                            ${selectOptions}
+                        </select>
+                        <div class="addons-container" id="addons-${service}" style="margin-top: 1rem;"></div>
+                    </div>`;
+                dynamicServicesContainer.innerHTML = serviceHtml;
+                
+                const selectEl = document.getElementById(`coverage-${service}`);
+                if(selectEl){
+                    selectEl.addEventListener('change', (e) => {
+                        servicesState[service].coverage = e.target.value;
+                        servicesState[service].addons = [];
+                        servicesState[service].option = null;
+                        renderAddons();
+                        updateImageDisplay();
+                        calculateEstimate();
+                    });
+                }
+                
+                renderAddons();
+            }
+            
+            function getQuantizedColor(hue) {
+                const baseHue = 240; // Royal Blue
+                const finalHue = (baseHue + parseInt(hue, 10)) % 360;
+
+                if (finalHue >= 345 || finalHue < 15) return 'Red';
+                if (finalHue >= 15 && finalHue < 45) return 'Orange';
+                if (finalHue >= 45 && finalHue < 75) return 'Yellow';
+                if (finalHue >= 75 && finalHue < 165) return 'Green';
+                if (finalHue >= 165 && finalHue < 195) return 'Cyan';
+                if (finalHue >= 195 && finalHue < 255) return 'Blue';
+                if (finalHue >= 255 && finalHue < 285) return 'Purple';
+                if (finalHue >= 285 && finalHue < 345) return 'Pink/Magenta';
+                return 'Blue'; // Default fallback
+            }
+
+            function renderAddons() {
+                if (!currentlyViewingService) return;
+                
+                const service = currentlyViewingService;
+                const state = servicesState[service];
+
+                if (!state.coverage) return;
+
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const coverageData = pricingData[vehicleType][service][state.coverage];
+                const addonsContainer = document.getElementById(`addons-${service}`);
+                if(!addonsContainer) return;
+                
+                addonsContainer.innerHTML = '';
+
+                if (coverageData.options) {
+                    if (service === 'Tint') {
+                        const tintOptions = Object.entries(coverageData.options);
+                        const sliderId = `tint-slider-${service}-${state.coverage.replace(/\s/g, '-')}`;
+                        const outputId = `tint-output-${service}-${state.coverage.replace(/\s/g, '-')}`;
+                        
+                        let sliderValueIndex = state.option !== null ? state.option : 1;
+
+                        let labelsHtml = '';
+                        tintOptions.forEach(([option, optionData], index) => {
+                            const tooltipText = typeof optionData === 'object' ? optionData.tooltip : null;
+                            let tooltipHtml = '';
+                            if (tooltipText) {
+                                tooltipHtml = `<div class="info-tooltip">${tooltipText}</div>`;
+                            }
+                            labelsHtml += `<div class="slider-label info-tooltip-container" data-index="${index}">${option}${tooltipHtml}</div>`;
+                        });
+                        
+                        const sliderHtml = `
+                            <div class="form-group">
+                                <label>Select Tint Percentage: <span id="${outputId}" style="color: var(--color-primary); font-weight: bold;"></span></label>
+                                <div class="slider-container">
+                                    <input type="range" min="0" max="${tintOptions.length - 1}" value="${sliderValueIndex}" class="tint-slider" id="${sliderId}" data-options='${JSON.stringify(tintOptions.map(o => o[0]))}'>
+                                    <div class="slider-labels">${labelsHtml}</div>
+                                </div>
+                            </div>`;
+                        addonsContainer.innerHTML = sliderHtml;
+
+                        const slider = document.getElementById(sliderId);
+                        const output = document.getElementById(outputId);
+                        const labels = addonsContainer.querySelectorAll('.slider-label');
+
+                        function updateSliderView() {
+                            const options = JSON.parse(slider.dataset.options);
+                            const selectedValue = options[slider.value];
+                            const isIllegal = ['20%', '5%'].includes(selectedValue);
+                            output.textContent = selectedValue;
+                            slider.classList.toggle('illegal-tint', isIllegal);
+                            labels.forEach(label => {
+                                label.classList.remove('active', 'illegal-tint');
+                                if (label.dataset.index === slider.value) {
+                                    label.classList.add('active');
+                                    if(isIllegal) label.classList.add('illegal-tint');
+                                }
+                            });
+                        }
+                        
+                        slider.addEventListener('input', updateSliderView);
+                        slider.addEventListener('change', () => {
+                             servicesState[service].option = slider.value;
+                             calculateEstimate();
+                        });
+                        updateSliderView();
+                    } else {
+                        const optionsHtml = Object.entries(coverageData.options).map(([option, price]) => {
+                            const uniqueId = `option-${service}-${state.coverage.replace(/\s/g, '-')}-${option.replace(/\s/g, '-')}`;
+                            return `
+                                <div>
+                                    <input type="radio" id="${uniqueId}" name="option-${service}-${state.coverage}" value="${option}" class="choice-input" data-price="${price}" ${state.option === option ? 'checked' : ''} required>
+                                    <label for="${uniqueId}" class="choice-label"><span>${option}</span></label>
+                                </div>`;
+                        }).join('');
+                        let baseText = coverageData.base || 'Select Option';
+                        addonsContainer.innerHTML = `<div class="form-group"><label>${baseText}:</label><div class="choice-group">${optionsHtml}</div></div>`;
+                        
+                        addonsContainer.querySelectorAll('.choice-input').forEach(input => {
+                            input.addEventListener('change', (e) => {
+                                servicesState[service].option = e.target.value;
+                                calculateEstimate();
+                            });
+                        });
+                    }
+                } else if (service === 'Vinyl' && state.coverage === 'Color Change') {
+                        const sliderId = `hue-slider-${service}`;
+                        const hueValue = state.option || 0;
+
+                        const sliderHtml = `
+                            <div class="form-group">
+                                <label for="${sliderId}">Adjust Wrap Color</label>
+                                <div class="slider-container">
+                                    <input type="range" min="0" max="360" value="${hueValue}" class="hue-slider" id="${sliderId}">
+                                </div>
+                            </div>`;
+                        addonsContainer.innerHTML = sliderHtml;
+
+                        const slider = document.getElementById(sliderId);
+                        slider.addEventListener('input', (e) => {
+                            coverageImage.style.filter = `hue-rotate(${e.target.value}deg)`;
+                        });
+                        slider.addEventListener('change', (e) => {
+                            servicesState[service].option = e.target.value;
+                            calculateEstimate();
+                        });
+
+                } else if (coverageData.addons) {
+                    const addonsHtml = Object.keys(coverageData.addons).map(addon => {
+                        const price = coverageData.addons[addon];
+                        const uniqueId = `addon-${service}-${state.coverage.replace(/\s/g, '-')}-${addon.replace(/\s/g, '-')}`;
+                        return `
+                            <div>
+                                <input type="checkbox" id="${uniqueId}" name="addon-${addon}" class="addon choice-input" data-addon-name="${addon}" data-price="${price}" ${state.addons.includes(addon) ? 'checked' : ''}>
+                                <label for="${uniqueId}" class="choice-label"><span>${addon}</span></label>
+                            </div>`;
+                    }).join('');
+                    addonsContainer.innerHTML = `<div class="form-group"><label>Available Add-ons:</label><div class="choice-group">${addonsHtml}</div></div>`;
+                    
+                    addonsContainer.querySelectorAll('.addon').forEach(checkbox => {
+                        checkbox.addEventListener('change', (e) => {
+                            const addonName = e.target.dataset.addonName;
+                            if (e.target.checked) {
+                                if (!servicesState[service].addons.includes(addonName)) {
+                                    servicesState[service].addons.push(addonName);
+                                }
+                            } else {
+                                servicesState[service].addons = servicesState[service].addons.filter(a => a !== addonName);
+                            }
+                            calculateEstimate();
+                        });
+                    });
+                }
+            }
+
+            function calculateEstimate() {
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                let total = 0;
+                let isConsultationNeeded = false;
+                let finalSelectedItems = [];
+
+                for (const service of allServices) {
+                    const state = servicesState[service];
+                    if (!state.selected || !state.coverage) continue;
+                    
+                    const serviceData = pricingData[vehicleType][service];
+                    const coverageData = serviceData[state.coverage];
+                    let serviceItemName = `${service} - ${state.coverage}`;
+                    
+                    if (typeof coverageData.price === 'string') {
+                        isConsultationNeeded = true;
+                        finalSelectedItems.push({ name: serviceItemName, price: 'Call For Free Consultation' });
+                    } else {
+                        let basePrice = coverageData.price || 0;
+                        total += basePrice;
+                        
+                        if(coverageData.options) {
+                            let optionName = '';
+                            if(service === 'Tint') {
+                                const tintOptions = Object.keys(coverageData.options);
+                                optionName = tintOptions[state.option || 1];
+                            } else if(service === 'Coating' && state.option) {
+                                optionName = state.option;
+                                const optionPrice = coverageData.options[optionName];
+                                if (typeof optionPrice === 'string') {
+                                    isConsultationNeeded = true;
+                                } else {
+                                    total += optionPrice;
+                                    basePrice += optionPrice;
+                                }
+                            }
+                            if(optionName) serviceItemName += ` - ${optionName}`;
+                        }
+                         if(service === 'Vinyl' && state.coverage === 'Color Change' && state.option !== null) {
+                            const colorName = getQuantizedColor(state.option);
+                            serviceItemName += ` - ${colorName}`;
+                        }
+                        
+                        finalSelectedItems.push({ name: serviceItemName, price: basePrice });
+                    }
+                    
+                    state.addons.forEach(addon => {
+                        const addonPrice = coverageData.addons[addon];
+                        if (typeof addonPrice === 'string') {
+                            isConsultationNeeded = true;
+                            finalSelectedItems.push({ name: ` - ${addon}`, price: 'Call For Free Consultation' });
+                        } else {
+                            total += addonPrice;
+                            finalSelectedItems.push({ name: ` - ${addon}`, price: addonPrice });
+                        }
+                    });
+                }
+
+                userSelections.selectedItems = finalSelectedItems;
+
+                const selectedServicesCount = Object.values(servicesState).filter(s => s.selected).length;
+                if (isConsultationNeeded || selectedServicesCount === 0) {
+                    priceDisplay.textContent = selectedServicesCount > 0 ? 'Call For Free Consultation' : '$0.00';
+                    priceDisplay.classList.toggle('consultation', selectedServicesCount > 0);
+                    if (total > 0 && isConsultationNeeded) {
+                        priceDisplay.textContent += ` + $${total.toFixed(2)}`;
+                    }
+                    selectionsNextBtn.disabled = selectedServicesCount === 0;
+                } else {
+                    priceDisplay.textContent = `$${total.toFixed(2)}`;
+                    priceDisplay.classList.remove('consultation');
+                    selectionsNextBtn.disabled = false;
+                }
+            }
+
+
+            function handleTabClick(e) {
+                const target = e.target;
+                const tab = target.closest('.service-tab');
+                if (!tab) return;
+                
+                const service = tab.dataset.service;
+
+                if (target.classList.contains('close-btn')) {
+                    e.stopPropagation();
+                    servicesState[service].selected = false;
+                    servicesState[service].coverage = '';
+                    servicesState[service].addons = [];
+                    servicesState[service].option = null;
+
+                    if(currentlyViewingService === service) {
+                        currentlyViewingService = Object.keys(servicesState).find(s => servicesState[s].selected) || null;
+                    }
+                } else {
+                    if (!servicesState[service].selected) {
+                        servicesState[service].selected = true;
+                    }
+                    currentlyViewingService = service;
+                }
+                
+                selectionsNextBtn.disabled = getSelectedServices().length === 0;
+                renderTabs();
+                renderServiceContent();
+                calculateEstimate();
+                updateImageDisplay();
+            }
+
+            function getSelectedServices() {
+                return allServices.filter(s => servicesState[s].selected);
+            }
+
+            function updateImageDisplay() {
+                const coverageImage = document.getElementById('coverage-image');
+                coverageImage.style.filter = 'hue-rotate(0deg)'; 
+
+                if (currentlyViewingService === 'Vinyl' && servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change') {
+                    coverageImage.src = ppfImageMap['Full Car'];
+                    const hue = servicesState['Vinyl'].option || 0;
+                    coverageImage.style.filter = `hue-rotate(${hue}deg)`;
+                    return;
+                }
+
+                if (servicesState['PPF'].selected && servicesState['PPF'].coverage && ppfImageMap[servicesState['PPF'].coverage]) {
+                    coverageImage.src = ppfImageMap[servicesState['PPF'].coverage];
+                    return;
+                }
+
+                coverageImage.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
+            }
+
+
+            // --- INITIALIZATION & EVENT LISTENERS ---
+            function initializeApp() {
+                initializeState();
+                renderTabs();
+                calculateEstimate();
+                checkAndDisplayCookie();
+                
+                document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        initializeState();
+                        renderTabs();
+                        renderServiceContent();
+                        calculateEstimate();
+                        updateImageDisplay();
+                    });
+                });
+                serviceTabsContainer.addEventListener('click', handleTabClick);
+
+                nextBtns.forEach(btn => btn.addEventListener('click', () => updateStep(currentStep + 1)));
+                prevBtns.forEach(btn => btn.addEventListener('click', () => updateStep(currentStep - 1)));
+                submitFormBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (form.reportValidity()) {
+                        generateEmail();
+                        setTimeout(() => {
+                            updateStep(3);
+                        }, 500);
+                    }
+                });
+
+                callLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        if (!isMobileDevice()) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const tooltip = this.parentElement.querySelector('.qr-tooltip');
+                            if (!tooltip) return;
+                            const canvas = tooltip.querySelector('.qr-code-canvas');
+                            const isActive = tooltip.classList.contains('active');
+                            
+                            document.querySelectorAll('.qr-tooltip.active').forEach(activeTooltip => {
+                                activeTooltip.classList.remove('active');
+                            });
+
+                            if (!isActive) {
+                                tooltip.classList.add('active');
+                                if (!canvas.dataset.rendered) {
+                                    QRCode.toCanvas(canvas, `tel:${phoneNumber}`, {
+                                        width: 150,
+                                        margin: 0,
+                                        color: {
+                                            dark: '#FFB700',
+                                            light: '#141414'
+                                        }
+                                    }, function (error) {
+                                        if (error) console.error(error);
+                                        canvas.dataset.rendered = 'true';
+                                    });
+                                }
+                            }
+                        }
+                    });
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.call-link-container')) {
+                        document.querySelectorAll('.qr-tooltip.active').forEach(tooltip => {
+                            tooltip.classList.remove('active');
+                        });
+                    }
+                });
+            }
+
+            initializeApp();
+
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
