@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WIKD Motorsports | Custom Tuning Configurator</title>
+    <title>Vehicle Protection Configurator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Script for VIN scanning functionality -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
     <script src="https://animatedicons.co/scripts/embed-animated-icons.js"></script>
-    <!-- MODIFICATION: Added QR Code generation library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <style>
         :root {
             --color-background: #0A0A0A;
             --color-text: #EAEAEA;
             --color-text-muted: #888888;
-            --color-primary: #FF3B30;
+            --color-primary: #FFB700;
             --color-surface: #141414;
             --color-border: #2A2A2A;
+            --color-danger: #ff4d4d;
             --font-heading: 'Rajdhani', sans-serif;
             --font-body: 'Inter', sans-serif;
         }
@@ -37,8 +35,7 @@
             color: var(--color-text);
             font-family: var(--font-body);
             line-height: 1.6;
-            /* MODIFICATION: Removed all padding and margin for edge-to-edge layout */
-            padding: 0;
+            padding: 2rem 1rem;
             margin: 0;
         }
 
@@ -52,83 +49,39 @@
         
         .widget-container {
             width: 100%;
-            /* MODIFICATION: Removed horizontal padding and margin. Added vertical padding for spacing. */
-            padding: 2rem 0;
-            margin: 0;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
         }
 
-        @keyframes colorFlowPosition {
-            0%   { background-position: 0 0, 0% 50%; }
-            50%  { background-position: 0 0, 100% 50%; }
-            100% { background-position: 0 0, 0% 50%; }
+        #image-display-container {
+            flex: 1 1 40%;
+            position: sticky;
+            top: 50vh;
+            transform: translateY(-50%);
+            text-align: center;
+        }
+        #coverage-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            transition: filter 0.3s ease;
+            object-fit: contain;
+        }
+
+        #configurator-wrapper {
+            flex: 1 1 60%;
+            min-width: 0;
         }
 
         .panel {
             background-color: var(--color-surface);
-            /* MODIFICATION: Removed border-radius and horizontal margin for full-width display */
-            border-radius: 0;
-            padding: 2rem;
-            margin: 0 0 2rem 0;
-            transition: all 0.5s ease;
-            position: relative;
-            border: 1px solid transparent;
-            background-clip: padding-box;
-            border-left: none; /* Ensure no side borders interfere with edge-to-edge */
-            border-right: none;
-        }
-
-        /* MODIFICATION: Setup for two pseudo-elements for cross-fading */
-        .panel::before,
-        .panel::after {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            z-index: -1;
-            margin: -1px;
-            border-radius: inherit;
-            background-size: 100% 100%, 300% 100%;
-            animation: colorFlowPosition 4s ease-in-out infinite;
-            transition: opacity 0.8s ease-in-out;
-            opacity: 0;
-        }
-
-        /* MODIFICATION: Opacity control classes for cross-fade */
-        .panel.show-before::before { opacity: 1; }
-        .panel.show-after::after { opacity: 1; }
-
-        /* MODIFICATION: Halved falloff distance for a more subtle effect */
-        .panel.theme-packages-before::before {
-            background-image: linear-gradient(to bottom, transparent 0px, transparent 35px, var(--color-border) 125px), 
-                              linear-gradient(90deg, rgba(179,0,0,0.5), rgba(255,26,0,0.6), rgba(255,170,0,0.5), rgba(255,26,0,0.6), rgba(179,0,0,0.5));
-        }
-        .panel.theme-wheels-before::before {
-            background-image: linear-gradient(to bottom, transparent 0px, transparent 35px, var(--color-border) 125px), 
-                              linear-gradient(90deg, rgba(0,77,0,0.5), rgba(0,128,0,0.6), rgba(144,238,144,0.5), rgba(0,128,0,0.6), rgba(0,77,0,0.5));
-        }
-        .panel.theme-cooling-before::before {
-            background-image: linear-gradient(to bottom, transparent 0px, transparent 35px, var(--color-border) 125px), 
-                              linear-gradient(90deg, rgba(0,197,255,0.5), rgba(255,255,255,0.6), rgba(175,238,238,0.5), rgba(255,255,255,0.6), rgba(0,197,255,0.5));
-        }
-        .panel.theme-exhaust-before::before {
-            background-image: linear-gradient(to bottom, transparent 0px, transparent 35px, var(--color-border) 125px), 
-                              linear-gradient(90deg, rgba(75,0,130,0.5), rgba(128,0,0,0.6), rgba(138,43,226,0.5), rgba(128,0,0,0.6), rgba(75,0,130,0.5));
-        }
-
-        .panel.theme-packages-after::after {
-            background-image: linear-gradient(to bottom, transparent 0px, transparent 35px, var(--color-border) 125px), 
-                              linear-gradient(90deg, rgba(179,0,0,0.5), rgba(255,26,0,0.6), rgba(255,170,0,0.5), rgba(255,26,0,0.6), rgba(179,0,0,0.5));
-        }
-        .panel.theme-wheels-after::after {
-            background-image: linear-gradient(to bottom, transparent 0px, transparent 35px, var(--color-border) 125px), 
-                              linear-gradient(90deg, rgba(0,77,0,0.5), rgba(0,128,0,0.6), rgba(144,238,144,0.5), rgba(0,128,0,0.6), rgba(0,77,0,0.5));
-        }
-        .panel.theme-cooling-after::after {
-            background-image: linear-gradient(to bottom, transparent 0px, transparent 35px, var(--color-border) 125px), 
-                              linear-gradient(90deg, rgba(0,197,255,0.5), rgba(255,255,255,0.6), rgba(175,238,238,0.5), rgba(255,255,255,0.6), rgba(0,197,255,0.5));
-        }
-        .panel.theme-exhaust-after::after {
-            background-image: linear-gradient(to bottom, transparent 0px, transparent 35px, var(--color-border) 125px), 
-                              linear-gradient(90deg, rgba(75,0,130,0.5), rgba(128,0,0,0.6), rgba(138,43,226,0.5), rgba(128,0,0,0.6), rgba(75,0,130,0.5));
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 0 0 1.5rem 0;
+            border: 1px solid var(--color-border);
         }
         
         .form-step, #welcome-container, #thank-you-container {
@@ -146,41 +99,44 @@
         
         .step-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         .step-header h2 {
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             margin-top: 0;
             margin-bottom: 0.25rem;
         }
-        .step-header h2 .vehicle-name-highlight {
-            color: var(--color-primary);
-            display: block;
-            font-size: 1.5rem;
-            margin-top: 0.5rem;
-        }
+
         .step-header p {
             color: var(--color-text-muted);
             font-size: 1rem;
             margin-top: 0;
+        }
+
+        .header-subtext-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem 1rem;
         }
         
         .progress-bar {
             position: relative;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             margin-left: auto;
             margin-right: auto;
-            max-width: 900px; /* Give progress bar a max width to look good */
-            padding: 0 1rem; /* Add some padding so nodes don't hit edge */
+            max-width: 900px;
+            padding: 0 1rem;
         }
 
         .progress-bar::before {
             content: '';
             position: absolute;
-            top: 4px; 
-            left: var(--bar-start-offset, 10%); 
+            top: 4px;
+            left: var(--bar-start-offset, 10%);
             width: var(--bar-width, 80%);
             height: 2px;
             background-color: var(--color-border);
@@ -207,12 +163,12 @@
             color: var(--color-text-muted);
             transition: color 0.3s ease;
             cursor: default;
-            padding-top: 20px; 
+            padding-top: 20px;
         }
         
         .step-node {
             position: absolute;
-            top: 0; 
+            top: 0;
             left: 50%;
             transform: translateX(-50%);
             width: 6px;
@@ -229,20 +185,14 @@
         .progress-step.active { color: var(--color-primary); }
         .progress-step.active .step-node { border-color: var(--color-primary); }
 
-        .form-group { margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
         .form-group label {
             display: block;
             margin-bottom: .5rem;
             font-weight: 600;
             font-family: var(--font-heading);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
-        }
-
-        .vin-input-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
         }
 
         .form-control {
@@ -258,70 +208,129 @@
             flex-grow: 1;
         }
         .form-control:focus { outline: none; border-color: var(--color-primary); }
-        .form-control:disabled { background-color: #2a2a2a; color: #888; cursor: not-allowed; }
         
-        .form-control option { background: var(--color-surface); color: var(--color-text); }
-        .form-control option.top-highlight{ color:var(--color-primary); font-weight:600 }
-        .form-control option.model-highlight{ color:var(--color-primary); font-weight:600 }
-        .form-control option.separator{ font-weight:600; background:var(--color-border); color:var(--color-text-muted) }
-        
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-        input[type=number] { -moz-appearance: textfield; }
-
         .choice-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.75rem;
         }
+
+        /* Service Tabs */
+        .service-tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-tab {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            background-color: transparent;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .service-tab.available:hover {
+             color: var(--color-text);
+             background-color: var(--color-border);
+        }
+
+        .service-tab.selected {
+            background-color: var(--color-primary);
+            color: white;
+            padding-right: 30px; /* Space for the X */
+        }
+        .service-tab.viewing {
+            color: var(--color-primary);
+            border-bottom: 2px solid var(--color-primary);
+            border-radius: 6px 6px 0 0;
+        }
+         .service-tab.selected.viewing {
+            background-color: transparent;
+            color: var(--color-primary);
+        }
+
+        .service-tab .close-btn {
+            display: none;
+            position: absolute;
+            top: 50%;
+            right: 6px;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            z-index: 2;
+            border-radius: 50%;
+        }
+        .service-tab .close-btn:hover {
+            background-color: rgba(0,0,0,0.2);
+        }
+        
+        .service-tab.selected .close-btn {
+            display: block;
+        }
+        .service-tab.selected.viewing .close-btn {
+            color: var(--color-text);
+        }
+        .service-tab.selected.viewing .close-btn:hover {
+            background-color: var(--color-border);
+        }
+
         .choice-input { display: none; }
         .choice-label {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 24px;
+            padding: 6px 14px;
             font-family: var(--font-heading);
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             text-transform: uppercase;
             color: var(--color-text);
             background-color: transparent;
             border: 2px solid var(--color-border);
             position: relative;
-            overflow: hidden;
             transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out;
             cursor: pointer;
             text-align: center;
-            min-height: 48px;
+            min-height: 40px;
+            border-radius: 6px;
         }
-
-        .choice-group > *:first-child .choice-label { clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 85%); }
-        .choice-group > *:last-child:not(:first-child) .choice-label { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); }
-        .choice-group > *:not(:first-child):not(:last-child) .choice-label { clip-path: none; border-radius: 0;}
-
-
         .choice-input:checked + .choice-label {
             background-color: var(--color-primary);
             border-color: var(--color-primary);
             color: white;
         }
-
+        
         .btn-group {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             gap: 1rem;
         }
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 12px 28px;
+            padding: 8px 20px;
             font-family: var(--font-heading);
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             text-transform: uppercase;
             color: var(--color-text);
@@ -334,15 +343,13 @@
             text-align: center;
             text-decoration: none;
             flex-grow: 1;
-            gap: 0.5rem; 
+            gap: 0.5rem;
             z-index: 1;
+            border-radius: 6px;
         }
-        .btn.btn-left { clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 85%); }
-        .btn.btn-right { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); }
-
-        .btn span, .choice-label span, .btn i, .btn animated-icons { 
-            position: relative; 
-            z-index: 2; 
+        .btn span, .choice-label span, .btn i, .btn animated-icons {
+            position: relative;
+            z-index: 2;
         }
         .btn span {
             top: 1px;
@@ -360,32 +367,16 @@
             z-index: -1;
         }
         
-        .btn-primary { 
-            border-color: var(--color-primary); 
-            color: var(--color-primary); 
+        .btn-primary {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
         }
-        .btn-primary:hover { 
+        .btn-primary:hover {
             color: white;
             border-color: var(--color-primary);
         }
         .btn-primary:hover::before {
             width: 100%;
-        }
-
-        .prev-btn:hover {
-             border-color: var(--color-border);
-             color: var(--color-text);
-             background-color: transparent;
-        }
-
-        .btn-primary-filled, .btn.selected {
-            background-color: var(--color-primary);
-            border-color: var(--color-primary);
-            color: white;
-        }
-        .btn-primary-filled:hover, .btn.selected:hover {
-            background-color: #e03024;
-            border-color: #e03024;
         }
 
         .btn:disabled {
@@ -394,32 +385,101 @@
             cursor: not-allowed;
             background-color: var(--color-surface);
         }
-
-        .btn-icon {
-            flex-grow: 0;
-            flex-shrink: 0;
-            padding: 0; 
-            width: 52px; 
-            height: 46px; 
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-        }
-
-        .btn-add {
-            flex-grow: 0;
-            padding-left: 18px;
-            padding-right: 18px;
-        }
         
+        .hidden-field { display: none !important; }
+
+        .estimate-summary { 
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .summary-main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .estimate-summary h3 { font-size: 1.25rem; margin: 0; }
+
+        .estimate-summary .total-price { font-size: 1.75rem; font-weight: 700; color: var(--color-primary); }
+        .estimate-summary .total-price.consultation { color: #888888; font-size: 1.25rem; }
+        
+        #toggle-summary-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.3s ease;
+            line-height: 1;
+        }
+
+        #toggle-summary-btn.expanded {
+            transform: rotate(180deg);
+        }
+
+        #summary-breakdown {
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding-top 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+        }
+
+        #summary-breakdown.expanded {
+            border-top: 1px solid var(--color-border);
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+            max-height: 500px;
+        }
+
+        #summary-items-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        #summary-items-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+        }
+
+        #summary-items-list li:not(:last-child) {
+            border-bottom: 1px solid var(--color-background);
+        }
+
+        #summary-items-list .item-name {
+            color: var(--color-text);
+            padding-right: 1rem;
+        }
+
+        #summary-items-list .item-price {
+            color: var(--color-primary);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
         .call-link-container {
             position: relative;
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 0.75rem;
+            display: inline-flex;
+            justify-content: center;
         }
-
+        
         .call-link {
             display: inline-flex;
             align-items: center;
@@ -430,126 +490,13 @@
             transition: color 0.3s ease;
             text-transform: none;
         }
-        .call-link:hover {
-            color: var(--color-text);
-        }
-        .call-link animated-icons {
-            width: 22px !important;
-            height: 22px !important;
-            margin-right: 6px;
-        }
-        .call-link span {
-            top: 0;
-        }
-
-
-        .hidden-field { display: none !important; }
-        .spinner {
-            border: 4px solid var(--color-border);
-            border-top-color: var(--color-primary);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 1rem auto 0;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        #result-panel { text-align: left; }
-        .result-card { background-color: var(--color-background); border: 1px solid var(--color-border); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
-        .result-card h3 { color: var(--color-primary); font-size: 1.5rem; margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
-        .result-card .badge { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 9999px; background-color: var(--color-border); display: inline-block; margin-left: 1rem; }
-        .result-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
-        .summary-item { background: var(--color-surface); padding: 1rem; border-radius: 8px; }
-        .summary-item strong { display: block; font-family: var(--font-heading); text-transform: uppercase; color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 0.25rem; }
-        .summary-item span { color: white; font-weight: 500; font-size: 1.1rem; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-        .product-card { background: var(--color-surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--color-border); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .product-card img { width: 100%; height: 200px; object-fit: cover; }
-        .product-card-content { padding: 1rem; display: flex; flex-direction: column; flex-grow: 1; }
-        .product-card-content h4 { font-family: var(--font-body); font-weight: 600; font-size: 1rem; text-transform: none; line-height: 1.4; flex-grow: 1; }
-        .product-card-footer { display: flex; justify-content: space-between; align-items: stretch; margin-top: 1rem; gap: 1rem; }
-        .product-price { font-size: 1.2rem; font-weight: bold; color: var(--color-primary); flex-shrink: 0; align-self: center;}
-        .product-card-footer .btn { flex-grow: 0; padding: 8px 20px; }
-        .product-card-footer .btn-add { height: 100%; }
-
-
-        .product-grid-container { position: relative; transition: max-height 0.5s ease-in-out; }
-        .product-grid-container.collapsed { max-height: 360px; overflow: hidden; }
-        .product-grid-container.collapsed::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(180deg, rgba(20, 20, 20, 0) 0%, var(--color-surface) 100%); pointer-events: none; }
-        .show-more-container { text-align: center; margin-top: 1.5rem; }
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: var(--color-border); border-radius: 2px; outline: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); cursor: pointer; border: 3px solid var(--color-surface); box-shadow: 0 0 10px rgba(255, 59, 48, 0.7); transition: transform 0.2s ease; }
-        .input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
-        
-        .whp-slider-container {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        #whp-slider {
-            flex-grow: 1;
-        }
-
-        #whp-output {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--color-primary);
-            font-family: var(--font-heading);
-            flex-shrink: 0; 
-            width: 200px; 
-            white-space: nowrap; 
-        }
-        #whp-output span {
-            font-size: 1.5rem;
-            font-weight: 600; 
-            color: var(--color-text-muted);
-        }
-        
-        .status-message { text-align: center; margin-top: 1rem; display: none; }
-        .status-message.error { color: var(--color-primary); }
-        .status-message.info { color: #f0ad4e; }
-
-        #camera-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #camera-stream {
-            width: 100%;
-            max-width: 640px;
-            height: auto;
-            border-radius: 12px;
-            border: 2px solid var(--color-border);
-        }
-        #camera-modal .btn-group {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-        }
-        
-        /* MODIFICATION: Changed tooltip to open upwards */
+        .call-link:hover { color: var(--color-text); }
+        .call-link animated-icons { width: 22px !important; height: 22px !important; margin-right: 6px; }
         .qr-tooltip {
             position: absolute;
             bottom: 100%;
-            right: 0; 
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
             margin-bottom: 12px;
             background-color: var(--color-surface);
             border: 1px solid var(--color-border);
@@ -560,1710 +507,1000 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.4);
             opacity: 0;
             visibility: hidden;
-            transform: translateY(10px);
             transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
             pointer-events: none;
-            width: auto; 
+            width: auto;
         }
-
         .qr-tooltip.active {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
             pointer-events: auto;
         }
-
-        .qr-tooltip::before {
+        .qr-tooltip::before, .info-tooltip::before {
             content: '';
             position: absolute;
             top: 100%;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             border-width: 8px;
             border-style: solid;
             border-color: var(--color-border) transparent transparent transparent;
         }
-
-        .qr-tooltip::after {
+        .qr-tooltip::after, .info-tooltip::after {
             content: '';
             position: absolute;
             top: 100%;
-            right: 21px;
-            margin-top: -1px; 
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: -1px;
             border-width: 7px;
             border-style: solid;
             border-color: var(--color-surface) transparent transparent transparent;
         }
         
-        /* MODIFICATION: Added rules to center the thank you page tooltip */
-        #call-link-thank-you .qr-tooltip {
-            right: auto;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-        }
-        
-        #call-link-thank-you .qr-tooltip.active {
-            transform: translateX(-50%) translateY(0);
-        }
-        
-        #call-link-thank-you .qr-tooltip::before,
-        #call-link-thank-you .qr-tooltip::after {
-            right: auto;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .qr-tooltip .qr-code-canvas {
-            border-radius: 8px; 
-            max-width: 100%;
-            height: auto;
-            box-sizing: border-box;
-            display: block;
-        }
-
-        .qr-tooltip p {
-            color: var(--color-text-muted);
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0;
-        }
-
-
-        .e85-toggle-label {
+        .info-tooltip-container {
             position: relative;
-            display: inline-block;
-            width: 52px;
-            height: 28px;
-            background-color: var(--color-border);
-            border-radius: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
         }
-        .e85-toggle-label .dot {
+
+        .info-tooltip-container .info-tooltip {
             position: absolute;
-            content: '';
-            height: 22px;
-            width: 22px;
-            left: 3px;
-            top: 3px;
-            background-color: white;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-15px);
+            margin-bottom: 5px;
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            z-index: 20;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            width: max-content;
+            font-size: 0.85rem;
+            color: var(--color-text);
+            font-family: var(--font-body);
+            text-transform: none;
+            font-weight: 400;
+        }
+        .info-tooltip-container:hover .info-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .slider-container {
+            padding: 1rem 0.5rem;
+        }
+
+        .tint-slider, .hue-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--color-border);
+            outline: none;
+            opacity: 0.9;
+            transition: opacity .2s;
+            border-radius: 2px;
+            margin: 0;
+        }
+
+        .tint-slider:hover, .hue-slider:hover { opacity: 1; }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+        }
+
+        .tint-slider::-webkit-slider-thumb, .hue-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--color-primary);
+            cursor: pointer;
             border-radius: 50%;
-            transition: transform 0.3s ease;
+            border: 3px solid var(--color-surface);
+            margin-top: -8px; /* Center thumb on track */
+            transition: box-shadow 0.3s ease;
         }
-        input:checked + .e85-toggle-label {
-            background-color: var(--color-primary);
-        }
-        input:checked + .e85-toggle-label .dot {
-            transform: translateX(24px);
-        }
-
-        .btn animated-icons {
-            width: 22px !important;
-            height: 22px !important;
-            transform: scale(1.2);
-        }
-        .result-card h3 animated-icons {
-            width: 28px !important;
-            height: 28px !important;
-            flex-shrink: 0;
-            transform: scale(1.2);
+        .tint-slider.illegal-tint::-webkit-slider-thumb {
+            background-color: var(--color-danger);
+            animation: pulse-red 2s infinite;
         }
 
-        /* NEW ANIMATION STYLES */
-        #add-to-inquiry-prompt {
+        .tint-slider::-moz-range-thumb, .hue-slider::-moz-range-thumb {
+            width: 14px; /* (20px - 3px*2) */
+            height: 14px;
+            background: var(--color-primary);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 3px solid var(--color-surface);
+            transition: box-shadow 0.3s ease;
+        }
+        .tint-slider.illegal-tint::-moz-range-thumb {
+            background-color: var(--color-danger);
+            box-shadow: 0 0 8px var(--color-danger);
+        }
+        .hue-slider::-webkit-slider-thumb {
+            background: #EAEAEA;
+        }
+        .hue-slider::-moz-range-thumb {
+            background: #EAEAEA;
+        }
+
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            margin-top: 0.75rem;
+        }
+
+        .slider-label {
+            color: var(--color-text-muted);
+            font-size: 0.8rem;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            cursor: pointer;
             position: relative;
-            overflow: hidden;
-            display: inline-block;
-            padding: 2px 5px;
-            animation: scale-pulse 0.8s cubic-bezier(0.5, 0, 0.5, 1) 0.5s 1; /* duration, timing, delay, count */
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.3s ease;
         }
 
-        @keyframes scale-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
 
-        @media (max-width: 640px) {
-            /* MODIFICATION: Removed the rule that added horizontal padding */
-            .panel { padding: 1.5rem; }
-            .step-header h2 { font-size: 2rem; }
-            .product-grid { grid-template-columns: 1fr; }
-            .btn-group { flex-direction: column; }
-            .vin-input-group { flex-wrap: wrap; }
-            .vin-input-group .form-control { width: 100%; margin-bottom: 0.5rem; }
-            .vin-input-group .btn-icon { flex-grow: 1; }
-
-            .whp-slider-container {
-                flex-direction: column-reverse; 
-                gap: 0.5rem;
+        @media (max-width: 992px) {
+             .widget-container {
+                flex-direction: column;
             }
-            #whp-output {
+            #image-display-container {
+                position: static;
+                transform: none;
                 width: 100%;
-                margin-bottom: 0.5rem;
+                max-width: 40%;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 2rem;
             }
+        }
+        @media (max-width: 640px) {
+            body { padding: 1rem 0; }
+            .panel { padding: 1rem; }
+            .step-header h2 { font-size: 2rem; }
+            .btn-group { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
     <div class="widget-container">
-        <div id="welcome-container" class="active">
-            <div class="panel">
-                <div class="step-header">
-                    <h2 id="welcome-title">WIKD Tuning Configurator</h2>
-                    <p id="welcome-subtitle">Find the perfect performance package and parts for your vehicle. Let's get started!</p>
-                </div>
-                <div class="form-group">
-                    <label for="first-name">First, what should we call you?</label>
-                    <input type="text" id="first-name" class="form-control" placeholder="e.g., Alex">
-                </div>
-
-                <div id="initial-buttons">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-left" id="start-vin-btn"><span><i class="fas fa-barcode"></i> Start with VIN</span></button>
-                        <button type="button" class="btn btn-right" id="start-manual-btn"><span><i class="fas fa-edit"></i> Fill Out Manually</span></button>
-                    </div>
-                    <div class="call-link-container" id="call-link-welcome">
-                         <a href="tel:844-232-9453" class="call-link">
-                             <animated-icons
-                                 src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c"
-                                 trigger="loop"
-                                 attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}'
-                                 height="22"
-                                 width="22"
-                             ></animated-icons>
-                             <span>or give us a ring, we're open!</span>
-                         </a>
-                         <div class="qr-tooltip">
-                             <canvas class="qr-code-canvas"></canvas>
-                             <p>Scan to call us!</p>
-                         </div>
-                    </div>
-                </div>
-                
-                <div id="vin-lookup-container" class="hidden-field">
-                    <div class="form-group">
-                        <label for="vin-input-lookup">Enter Your 17-Digit VIN</label>
-                        <div class="vin-input-group">
-                            <input type="text" id="vin-input-lookup" class="form-control" placeholder="XXXXXXXXXXXXXXXXX" maxlength="17" style="text-transform: uppercase;">
-                            <button type="button" class="btn btn-icon" id="snap-vin-btn" title="Scan VIN with Camera">
-                                <i class="fas fa-camera"></i>
-                            </button>
-                            <button type="button" class="btn btn-icon" id="upload-vin-btn" title="Upload VIN Image">
-                                <i class="fas fa-upload"></i>
-                            </button>
-                            <input type="file" id="upload-vin-image-input" accept="image/*" class="hidden-field"/>
-                        </div>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-left" id="vin-back-btn"><span><i class="fas fa-arrow-left"></i> Back</span></button>
-                        <button type="button" class="btn btn-primary-filled btn-right" id="decode-vin-btn"><span><i class="fas fa-search"></i> Look Up</span></button>
-                    </div>
-                    <div id="vin-loader" class="hidden-field"><div class="spinner"></div></div>
-                    <p id="vin-status" class="status-message"></p>
-                </div>
-            </div>
+        <!-- Image Display Area -->
+        <div id="image-display-container">
+            <img id="coverage-image" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
         </div>
 
-        <div id="questionnaire-container" class="hidden-field">
-            <div class="progress-bar" id="progress-bar">
-                <div class="progress-step active" data-step="1"><div class="step-node"></div>Vehicle</div>
-                <div class="progress-step" data-step="2"><div class="step-node"></div>Tech</div>
-                <div class="progress-step" data-step="3"><div class="step-node"></div>Goals</div>
-                <div class="progress-step" data-step="4"><div class="step-node"></div>Results</div>
-                <div class="progress-step" data-step="5"><div class="step-node"></div>Contact</div>
-            </div>
-
-            <form id="tuning-form">
-                <div id="step-1" class="form-step active">
-                    <div class="panel">
-                        <div class="step-header"><h2>Select Your Vehicle</h2><p>Alright <span class="user-name"></span>, let's start with the basics. Tell us what you drive.</p></div>
-                        
-                        <!-- INTEGRATION: Replaced vehicle selection elements -->
-                        <div class="form-group">
-                            <label for="make">Make</label>
-                            <select id="make" name="make" class="form-control" required><option value="">-- Select Make --</option></select>
-                        </div>
-                        <div class="form-group">
-                            <label for="model">Model</label>
-                            <select id="model" name="model" class="form-control" required disabled><option value="">-- Select Make First --</option></select>
-                        </div>
-                         <div class="form-group">
-                            <label for="year">Year</label>
-                            <select id="year" name="year" class="form-control" required><option value="">-- Select Model First --</option></select>
-                        </div>
-                        <div class="form-group hidden-field" id="trim-group">
-                            <label for="trim">Trim</label>
-                            <select id="trim" name="trim" class="form-control" disabled><option value="">-- Select Trim --</option></select>
-                        </div>
-                        <!-- END INTEGRATION -->
-
-                        <div class="form-group" style="margin-top: 1.5rem;">
-                            <label>Transmission</label>
-                            <div class="choice-group" id="transmission-choice-group">
-                                <div><input type="radio" id="trans-manual" name="transmission" value="Manual" class="choice-input" checked><label for="trans-manual" class="choice-label"><span>Manual</span></label></div>
-                                <div><input type="radio" id="trans-auto" name="transmission" value="Automatic" class="choice-input"><label for="trans-auto" class="choice-label"><span>Automatic</span></label></div>
-                            </div>
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn prev-btn btn-left">
-                                <animated-icons src="https://animatedicons.co/get-icon?name=Back&style=minimalistic&token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes='{"variationThumbColour":"#EAEAEA","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#EAEAEA","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                                <span>Back</span>
-                            </button>
-                            <button type="button" class="btn btn-primary next-btn btn-right">
-                                <span>Next</span>
-                                <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="step-2" class="form-step">
-                    <div class="panel">
-                        <div class="step-header"><h2>Technical Details</h2><p>Sweet ride 🔥 Now, tell us about your <span class="vehicle-model-name">vehicle</span>'s current state.</p></div>
-                        <div class="form-group" id="tcm-unlock-group">
-                            <label>TCM Unlocked?</label>
-                            <div class="choice-group">
-                                <div><input type="radio" id="tcm-yes" name="tcm_unlocked" value="yes" class="choice-input"><label for="tcm-yes" class="choice-label"><span>Yes</span></label></div>
-                                <div><input type="radio" id="tcm-no" name="tcm_unlocked" value="no" class="choice-input" checked><label for="tcm-no" class="choice-label"><span>No</span></label></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>ECU Unlocked?</label>
-                            <div class="choice-group">
-                                <div><input type="radio" id="ecu-yes" name="ecu_unlocked" value="yes" class="choice-input"><label for="ecu-yes" class="choice-label"><span>Yes</span></label></div>
-                                <div><input type="radio" id="ecu-no" name="ecu_unlocked" value="no" class="choice-input" checked><label for="ecu-no" class="choice-label"><span>No</span></label></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Primary Fuel Type</label>
-                            <div class="choice-group">
-                                <div><input type="radio" id="fuel-93" name="fuel_type" value="93 Octane" class="choice-input" checked><label for="fuel-93" class="choice-label"><span>93 Octane</span></label></div>
-                                <div><input type="radio" id="fuel-e85" name="fuel_type" value="E85 / Flex Fuel" class="choice-input"><label for="fuel-e85" class="choice-label"><span>E85 / Flex</span></label></div>
-                                <div><input type="radio" id="fuel-other" name="fuel_type" value="Other" class="choice-input"><label for="fuel-other" class="choice-label"><span>Other</span></label></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Prior Tune</label>
-                            <div class="choice-group">
-                                <div><input type="radio" id="tune-none" name="prior_tune" value="None" class="choice-input" checked><label for="tune-none" class="choice-label"><span>None</span></label></div>
-                                <div><input type="radio" id="tune-dyno" name="prior_tune" value="Dyno" class="choice-input"><label for="tune-dyno" class="choice-label"><span>Dyno Tune</span></label></div>
-                                <div><input type="radio" id="tune-remote" name="prior_tune" value="Remote" class="choice-input"><label for="tune-remote" class="choice-label"><span>Remote Tune</span></label></div>
-                            </div>
-                        </div>
-                        <div class="form-group hidden-field" id="current-hp-group">
-                            <label for="current-hp">Current Horsepower (WHP)</label>
-                            <input type="number" id="current-hp" name="current_hp" class="form-control" placeholder="e.g., 650">
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn prev-btn btn-left">
-                                <animated-icons src="https://animatedicons.co/get-icon?name=Back&style=minimalistic&token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes='{"variationThumbColour":"#EAEAEA","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#EAEAEA","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                                <span>Back</span>
-                            </button>
-                            <button type="button" class="btn btn-primary next-btn btn-right">
-                                <span>Next</span>
-                                <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                            </button>
-                        </div>
-                    </div>
+        <div id="configurator-wrapper">
+            <!-- Multi-Step Form -->
+            <div id="questionnaire-container" class="active">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-step active" data-step="1"><div class="step-node"></div>Selections</div>
+                    <div class="progress-step" data-step="2"><div class="step-node"></div>Contact</div>
                 </div>
                 
-                <div id="step-3" class="form-step">
-                    <div class="panel">
-                        <div class="step-header"><h2>Goals & Mods</h2><p>Great, <span class="user-name"></span>. Finally, what have you done, and what do you want to achieve?</p></div>
-                        <div class="form-group">
-                            <label for="prior-mods">List Prior Performance Mods</label>
-                            <textarea id="prior-mods" name="prior_mods" class="form-control" rows="4" placeholder="e.g., Cold Air Intake, Long Tube Headers, Upgraded Pulley, etc."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="whp-slider">Target Horsepower Increase (WHP)</label>
-                            <div class="whp-slider-container">
-                                <input type="range" id="whp-slider" name="hp_delta" min="30" max="1000" value="75" step="5">
-                                <div id="whp-output"><span class="whp-number">+75</span> <span>WHP</span></div>
+                <form id="configurator-form">
+                    <!-- Step 1: Vehicle Type and Services -->
+                    <div id="step-1" class="form-step active">
+                        <div class="panel">
+                            <div class="step-header">
+                                <h2>VEHICLE PROTECTION CONFIGURATOR</h2>
+                                <div class="header-subtext-container">
+                                    <p id="welcome-message">Tell us what you drive and what you'd like to protect.</p>
+                                    <div class="call-link-container" id="call-link-welcome">
+                                        <a href="tel:4696251127" class="call-link">
+                                            <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                            <span>or give us a ring, we're open!</span>
+                                        </a>
+                                        <div class="qr-tooltip">
+                                            <canvas class="qr-code-canvas"></canvas>
+                                            <p>Scan to call us!</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn prev-btn btn-left">
-                                <animated-icons src="https://animatedicons.co/get-icon?name=Back&style=minimalistic&token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes='{"variationThumbColour":"#EAEAEA","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#EAEAEA","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                                <span>Back</span>
-                            </button>
-                            <button type="button" class="btn btn-primary btn-right" id="get-results-btn">
-                                <span>Get Results</span>
-                                <i class="fas fa-bolt"></i>
-                            </button>
+                            <div class="estimate-summary">
+                                <div class="summary-main">
+                                    <div class="summary-total">
+                                        <h3>Starting At:</h3>
+                                        <div id="price-display" class="total-price">$0.00</div>
+                                    </div>
+                                    <button type="button" id="toggle-summary-btn" class="hidden-field" title="View Details">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                                <div id="summary-breakdown">
+                                    <ul id="summary-items-list"></ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Vehicle Type</label>
+                                <div class="choice-group">
+                                    <div><input type="radio" id="vehicle-2door" name="vehicle" value="2Door" class="choice-input" checked><label for="vehicle-2door" class="choice-label"><span>2 Door</span></label></div>
+                                    <div><input type="radio" id="vehicle-4door" name="vehicle" value="4Door" class="choice-input"><label for="vehicle-4door" class="choice-label"><span>4 Door</span></label></div>
+                                    <div><input type="radio" id="vehicle-suv" name="vehicle" value="SUV" class="choice-input"><label for="vehicle-suv" class="choice-label"><span>SUV</span></label></div>
+                                    <div><input type="radio" id="vehicle-oversize" name="vehicle" value="Oversize" class="choice-input"><label for="vehicle-oversize" class="choice-label"><span>Oversize</span></label></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Services</label>
+                                <div class="service-tabs-container" id="service-tabs-container">
+                                    <!-- Tabs will be dynamically controlled by JS -->
+                                </div>
+                            </div>
+                            <div id="dynamic-services-container"></div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary next-btn btn-right" id="selections-next-btn" disabled>
+                                    <span>Continue to Contact</span>
+                                    <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="step-4" class="form-step">
-                    <div class="panel" id="result-panel">
-                        <div class="step-header"><h2>Here's what we can do for you</h2><p id="add-to-inquiry-prompt">Press '+' to add to your upgrade inquiry.</p></div>
-                        <div id="summary-card" class="result-card">
-                            <h3><i class="fas fa-car"></i> <span class="user-name-possessive"></span> Build Summary</h3>
-                            <div class="result-summary-grid">
-                                <div class="summary-item"><strong>Vehicle</strong><span id="summary-vehicle"></span></div>
-                                <div class="summary-item"><strong>Transmission</strong><span id="summary-transmission"></span></div>
-                                <div class="summary-item" id="summary-power"></div>
+                    <!-- Step 2: Contact Information -->
+                    <div id="step-2" class="form-step">
+                        <div class="panel">
+                            <div class="step-header"><h2>Contact an Expert</h2><p>Please provide your information below so we can get in touch.</p></div>
+                            <div class="form-group">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <label for="customer-first-name">First Name</label>
+                                        <input type="text" id="customer-first-name" name="customer_first_name" class="form-control" required placeholder="e.g., John">
+                                    </div>
+                                    <div>
+                                        <label for="customer-last-name">Last Name</label>
+                                        <input type="text" id="customer-last-name" name="customer_last_name" class="form-control" required placeholder="e.g., Doe">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-phone">Phone Number</label>
+                                <input type="tel" id="customer-phone" name="customer_phone" class="form-control" required placeholder="e.g., (469) 625-1127">
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-email">Email</label>
+                                <input type="email" id="customer-email" name="customer_email" class="form-control" required placeholder="e.g., john.doe@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-comments">Questions or Comments (Optional)</label>
+                                <textarea id="customer-comments" name="customer_comments" class="form-control" rows="3" placeholder="e.g., I'd like to discuss a custom design..."></textarea>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn prev-btn btn-left" id="contact-back-btn">
+                                    <animated-icons src="https://animatedicons.co/get-icon?name=Back&style=minimalistic&token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes='{"variationThumbColour":"#EAEAEA","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#EAEAEA","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                    <span>Back to Selections</span>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-right" id="submit-form-btn">
+                                    <span>Send Inquiry</span>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
                             </div>
                         </div>
-                        <div id="recommendations-container"></div>
-                        <div id="power-check-notice" class="result-card hidden-field">
-                            <h3>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Thank You Screen -->
+            <div id="thank-you-container" class="hidden-field">
+                <div class="panel" style="text-align: center;">
+                    <div style="display: flex; justify-content: center;">
+                        <animated-icons
+                            src="https://animatedicons.co/get-icon?name=High%20Five&style=minimalistic&token=dfda27f9-e133-49e0-bf9e-4d952d0ab596"
+                            trigger="loop"
+                            attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#EAEAEA","background":"#141414"}}'
+                            height="200"
+                            width="200">
+                        </animated-icons>
+                    </div>
+                    <div class="step-header" style="margin-bottom: 1rem;">
+                        <h2 id="thank-you-title" style="margin-bottom: 0.5rem;">Thanks, <span class="user-name"></span>!</h2>
+                        <p id="thank-you-subtitle">We're excited to help you protect your ride.</p>
+                    </div>
+                    <div class="call-link-container" id="call-link-thank-you" style="justify-content: center;">
+                           <a href="tel:4696251127" class="call-link">
                                 <animated-icons
-                                    src="https://animatedicons.co/get-icon?name=Alert&style=minimalistic&token=4ff92fe8-3f2e-471b-beff-2c28789b1813"
+                                    src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c"
                                     trigger="loop"
-                                    attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}'
-                                    height="28"
-                                    width="28">
+                                    attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}'
+                                    height="22"
+                                    width="22">
                                 </animated-icons>
-                                Power Check Recommended
-                            </h3>
-                            <p style="color: var(--color-text-muted);">Since you've had a remote tune previously, we highly recommend a baseline dyno run. This "Power Check" ensures we have accurate data to build upon, guaranteeing the best and safest results for your vehicle.</p>
-                             <div style="display: flex; align-items: stretch; gap: 0.5rem; margin-top: 1rem;">
-                                 <a href="https://www.wikdmotorsports.com/pages/power-check" target="_blank" class="btn btn-primary btn-left"><span>Learn More</span></a>
-                                 <button type="button" class="btn btn-add btn-right" data-id="power-check" data-type="service" data-title="Power Check Service" data-price="0"><span>+</span></button>
-                             </div>
-                        </div>
-                        <div style="text-align: center; margin-top: 3rem;">
-                            <h3 style="justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;"><i class="fas fa-comments"></i> Next Steps</h3>
-                            <p style="color: var(--color-text-muted); margin-bottom: 0;">Ready to upgrade or need a fully custom build? Our experts are here to help craft the perfect solution for you.</p>
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn prev-btn btn-left">
-                                <animated-icons src="https://animatedicons.co/get-icon?name=Back&style=minimalistic&token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes='{"variationThumbColour":"#EAEAEA","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#EAEAEA","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                                <span>Back</span>
-                            </button>
-                            <button type="button" class="btn btn-primary contact-expert-btn btn-right">
-                                <span>Talk to an Expert</span>
-                                <animated-icons src="https://animatedicons.co/get-icon?name=mail&style=minimalistic&token=e55f9897-402e-4453-b539-03e933b6d7fa" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="step-5" class="form-step">
-                    <div class="panel">
-                        <div class="step-header"><h2>Contact an Expert</h2><p>Please provide your contact information below so our team can get in touch.</p></div>
-                        <div class="form-group">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div>
-                                    <label for="customer-first-name">First Name</label>
-                                    <input type="text" id="customer-first-name" name="customer_first_name" class="form-control" required placeholder="e.g., John">
-                                </div>
-                                <div>
-                                    <label for="customer-last-name">Last Name</label>
-                                    <input type="text" id="customer-last-name" name="customer_last_name" class="form-control" required placeholder="e.g., Doe">
-                                </div>
+                                <span>Want to discuss your build now? Give us a ring, we’re open!</span>
+                            </a>
+                            <div class="qr-tooltip">
+                                <canvas class="qr-code-canvas"></canvas>
+                                <p>Scan to call us!</p>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="customer-phone">Phone Number</label>
-                            <input type="tel" id="customer-phone" name="customer_phone" class="form-control" required placeholder="e.g., (555) 123-4567">
-                        </div>
-                        <div class="form-group">
-                            <label for="customer-comments">Questions or Comments (Optional)</label>
-                            <textarea id="customer-comments" name="customer_comments" class="form-control" rows="3" placeholder="e.g., I'd like to discuss a custom camshaft..."></textarea>
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn prev-btn btn-left">
-                                <animated-icons src="https://animatedicons.co/get-icon?name=Back&style=minimalistic&token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes='{"variationThumbColour":"#EAEAEA","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#EAEAEA","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                                <span>Back to Results</span>
-                            </button>
-                            <button type="button" class="btn btn-primary btn-right" id="generate-email-btn">
-                                <span>Generate Email</span>
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
-
-        <div id="thank-you-container" class="hidden-field">
-            <div class="panel" style="text-align: center;">
-                <div style="display: flex; justify-content: center;">
-                    <animated-icons
-                        src="https://animatedicons.co/get-icon?name=High%20Five&style=minimalistic&token=dfda27f9-e133-49e0-bf9e-4d952d0ab596"
-                        trigger="loop"
-                        attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#EAEAEA","background":"#141414"}}'
-                        height="200"
-                        width="200">
-                    </animated-icons>
-                </div>
-                <div class="step-header" style="margin-bottom: 1rem;">
-                    <h2 id="thank-you-title" style="margin-bottom: 0.5rem;">Thanks, <span class="user-name"></span>!</h2>
-                    <p id="thank-you-subtitle">We're excited to help you build your dream machine.</p>
-                </div>
-                <div class="call-link-container" id="call-link-thank-you" style="justify-content: center;">
-                       <a href="tel:844-232-9453" class="call-link">
-                            <animated-icons
-                                src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c"
-                                trigger="loop"
-                                attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}'
-                                height="22"
-                                width="22">
-                            </animated-icons>
-                            <span>Want to discuss your build now? Give us a ring, we’re open!</span>
-                        </a>
-                        <div class="qr-tooltip">
-                            <canvas class="qr-code-canvas"></canvas>
-                            <p>Scan to call us!</p>
-                        </div>
                 </div>
             </div>
         </div>
-
     </div>
-
-    <!-- Camera Modal HTML -->
-    <div id="camera-modal" class="hidden-field">
-        <video id="camera-stream" playsinline></video>
-        <canvas id="snapshot-canvas" class="hidden-field"></canvas>
-        <div class="btn-group">
-            <button type="button" class="btn" id="close-camera-btn"><span><i class="fas fa-times"></i> Close</span></button>
-            <button type="button" class="btn btn-primary" id="capture-btn"><span><i class="fas fa-camera"></i> Snap Picture</span></button>
-        </div>
-    </div>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // --- REFACTOR: MASTER DATA (WILL BE FETCHED DYNAMICALLY) ---
-    let corvetteTechData = [];
-    let packages = {};
-    let products = [];
-    const WIKD_DATA_URL = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/WIKD-Motorsports-Data.json?v=1755118954';
-
-    // --- FORM ELEMENTS ---
-    const form = document.getElementById('tuning-form');
-    const nextBtns = document.querySelectorAll('.next-btn');
-    const prevBtns = document.querySelectorAll('.prev-btn');
-    const getResultsBtn = document.getElementById('get-results-btn');
-    const steps = document.querySelectorAll('.form-step');
-    const progressBar = document.getElementById('progress-bar');
-    const progressSteps = document.querySelectorAll('.progress-step');
-    const tcmUnlockGroup = document.getElementById('tcm-unlock-group');
-    const whpSlider = document.getElementById('whp-slider');
-    const whpOutput = document.getElementById('whp-output');
-    const transManualInput = document.getElementById('trans-manual');
-    const transAutoInput = document.getElementById('trans-auto');
-    const priorTuneRadios = document.querySelectorAll('input[name="prior_tune"]');
-    const currentHpGroup = document.getElementById('current-hp-group');
     
-    // --- INITIAL FLOW & VIN ELEMENTS ---
-    const welcomeContainer = document.getElementById('welcome-container');
-    const welcomeTitle = document.getElementById('welcome-title');
-    const welcomeSubtitle = document.getElementById('welcome-subtitle');
-    const firstNameInput = document.getElementById('first-name');
-    const userNameSpans = document.querySelectorAll('.user-name');
-    const userNamePossessiveSpan = document.querySelector('.user-name-possessive');
-    const questionnaireContainer = document.getElementById('questionnaire-container');
-    const startManualBtn = document.getElementById('start-manual-btn');
-    const startVinBtn = document.getElementById('start-vin-btn');
-    const vinLookupContainer = document.getElementById('vin-lookup-container');
-    const initialButtons = document.getElementById('initial-buttons');
-    const vinInput = document.getElementById('vin-input-lookup');
-    const decodeVinBtn = document.getElementById('decode-vin-btn');
-    const vinLoader = document.getElementById('vin-loader');
-    const vinStatus = document.getElementById('vin-status');
-    const vinBackBtn = document.getElementById('vin-back-btn');
-    const uploadVinImageInput = document.getElementById('upload-vin-image-input');
-    const uploadVinBtn = document.getElementById('upload-vin-btn'); 
-    const vehicleModelNameSpans = document.querySelectorAll('.vehicle-model-name');
-    const recommendationsContainer = document.getElementById('recommendations-container');
-    const thankYouContainer = document.getElementById('thank-you-container');
-
-
-    // --- CAMERA & QR ELEMENTS ---
-    const snapVinBtn = document.getElementById('snap-vin-btn');
-    const cameraModal = document.getElementById('camera-modal');
-    const cameraStream = document.getElementById('camera-stream');
-    const captureBtn = document.getElementById('capture-btn');
-    const closeCameraBtn = document.getElementById('close-camera-btn');
-    const snapshotCanvas = document.getElementById('snapshot-canvas');
-    let currentStream = null;
-
-    const callLinks = document.querySelectorAll('.call-link');
-
-    let currentStep = 1;
-    let userVin = null;
-    let userFirstName = '';
-    let selectedItems = [];
-
-    
-    // === INTEGRATION: NEW VEHICLE SELECTOR LOGIC (EXISTING) ===
-    const API_BASE = 'https://vpic.nhtsa.dot.gov/api/vehicles';
-    const makeSelect = document.getElementById('make');
-    const modelSelect = document.getElementById('model');
-    const yearSelect = document.getElementById('year');
-    const trimGroup = document.getElementById('trim-group');
-    const trimSelect = document.getElementById('trim');
-    const regionIndicator = document.getElementById('regionIndicator');
-
-    const priorityMakes = ['Audi','Cadillac','Chevrolet','Ferrari','Lamborghini','Mclaren'];
-    const excludedMakes = new Set(['tesla']);
-    const makeRegionMap = {
-        'cadillac':'us-domestic','chevrolet':'us-domestic','gmc':'us-domestic','ford':'us-domestic','chrysler':'us-domestic','dodge':'us-domestic','jeep':'us-domestic','lincoln':'us-domestic','buick':'us-domestic','ram':'us-domestic',
-        'audi':'euro','bmw':'euro','mercedesbenz':'euro','mercedes':'euro','volkswagen':'euro','porsche':'euro','ferrari':'euro','lamborghini':'euro','mclaren':'euro','jaguar':'euro','landrover':'euro','alfaromeo':'euro','rollsroyce':'euro','astonmartin':'euro','mini':'euro','saab':'euro','volvo':'euro','koenigsegg':'euro','bugatti':'euro','pagani':'euro','lotus':'euro','bentley':'euro','fiat':'euro','seat':'euro','skoda':'euro','smart':'euro','renault':'euro','peugeot':'euro','citroen':'euro','opel':'euro','vauxhall':'euro',
-        'toyota':'jdm','honda':'jdm','nissan':'jdm','mazda':'jdm','subaru':'jdm','mitsubishi':'jdm','lexus':'jdm','infiniti':'jdm','acura':'jdm','suzuki':'jdm','isuzu':'jdm',
-        'hyundai':'korean','kia':'korean'
-    };
-    const manualCadillacModels = [
-        {name:'CT5-V Blackwing', hasPackage:true},
-        {name:'CTS-V', hasPackage:true},
-        {name:'CT4-V Blackwing', hasPackage:false},
-        {name:'Escalade', hasPackage:false}
-    ];
-    // --- FIX: Added Cadillac to the makeModelPackages object ---
-    const makeModelPackages = {
-        'cadillac': { 'ct5vblackwing': true, 'ctsv': true },
-        'audi':{'r8':true},
-        'chevrolet':{'corvette':true,'camaro':true,'silverado1500':false,'tahoe':false},
-        'ferrari':{'458italia':true},
-        'gmc':{'sierra1500':false,'yukon':false},
-        'lamborghini':{'huracan':true},
-        'mclaren':{'570s':true,'540c':true,'570gt':true,'720s':true}
-    };
-    const modelTrims = {
-        'chevrolet': {
-            'corvette': ['Base','Z06','ZR1','Stingray','Grand Sport','E-Ray'],
-            'camaro': ['Gen 5','Gen 6 SS','Gen 6 ZL1']
-        },
-        'lamborghini': {
-            'huracan': ['EVO','STO']
-        }
-    };
-
-    function normalizeKey(str){return String(str||'').toLowerCase().replace(/\s+/g,'').replace(/-/g,'').replace(/[^a-z0-9]/g,'');}
-    function toTitleCase(str){return String(str||'').toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());}
-
-    async function loadCarMakes(){
-        try{
-            const res=await fetch(`${API_BASE}/GetMakesForVehicleType/car?format=json`);
-            if (!res.ok) throw new Error(`API Error: ${res.status}`);
-            const data=await res.json();
-            
-            makeSelect.innerHTML='<option value="">-- Select Make --</option>'; 
-            const apiMakes=data.Results.map(m=>({raw:m.MakeName, key:normalizeKey(m.MakeName)}));
-            const added=new Set();
-
-            for(const pm of priorityMakes){
-                const nk=normalizeKey(pm);
-                if(excludedMakes.has(nk) || !makeRegionMap[nk]) continue;
-                const apiMatch=apiMakes.find(x=>x.key===nk);
-                const opt=document.createElement('option');
-                opt.value=apiMatch?apiMatch.raw:pm;
-                opt.textContent=toTitleCase(opt.value);
-                opt.className='top-highlight';
-                makeSelect.appendChild(opt);
-                added.add(nk);
-            }
-
-            const sep=document.createElement('option');sep.textContent='──────────';sep.disabled=true;sep.className='separator';makeSelect.appendChild(sep);
-
-            const others=apiMakes.filter(x=>!added.has(x.key) && makeRegionMap[x.key] && !excludedMakes.has(x.key)).sort((a,b)=>a.raw.localeCompare(b.raw));
-            for(const m of others){ const o=document.createElement('option'); o.value=m.raw; o.textContent=toTitleCase(m.raw); makeSelect.appendChild(o); added.add(m.key);}	
-
-        }catch(err){
-            console.error('loadCarMakes error',err);
-            makeSelect.innerHTML = '<option value="">Error Loading Makes</option>';
-        }
-    }
-
-    async function loadModelsForMake(makeName){
-        modelSelect.innerHTML='<option value="">-- Loading Models --</option>'; 
-        modelSelect.disabled=true; 
-        hideTrim();
-        
-        if(!makeName){ 
-            modelSelect.innerHTML='<option value="">-- Select Make First --</option>'; 
-            return; 
-        }
-
-        const normalizedMake=normalizeKey(makeName);
-        const makeIsPriority = priorityMakes.some(m=>normalizeKey(m)===normalizedMake);
-
-        if(normalizedMake==='cadillac'){
-            let apiModels=[];
-            try{ const res=await fetch(`${API_BASE}/GetModelsForMake/${encodeURIComponent(makeName)}?format=json`); const data=await res.json(); apiModels=data.Results.map(r=>r.Model_Name);}catch(e){console.error('cadillac api models',e);}	  
-            const manualSet=new Set(manualCadillacModels.map(m=>normalizeKey(m.name)));
-            const additional=apiModels.filter(m=>!manualSet.has(normalizeKey(m)));
-
-            modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
-            for(const mm of manualCadillacModels){ const opt=document.createElement('option'); opt.value=mm.name; opt.textContent=mm.name; if(mm.hasPackage && makeIsPriority) opt.className='model-highlight'; modelSelect.appendChild(opt);}	  
-            additional.forEach(mn=>{ const opt=document.createElement('option'); opt.value=mn; opt.textContent=mn; modelSelect.appendChild(opt); });
-            modelSelect.disabled=false;
-            modelSelect.dispatchEvent(new Event('change'));
-            return;
-        }
-
-        try{
-            const res=await fetch(`${API_BASE}/GetModelsForMake/${encodeURIComponent(makeName)}?format=json`);
-            if (!res.ok) throw new Error(`API Error: ${res.status}`);
-            const data=await res.json();
-            const makePackages = makeModelPackages[normalizedMake] || {};
-
-            let withPackages=[]; let withoutPackages=[];
-
-            if(normalizedMake==='chevrolet'){
-                const cor = data.Results.find(m=>normalizeKey(m.Model_Name)==='corvette');
-                const cam = data.Results.find(m=>normalizeKey(m.Model_Name)==='camaro');
-                if(cor) withPackages.push(cor.Model_Name);
-                if(cam) withPackages.push(cam.Model_Name);
-                data.Results.forEach(m=>{
-                    const nm=normalizeKey(m.Model_Name);
-                    if(nm==='corvette'||nm==='camaro') return;
-                    if(makePackages[nm]===true) withPackages.push(m.Model_Name); else withoutPackages.push(m.Model_Name);
-                });
-            } else {
-                data.Results.forEach(m=>{
-                    const nm=normalizeKey(m.Model_Name);
-                    if(makePackages[nm]===true) withPackages.push(m.Model_Name); else withoutPackages.push(m.Model_Name);
-                });
-            }
-            
-            modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
-            withPackages.forEach(mn=>{ const opt=document.createElement('option'); opt.value=mn; opt.textContent=mn; if(makeIsPriority) opt.className='model-highlight'; modelSelect.appendChild(opt); });
-            withoutPackages.forEach(mn=>{ const opt=document.createElement('option'); opt.value=mn; opt.textContent=mn; modelSelect.appendChild(opt); });
-
-            if(data.Results.length===0){ modelSelect.innerHTML = '<option value="">No models found</option>';}	  
-            modelSelect.disabled=false;
-            modelSelect.dispatchEvent(new Event('change'));
-        }catch(err){ 
-            console.error('loadModelsForMake error',err); 
-            modelSelect.innerHTML='<option value="">Error loading models</option>'; 
-        }
-    }
-
-    function hideTrim(){ 
-        trimGroup.classList.add('hidden-field');
-        trimSelect.innerHTML='<option value="">-- Select Trim --</option>'; 
-        trimSelect.disabled = true;
-        trimSelect.required = false;
-    }
-    function showTrim(trims){ 
-        trimSelect.innerHTML=''; 
-        const placeholder=document.createElement('option'); placeholder.value=''; placeholder.textContent='-- Select Trim --'; trimSelect.appendChild(placeholder); 
-        trims.forEach(t=>{ const o=document.createElement('option'); o.value=t; o.textContent=t; trimSelect.appendChild(o); }); 
-        trimGroup.classList.remove('hidden-field'); 
-        trimSelect.disabled = false;
-        trimSelect.required = true;
-    }
-
-    function updateTrimDropdown(makeName, modelName){
-        hideTrim();
-        if(!makeName || !modelName) return;
-        const nMake = normalizeKey(makeName);
-        const nModel = normalizeKey(modelName);
-
-        if(
-            (nMake === 'chevrolet' && (nModel === 'corvette' || nModel === 'camaro')) ||
-            (nMake === 'lamborghini' && nModel === 'huracan')
-        ) {
-            const trims = modelTrims[nMake] && modelTrims[nMake][nModel] ? modelTrims[nMake][nModel] : null;
-            if(trims && trims.length > 0) {
-                showTrim(trims);
-            }
-        }
-    }
-    // === END INTEGRATION: NEW VEHICLE SELECTOR LOGIC ===
-
-
-    // --- HELPER FUNCTIONS ---
-    function isMobileDevice() {
-        return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    }
-
-    // --- NAME HANDLING & VALIDATION ---
-    function validateAndStoreName() {
-        const name = firstNameInput.value.trim();
-        if (name === '') {
-            firstNameInput.style.borderColor = 'var(--color-primary)';
-            setTimeout(() => { firstNameInput.style.borderColor = ''; }, 2000);
-            return false;
-        }
-        userFirstName = name;
-        userNameSpans.forEach(span => { span.textContent = userFirstName; });
-
-        if (userFirstName.toLowerCase().endsWith('s')) {
-            userNamePossessiveSpan.textContent = userFirstName + "'";
-        } else {
-            userNamePossessiveSpan.textContent = userFirstName + "'s";
-        }
-        return true;
-    }
-
-    // --- INITIAL FLOW LOGIC (MODIFIED) ---
-    startManualBtn.addEventListener('click', () => {
-        if (!validateAndStoreName()) return;
-
-        welcomeContainer.classList.remove('active');
-        welcomeContainer.classList.add('hidden-field');
-        questionnaireContainer.classList.remove('hidden-field');
-        questionnaireContainer.classList.add('active');
-        initializeProgressBar();
-    });
-
-    startVinBtn.addEventListener('click', () => {
-        if (!validateAndStoreName()) return;
-
-        initialButtons.classList.add('hidden-field');
-        vinLookupContainer.classList.remove('hidden-field');
-        welcomeTitle.textContent = 'VIN Lookup';
-        welcomeSubtitle.innerHTML = `Alright <span class="user-name">${userFirstName}</span>, let's find your vehicle.`;
-    });
-    
-    vinBackBtn.addEventListener('click', () => {
-        vinLookupContainer.classList.add('hidden-field');
-        initialButtons.classList.remove('hidden-field');
-        showStatus('');
-        vinInput.value = '';
-        welcomeTitle.textContent = 'WIKD Tuning Configurator';
-        welcomeSubtitle.textContent = 'Find the perfect performance package and parts for your vehicle. Let\'s get started!';
-    });
-
-    function showStatus(message, isError = false, isInfo = false) {
-        vinStatus.textContent = message;
-        vinStatus.className = 'status-message';
-        if (message) {
-            if (isError) vinStatus.classList.add('error');
-            if (isInfo) vinStatus.classList.add('info');
-            vinStatus.style.display = 'block';
-        } else {
-            vinStatus.style.display = 'none';
-        }
-    }
-
-    decodeVinBtn.addEventListener('click', async () => {
-        const vin = vinInput.value.trim().toUpperCase();
-        if (vin.length !== 17) {
-            showStatus('Please enter a valid 17-digit VIN.', true);
-            return;
-        }
-        
-        showStatus('');
-        vinLoader.classList.remove('hidden-field');
-        decodeVinBtn.disabled = true;
-        vinBackBtn.disabled = true;
-
-        try {
-            const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${vin}?format=json`);
-            if (!response.ok) throw new Error(`API Error: ${response.status}`);
-            const data = await response.json();
-            
-            const result = data.Results[0];
-            if (!result || !result.Make || !result.Model || !result.ModelYear) {
-                 throw new Error(result.ErrorText || 'VIN not found or is missing critical data. Please fill out manually.');
-            }
-
-            const decodedMakeRaw = result.Make;
-            const makeOption = Array.from(makeSelect.options).find(opt => opt.value.toLowerCase() === decodedMakeRaw.toLowerCase());
-
-            if (!makeOption) {
-                throw new Error(`Sorry, we don't have tuning data for ${toTitleCase(decodedMakeRaw)} yet. Please fill out as "Other".`);
-            }
-            
-            userVin = vin;
-
-            makeSelect.value = makeOption.value;
-            await loadModelsForMake(makeSelect.value);
-            const modelOptions = Array.from(modelSelect.options).map(opt => opt.value);
-            const decodedModel = modelOptions.find(m => normalizeKey(m) === normalizeKey(result.Model)) || modelOptions[0];
-            modelSelect.value = decodedModel;
-            yearSelect.value = result.ModelYear;
-            modelSelect.dispatchEvent(new Event('change'));
-            yearSelect.dispatchEvent(new Event('change'));
-            
-            const apiTrim = result.Trim || result.Trim2 || '';
-            let trimFound = false;
-            if (apiTrim && trimSelect.options.length > 1) {
-                const trimOptions = Array.from(trimSelect.options);
-                let bestMatch = trimOptions.find(opt => opt.value.toLowerCase() === apiTrim.toLowerCase());
-                if (!bestMatch) {
-                    bestMatch = trimOptions.find(opt => opt.value && apiTrim.toLowerCase().includes(opt.value.toLowerCase()));
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const phoneNumber = '4696251127';
+            const pricingData = {
+                '2Door': {
+                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 6295.00, addons: { 'Add Ceramic Coating': 0 } } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 495.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 995.00, '2 Step Polish/PC': 1295.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 0 } } },
+                    'Vinyl': { 'Color Change': { price: 3495.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                },
+                '4Door': {
+                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 7095.00, addons: { 'Add Ceramic Coating': 0 } } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 595.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1195.00, '2 Step Polish/PC': 1545.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 335.00 } } },
+                    'Vinyl': { 'Color Change': { price: 3995.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                },
+                'SUV': {
+                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 7895.00, addons: { 'Add Ceramic Coating': 0 } } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 645.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1395.00, '2 Step Polish/PC': 1795.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 115.00, addons: { 'Add Side Windows': 375.00 } } },
+                    'Vinyl': { 'Color Change': { price: 4295.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                },
+                'Oversize': {
+                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 8795.00, addons: { 'Add Ceramic Coating': 0 } } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 695.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1495.00, '2 Step Polish/PC': 1995.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 425.00 } } },
+                    'Vinyl': { 'Color Change': { price: 4995.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
                 }
-                if (bestMatch) {
-                    trimSelect.value = bestMatch.value;
-                    trimSelect.dispatchEvent(new Event('change'));
-                    trimFound = true;
+            };
+            
+            const ppfImageMap = {
+                'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859',
+                'Full Front': 'https://wikdwraps.com/cdn/shop/files/Full_Front.webp?v=1738085245&width=535',
+                'Track Pack': 'https://wikdwraps.com/cdn/shop/files/Track_Pack.webp?v=1738085280&width=535',
+                'Full Car': 'https://wikdwraps.com/cdn/shop/files/Full_Wrap.webp?v=1738074454&width=535'
+            };
+
+            const allServices = ['PPF', 'Tint', 'Coating', 'Vinyl'];
+            let servicesState = {};
+            let currentlyViewingService = null;
+            let userSelections = { selectedItems: [] };
+            let currentStep = 1;
+            let userFirstName = '';
+
+            // --- UI & FORM ELEMENTS ---
+            const form = document.getElementById('configurator-form');
+            const welcomeMessageEl = document.getElementById('welcome-message');
+            const nextBtns = document.querySelectorAll('.next-btn');
+            const prevBtns = document.querySelectorAll('.prev-btn');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const progressBar = document.getElementById('progress-bar');
+            const dynamicServicesContainer = document.getElementById('dynamic-services-container');
+            const serviceTabsContainer = document.getElementById('service-tabs-container');
+            const selectionsNextBtn = document.getElementById('selections-next-btn');
+            const priceDisplay = document.getElementById('price-display');
+            const thankYouContainer = document.getElementById('thank-you-container');
+            const coverageImage = document.getElementById('coverage-image');
+            const submitFormBtn = document.getElementById('submit-form-btn');
+            const callLinks = document.querySelectorAll('.call-link');
+            const summaryBreakdown = document.getElementById('summary-breakdown');
+            const summaryItemsList = document.getElementById('summary-items-list');
+            const toggleSummaryBtn = document.getElementById('toggle-summary-btn');
+            
+             // --- HELPER FUNCTIONS ---
+            function isMobileDevice() {
+                return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            }
+
+            function setCookie(name, value, days) {
+                let expires = "";
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Strict";
+            }
+
+            function getCookie(name) {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for(let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
+            
+            function checkAndDisplayCookie() {
+                const savedName = getCookie('userFirstName');
+                if (savedName) {
+                    welcomeMessageEl.innerHTML = `Welcome back, <span style="color:var(--color-primary);">${savedName}</span>! Tell us about your next project.`;
                 }
             }
-            
-            if (!trimFound && normalizeKey(modelSelect.value) === 'corvette') {
-                const stingrayOption = Array.from(trimSelect.options).find(opt => opt.value === 'Stingray');
-                if (stingrayOption) {
-                    trimSelect.value = 'Stingray';
-                    trimSelect.dispatchEvent(new Event('change'));
-                }
+
+            function validateAndStoreName() {
+                const name = document.getElementById('customer-first-name').value.trim();
+                userFirstName = name;
+                return name;
             }
             
-            makeSelect.disabled = true;
-            modelSelect.disabled = true;
-            yearSelect.disabled = true;
-            trimSelect.disabled = trimSelect.value !== '';
+            function generateEmail() {
+                const firstName = document.getElementById('customer-first-name').value;
+                const lastName = document.getElementById('customer-last-name').value;
+                const phone = document.getElementById('customer-phone').value;
+                const email = document.getElementById('customer-email').value;
+                const comments = document.getElementById('customer-comments').value;
 
-            startManualBtn.click();
-            setTimeout(() => updateStep(2), 100);
+                setCookie('userFirstName', firstName, 30);
 
-        } catch (error) {
-            showStatus(error.message, true);
-        } finally {
-            vinLoader.classList.add('hidden-field');
-            decodeVinBtn.disabled = false;
-            vinBackBtn.disabled = false;
-        }
-    });
+                let itemsText = 'No services selected.';
+                const total = priceDisplay.textContent;
 
-    // --- VIN SCANNER & CAMERA LOGIC ---
-    function correctVin(vin) {
-        return vin
-            .replace(/[^A-Z0-9]/gi, '')
-            .replace(/[OQ]/g, '0')
-            .replace(/I/g, '1')
-            .replace(/S/g, '5')
-            .replace(/B/g, '8');
-    }
-
-    function extractVin(text) {
-        const cleanedText = text.replace(/[\s\r\n-]+/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-        if (!cleanedText) return null;
-        const correctedText = correctVin(cleanedText);
-        return correctedText.slice(0, 17);
-    }
-    
-    function processImage(imageFile) {
-        vinLoader.classList.remove('hidden-field');
-        showStatus('Scanning image...', false, true);
-        decodeVinBtn.disabled = true;
-        vinBackBtn.disabled = true;
-        Tesseract.recognize(imageFile, 'eng', { logger: m => console.log(m) })
-            .then(({ data: { text } }) => {
-                const vin = extractVin(text);
-                if (vin) {
-                    vinInput.value = vin;
-                    showStatus('Text Detected. Please verify the VIN below.', false, true);
-                } else {
-                    showStatus('VIN not detected in image. Please try again or enter it manually.', true);
+                if (userSelections.selectedItems && userSelections.selectedItems.length > 0) {
+                    itemsText = userSelections.selectedItems.map(item => {
+                        const price = typeof item.price === 'number' ? ` ($${item.price.toFixed(2)})` : ` (${item.price})`;
+                        return `${item.name}${price}`;
+                    }).join('\n');
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                showStatus('An error occurred during image processing.', true);
-            })
-            .finally(() => {
-                vinLoader.classList.add('hidden-field');
-                decodeVinBtn.disabled = false;
-                vinBackBtn.disabled = false;
-            });
-    }
-    uploadVinBtn.addEventListener('click', () => { uploadVinImageInput.click(); });
-    uploadVinImageInput.addEventListener('change', () => {
-        const file = uploadVinImageInput.files[0];
-        if (!file) return;
-        processImage(file);
-        uploadVinImageInput.value = '';
-    });
-    async function openCamera() {
-        if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
-            showStatus('Camera access is not supported by your browser.', true);
-            return;
-        }
-        try {
-            currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-            cameraModal.classList.remove('hidden-field');
-            cameraStream.srcObject = currentStream;
-            cameraStream.play();
-        } catch (err) {
-            console.error("Error accessing camera: ", err);
-            showStatus('Could not access the camera. Please check permissions.', true);
-        }
-    }
-    function closeCamera() {
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
-        }
-        cameraModal.classList.add('hidden-field');
-    }
-    snapVinBtn.addEventListener('click', openCamera);
-    closeCameraBtn.addEventListener('click', closeCamera);
-    captureBtn.addEventListener('click', () => {
-        const context = snapshotCanvas.getContext('2d');
-        snapshotCanvas.width = cameraStream.videoWidth;
-        snapshotCanvas.height = cameraStream.videoHeight;
-        context.drawImage(cameraStream, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
-        closeCamera();
-        snapshotCanvas.toBlob(blob => { if (blob) { processImage(blob); } }, 'image/jpeg');
-    });
 
-
-    // --- UI POPULATION & EVENT LISTENERS ---
-    const populateYears = () => {
-        yearSelect.innerHTML = '<option value="">-- Select Year --</option>';
-        const currentYr = new Date().getFullYear();
-        for (let y = currentYr + 1; y >= 2005; y--) yearSelect.add(new Option(y, y));
-    };
-    
-    makeSelect.addEventListener('change', function() {
-        loadModelsForMake(this.value);
-        yearSelect.value = '';
-    });
-
-    modelSelect.addEventListener('change', function() {
-        updateTrimDropdown(makeSelect.value, this.value);
-        handleCorvetteTransmission();
-        updateTechInfo();
-    });
-
-    yearSelect.addEventListener('change', () => {
-        handleCorvetteTransmission();
-        updateTechInfo();
-    });
-
-    trimSelect.addEventListener('change', updateTechInfo);
-
-    document.querySelectorAll('input[name="transmission"]').forEach(radio => radio.addEventListener('change', updateTechInfo));
-    whpSlider.addEventListener('input', (e) => {
-        const numberSpan = whpOutput.querySelector('.whp-number');
-        numberSpan.textContent = `+${e.target.value}`;
-    });
-    priorTuneRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            currentHpGroup.classList.toggle('hidden-field', !(this.value === 'Dyno' || this.value === 'Remote'));
-        });
-    });
-    
-    // --- STEP NAVIGATION LOGIC (Unchanged) ---
-    const updateStep = (newStep) => {
-        if (newStep > currentStep) {
-            const currentStepPanel = steps[currentStep - 1];
-            const inputs = currentStepPanel.querySelectorAll('select[required], input[required]');
-            if (Array.from(inputs).some(input => !input.value)) {
-                inputs.forEach(input => {
-                    if (!input.value) {
-                        input.style.borderColor = 'var(--color-primary)';
-                        setTimeout(() => input.style.borderColor = '', 2000);
-                    }
-                });
-                return;
-            }
-        }
-
-        if (newStep === 2) {
-            const model = modelSelect.value;
-            vehicleModelNameSpans.forEach(span => {
-                span.textContent = model || 'vehicle';
-            });
-        }
-
-        steps.forEach(step => step.classList.remove('active'));
-        document.getElementById(`step-${newStep}`).classList.add('active');
-        const totalSteps = progressSteps.length;
-        const progressFraction = newStep > 1 ? (newStep - 1) / (totalSteps - 1) : 0;
-        const barTotalWidth = 100 - ( (1 / totalSteps) * 100 );
-        const fillWidth = progressFraction * barTotalWidth;
-        progressBar.style.setProperty('--progress-width', `${fillWidth}%`);
-        progressSteps.forEach((step, index) => {
-            const stepNumber = index + 1;
-            step.classList.remove('active', 'completed');
-            if (stepNumber < newStep) step.classList.add('completed');
-            else if (stepNumber === newStep) step.classList.add('active');
-        });
-        currentStep = newStep;
-        window.scrollTo(0, 0);
-    };
-
-    nextBtns.forEach(btn => btn.addEventListener('click', () => updateStep(currentStep + 1)));
-    
-    prevBtns.forEach(btn => btn.addEventListener('click', () => {
-        if (currentStep === 1) {
-            questionnaireContainer.classList.add('hidden-field');
-            questionnaireContainer.classList.remove('active');
-            welcomeContainer.classList.remove('hidden-field');
-            welcomeContainer.classList.add('active');
-        } else {
-            updateStep(currentStep - 1);
-        }
-    }));
-
-    getResultsBtn.addEventListener('click', () => {
-        selectedItems = []; 
-        generateResults();
-        updateStep(4);
-    });
-    
-    // --- CORE LOGIC (Largely Unchanged) ---
-    function handleCorvetteTransmission() {
-        const model = modelSelect.value;
-        const year = parseInt(yearSelect.value);
-        if (model === 'Corvette' && year >= 2020) {
-            transAutoInput.checked = true;
-            transAutoInput.disabled = true;
-            transManualInput.disabled = true;
-        } else {
-            transAutoInput.disabled = false;
-            transManualInput.disabled = false;
-        }
-    }
-
-    function updateTechInfo() {
-        const make = makeSelect.value;
-        const model = modelSelect.value;
-        const year = parseInt(yearSelect.value);
-        const trim = trimSelect.value;
-        const transmission = document.querySelector('input[name="transmission"]:checked').value;
-        tcmUnlockGroup.style.display = transmission === 'Automatic' ? 'block' : 'none';
-        if (make !== 'Chevrolet' || model !== 'Corvette' || !year || !trim) return;
-        let techSpec = corvetteTechData.find(spec => 
-            spec.year === year && 
-            spec.trim === trim &&
-            spec.transmission === (transmission === 'Automatic' ? 'Auto' : 'Manual')
-        );
-        if (techSpec) {
-            document.querySelector(`input[name="ecu_unlocked"][value="${techSpec.lockedECU === 'yes' ? 'no' : 'yes'}"]`).checked = true;
-            if (transmission === 'Automatic') {
-                document.querySelector(`input[name="tcm_unlocked"][value="${techSpec.lockedTCM === 'yes' ? 'no' : 'yes'}"]`).checked = true;
-            }
-        }
-    }
-
-    function generateResults() {
-        const partsGrid = recommendationsContainer.querySelector('.product-grid-container');
-        const wasExpanded = partsGrid && !partsGrid.classList.contains('collapsed');
-
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-        data.make = makeSelect.value;
-        data.model = modelSelect.value;
-        data.year = yearSelect.value;
-        data.trim = trimSelect.value;
-        if (!data.transmission) { data.transmission = document.querySelector('input[name="transmission"]:checked').value; }
-        const targetHpDelta = parseInt(data.hp_delta);
-        const currentHp = data.current_hp ? parseInt(data.current_hp) : null;
-        const priorTuneType = data.prior_tune;
-        const selectedYear = parseInt(data.year);
-
-        const e85Toggle = document.getElementById('e85-summary-toggle');
-        const e85Active = e85Toggle ? e85Toggle.checked : false;
-
-        document.getElementById('summary-vehicle').textContent = `${data.year} ${data.make} ${data.model} ${data.trim || ''}`.trim();
-        document.getElementById('summary-transmission').textContent = data.transmission;
-        const summaryPowerEl = document.getElementById('summary-power');
-        
-        let effectiveTargetHp = targetHpDelta;
-        
-        if (e85Active) {
-            effectiveTargetHp += 30;
-        }
-        
-        let powerSummaryHTML = '';
-        if (priorTuneType === 'None' || !currentHp) {
-            powerSummaryHTML = `<strong>Target Gain</strong><span>+${effectiveTargetHp} WHP</span>`;
-        } else {
-            let hpText = `${currentHp} WHP`;
-            if (priorTuneType === 'Remote') { hpText += ' (unconf.)'; }
-            powerSummaryHTML = `<strong>Power Target</strong><span>${hpText} &rarr; +${effectiveTargetHp} WHP</span>`;
-        }
-        summaryPowerEl.innerHTML = powerSummaryHTML;
-
-        recommendationsContainer.innerHTML = ''; 
-        
-        const powerCheckNotice = document.getElementById('power-check-notice');
-        powerCheckNotice.classList.toggle('hidden-field', data.prior_tune !== 'Remote');
-        const powerCheckAddBtn = powerCheckNotice.querySelector('.btn-add');
-        if (powerCheckAddBtn) {
-            const isSelected = selectedItems.some(item => item.id === 'power-check');
-            powerCheckAddBtn.classList.toggle('selected', isSelected);
-        }
-
-        let totalRecommendations = 0;
-        let primaryRecommendationMade = false;
-        let canHavePackages = false;
-        let canHaveDynoTune = true;
-        let canHaveParts = true;
-        
-        let techSpec = null;
-        if (data.make === 'Chevrolet' && data.model === 'Corvette') {
-            techSpec = corvetteTechData.find(spec => spec.year === selectedYear && spec.trim === data.trim && spec.transmission === (data.transmission === 'Automatic' ? 'Auto' : 'Manual'));
-            if (techSpec) {
-                canHavePackages = techSpec.packages === 'yes';
-                canHaveDynoTune = techSpec.dynoTune === 'yes';
-                canHaveParts = techSpec.parts === 'yes';
-            } else {
-                canHavePackages = selectedYear >= 2020;
-            }
-        } else {
-            const nMake = normalizeKey(data.make);
-            const nModel = normalizeKey(data.model);
-            canHavePackages = makeModelPackages[nMake]?.[nModel] === true;
-        }
-
-        let unlockCost = 0;
-        let unlockReason = [];
-        if (techSpec) {
-            if (data.ecu_unlocked === 'no' && techSpec.ecuCost > 0) {
-                unlockCost += techSpec.ecuCost;
-                unlockReason.push(`ECU Unlock ($${techSpec.ecuCost})`);
-            }
-            if (data.transmission === 'Automatic' && data.tcm_unlocked === 'no' && techSpec.tcmCost > 0) {
-                unlockCost += techSpec.tcmCost;
-                unlockReason.push(`TCM Unlock ($${techSpec.tcmCost})`);
-            }
-        }
-
-        if (canHavePackages) {
-            let vehiclePackages;
-            if (data.model === 'Corvette') {
-                const generationKey = selectedYear <= 2019 ? 'Corvette_C7' : 'Corvette_C8';
-                vehiclePackages = packages[generationKey] || [];
-            } else if (data.model === 'Camaro' && data.trim === 'Gen 6 ZL1') {
-                // Special case for ZL1 to get its specific packages
-                vehiclePackages = packages['Camaro'].filter(p => p.id.startsWith('zl1-'));
-            }
-             else {
-                vehiclePackages = packages[data.model] || [];
+                const subject = `WIKD Wraps Estimate Inquiry from ${firstName} ${lastName}`;
+                const emailBody = `
+    Hello WIKD Wraps Team,
+    I have submitted an estimate request through your online configurator. I am interested in the following services for my vehicle:
+    Vehicle Type: ${document.querySelector('input[name="vehicle"]:checked').value}
+    Total Estimate: ${total}
+    Selected Services:
+    ${itemsText}
+    ---
+    Customer Details:
+    Name: ${firstName} ${lastName}
+    Phone: ${phone}
+    Email: ${email}
+    Comments:
+    ${comments || 'No additional comments provided.'}
+    Please get in touch with me to discuss this further.
+                `;
+                window.location.href = `mailto:sales@wikdwraps.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
             }
 
-            let bestMatch = null;
-            let maxHpPackage = null;
-            const highHpThreshold = 75;
+            function updateStep(newStep) {
+                const questionnaireContainer = document.getElementById('questionnaire-container');
+                const thankYouContainer = document.getElementById('thank-you-container');
 
-            if (vehiclePackages && vehiclePackages.length > 0) {
-                vehiclePackages.sort((a, b) => a.hp_delta - b.hp_delta);
-                maxHpPackage = vehiclePackages[vehiclePackages.length - 1];
-                bestMatch = vehiclePackages.find(pkg => pkg.hp_delta >= targetHpDelta);
-                if (!bestMatch) { bestMatch = maxHpPackage; }
-            }
-
-            const tuneIcon = `<animated-icons src="https://animatedicons.co/get-icon?name=KM&style=minimalistic&token=5729fdff-2cfc-4b8b-9952-2ff7da52563d" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="28" width="28"></animated-icons>`;
-            const packageIcon = `<animated-icons src="https://animatedicons.co/get-icon?name=Product&style=minimalistic&token=5729fdff-2cfc-4b8b-9952-2ff7da52563d" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="28" width="28"></animated-icons>`;
-
-            if (maxHpPackage && targetHpDelta > maxHpPackage.hp_delta + highHpThreshold) {
-                totalRecommendations++;
-                primaryRecommendationMade = true;
-                const isSelected = selectedItems.some(item => item.id === 'custom-tune-high-hp');
-                recommendationsContainer.innerHTML += `<div class="result-card"><h3>${tuneIcon} Custom WIKD Tune Recommended</h3><p style="color: var(--color-text-muted);">Your horsepower goal of <strong>+${targetHpDelta} WHP</strong> is ambitious and exceeds our standard performance packages. For this level of performance, we recommend a fully custom WIKD Tune.</p><p style="color: var(--color-text-muted); margin-top: 1rem;">This involves a personalized consultation with our expert tuners to develop a bespoke solution, including part selection and dyno tuning, tailored specifically to your vehicle and goals.</p>${unlockCost > 0 ? `<p style="color: var(--color-text-muted); margin-top: 1rem;">This build will likely require: ${unlockReason.join(' + ')}.</p>` : ''}
-                <div style="display: flex; align-items: stretch; gap: 0.5rem; margin-top: 1rem;">
-                    <a href="https://www.wikdmotorsports.com/pages/custom-dyno-tuning" target="_blank" class="btn btn-primary btn-left"><span>Learn More</span></a>
-                    <button type="button" class="btn btn-add btn-right ${isSelected ? 'selected' : ''}" data-id="custom-tune-high-hp" data-type="service" data-title="Custom WIKD Tune" data-price="0"><span>+</span></button>
-                </div></div>`;
-            } else if (bestMatch) { 
-                totalRecommendations++;
-                primaryRecommendationMade = true;
-                
-                let finalPrice = bestMatch.price + unlockCost;
-                let finalHp = bestMatch.hp_delta;
-                let finalTitle = bestMatch.title;
-
-                if (e85Active && bestMatch.e85Compatible) {
-                    finalPrice += bestMatch.e85PriceBoost;
-                    finalHp += bestMatch.e85HpBoost;
-                    finalTitle = bestMatch.title.replace(/\s*\(E85\)/i, '') + ' (E85)';
-                }
-                
-                const isSelected = selectedItems.some(item => item.id === bestMatch.id);
-                
-                let footerHTML = `<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                                        <div style="display: flex; align-items: stretch; gap: 0.5rem;">
-                                            <a href="${bestMatch.url}" class="btn btn-primary btn-left" target="_blank"><span>View Package Details</span></a>
-                                            <button type="button" class="btn btn-add btn-right ${isSelected ? 'selected' : ''}" data-id="${bestMatch.id}" data-type="package" data-title="${bestMatch.title}" data-price="${bestMatch.price}" data-e85-price="${bestMatch.e85PriceBoost || 0}"><span>+</span></button>
-                                        </div>`;
-
-                if (bestMatch.e85Compatible) {
-                    footerHTML += `
-                                <div style="text-align: right;">
-                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                        <div>
-                                            <strong style="font-size: 0.9rem; font-family: var(--font-body); text-transform: none; color: var(--color-text);">E85 Conversion</strong>
-                                            <span style="color: var(--color-text-muted); font-size: 0.8rem; display: block;">+30 WHP</span>
-                                        </div>
-                                        <div>
-                                            <input type="checkbox" id="e85-summary-toggle" class="choice-input" ${e85Active ? 'checked' : ''}>
-                                            <label for="e85-summary-toggle" class="e85-toggle-label"><span class="dot"></span></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                }
-                footerHTML += `</div>`;
-
-
-                recommendationsContainer.innerHTML += `
-                    <div class="result-card">
-                        <h3>${packageIcon} Recommended Package</h3>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                            <div>
-                                <strong style="font-size: 1.2rem; color: white;">${finalTitle}</strong>
-                                <span class="badge">+${finalHp} WHP</span>
-                            </div>
-                            <span style="font-size: 1.5rem; font-weight: bold; color: var(--color-primary);">$${finalPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        </div>
-                        ${footerHTML}
-                    </div>`;
-            }
-        }
-
-        if (canHaveParts) {
-            const recommendedProducts = products.filter(p => {
-                const productKeywords = p.keywords.map(k => k.toLowerCase());
-                if (data.model === 'Corvette') {
-                    if (p.id === 'c8-catback-blue' && data.trim === 'Z06') return false;
-                    if (p.id === 'c8-z06-exhaust-blue' && data.trim !== 'Z06') return false;
-                }
-                if (productKeywords.includes('universal')) return true;
-                const selectedMakeLower = data.make.toLowerCase();
-                const selectedModelLower = data.model.toLowerCase();
-                let makeMatch = productKeywords.includes(selectedMakeLower);
-                if (selectedModelLower === 'r8' && (productKeywords.includes('lamborghini') || productKeywords.includes('audi'))) makeMatch = true;
-                const selectedModelWords = selectedModelLower.split(' ');
-                const modelWordsMatch = selectedModelWords.every(word => productKeywords.includes(word));
-                const singleKeywordModelMatch = productKeywords.includes(selectedModelLower.replace(/[\s-]/g, ''));
-                let modelMatch = modelWordsMatch || singleKeywordModelMatch;
-                if (selectedModelLower === 'r8' && productKeywords.includes('r8')) modelMatch = true;
-                if (!makeMatch || !modelMatch) return false;
-                if (selectedModelLower === 'corvette') {
-                    const isC8 = selectedYear >= 2020;
-                    const productIsForC8 = productKeywords.includes('c8');
-                    const productIsForC7 = productKeywords.includes('c7');
-                    if (productIsForC8 && !isC8) return false;
-                    if (productIsForC7 && isC8) return false;
-                }
-                return (!p.minYear || selectedYear >= p.minYear) && (!p.maxYear || selectedYear <= p.maxYear);
-            }).sort((a, b) => b.price - a.price);
-            if (recommendedProducts.length > 0) {
-                totalRecommendations++;
-                let productsHtml = recommendedProducts.map(p => {
-                    const isSelected = selectedItems.some(item => item.id === p.id);
-                    return `<div class="product-card">
-                                <img src="${p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'">
-                                <div class="product-card-content">
-                                    <h4>${p.title}</h4>
-                                    <div class="product-card-footer">
-                                        <span class="product-price">$${p.price.toLocaleString()}</span>
-                                        <div style="display: flex; align-items: stretch; gap: 0.5rem;">
-                                            <a href="${p.productUrl}" class="btn btn-left" target="_blank"><span>View</span></a>
-                                            <button type="button" class="btn btn-add btn-right ${isSelected ? 'selected' : ''}" data-id="${p.id}" data-type="product" data-title="${p.title}" data-price="${p.price}"><span>+</span></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`
-                }).join('');
-                const isCollapsible = recommendedProducts.length > 3; 
-                const containerCollapsedClass = isCollapsible ? 'collapsed' : '';
-                const showMoreButtonHtml = isCollapsible ? `<div class="show-more-container"><button class="btn show-more-btn btn-left"><span>Show More</span></button></div>` : '';
-                recommendationsContainer.innerHTML += `<div class="result-card"><h3><i class="fas fa-shopping-cart"></i> Recommended Parts & Gear</h3><div class="product-grid-container ${containerCollapsedClass}"><div class="product-grid">${productsHtml}</div></div>${showMoreButtonHtml}</div>`;
-            }
-        }
-
-        const tuneIcon = `<animated-icons src="https://animatedicons.co/get-icon?name=KM&style=minimalistic&token=5729fdff-2cfc-4b8b-9952-2ff7da52563d" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="28" width="28"></animated-icons>`;
-        
-        if (!primaryRecommendationMade) {
-            const nMake = normalizeKey(data.make);
-            const region = makeRegionMap[nMake] || 'unknown';
-
-            if (region === 'euro' || region === 'us-domestic') {
-                totalRecommendations++;
-                const isSelected = selectedItems.some(item => item.id === 'custom-tune-domestic-euro');
-                recommendationsContainer.innerHTML += `<div class="result-card"><h3>${tuneIcon} Custom Dyno Tune Recommended</h3><p style="color: var(--color-text-muted);">For your ${data.make} ${data.model}, a custom dyno tune is the best path forward to unlock its full potential. This allows us to tailor every parameter to your specific modifications for maximum safe, reliable power.</p>${unlockCost > 0 ? `<p style="color: var(--color-text-muted); margin-top: 1rem;">Required Unlocks: ${unlockReason.join(' + ')}.</p>` : ''}
-                <div style="display: flex; align-items: stretch; gap: 0.5rem; margin-top: 1rem;">
-                    <a href="https://www.wikdmotorsports.com/pages/custom-dyno-tuning" target="_blank" class="btn btn-primary btn-left"><span>Learn More</span></a>
-                    <button type="button" class="btn btn-add btn-right ${isSelected ? 'selected' : ''}" data-id="custom-tune-domestic-euro" data-type="service" data-title="Custom Dyno Tune" data-price="0"><span>+</span></button>
-                </div></div>`;
-            } else if (region === 'jdm' || region === 'korean') {
-                totalRecommendations++;
-                const isSelected = selectedItems.some(item => item.id === 'custom-tune-import');
-                recommendationsContainer.innerHTML += `<div class="result-card"><h3>${tuneIcon} Custom Import Tune Recommended</h3><p style="color: var(--color-text-muted);">For your ${data.make} ${data.model}, we recommend a custom import tune to unlock its full potential. Our experts specialize in tuning Japanese and Korean vehicles for maximum performance and reliability.</p>
-                <div style="display: flex; align-items: stretch; gap: 0.5rem; margin-top: 1rem;">
-                    <a href="https://www.wikdmotorsports.com/pages/custom-dyno-tuning" target="_blank" class="btn btn-primary btn-left"><span>Learn More</span></a>
-                    <button type="button" class="btn btn-add btn-right ${isSelected ? 'selected' : ''}" data-id="custom-tune-import" data-type="service" data-title="Custom Import Tune" data-price="0"><span>+</span></button>
-                </div></div>`;
-            }
-        }
-
-        if (totalRecommendations === 0) {
-            recommendationsContainer.innerHTML += `<div class="result-card"><h3><i class="fas fa-question-circle"></i> No Automatic Recommendations</h3><p style="color: var(--color-text-muted);">Based on your specific vehicle and goals, we don't have an automatic recommendation. This often means a fully custom approach is best. Please contact one of our experts to discuss your build.</p></div>`;
-        }
-        
-        const newPartsGrid = recommendationsContainer.querySelector('.product-grid-container');
-        if (newPartsGrid && wasExpanded) {
-            newPartsGrid.classList.remove('collapsed');
-            const showMoreBtn = newPartsGrid.parentElement.querySelector('.show-more-btn span');
-            if (showMoreBtn) {
-                showMoreBtn.textContent = 'Show Less';
-            }
-        }
-
-        const newE85Toggle = document.getElementById('e85-summary-toggle');
-        if (newE85Toggle) {
-            newE85Toggle.addEventListener('change', generateResults);
-        }
-    }
-    
-    recommendationsContainer.addEventListener('click', function(e) {
-        const addBtn = e.target.closest('.btn-add');
-        if (addBtn) {
-            const { id, type, title, price, e85Price } = addBtn.dataset;
-            const itemIndex = selectedItems.findIndex(item => item.id === id);
-
-            if (itemIndex > -1) {
-                selectedItems.splice(itemIndex, 1);
-            } else {
-                const newItem = {
-                    id,
-                    type,
-                    title,
-                    price: parseFloat(price)
-                };
-                if (type === 'package') {
-                    const e85Toggle = document.getElementById('e85-summary-toggle');
-                    newItem.e85 = e85Toggle ? e85Toggle.checked : false;
-                    if (newItem.e85) {
-                        newItem.price += parseFloat(e85Price);
-                        newItem.title = newItem.title.replace(/\s*\(E85\)/i, '') + ' (E85)';
-                    }
-                }
-                selectedItems.push(newItem);
-            }
-            generateResults();
-        }
-    });
-
-    document.body.addEventListener('click', function(e) {
-        const target = e.target;
-        const contactBtn = target.closest('.contact-expert-btn');
-        const showMoreBtn = target.closest('.show-more-btn');
-        if (contactBtn) { 
-            e.preventDefault(); 
-            const customerFirstNameInput = document.getElementById('customer-first-name');
-            if (userFirstName && !customerFirstNameInput.value) {
-                customerFirstNameInput.value = userFirstName;
-            }
-            updateStep(5); 
-        }
-        if (showMoreBtn) {
-            e.preventDefault();
-            const container = showMoreBtn.closest('.result-card').querySelector('.product-grid-container');
-            const btnSpan = showMoreBtn.querySelector('span');
-            if (container) {
-                container.classList.toggle('collapsed');
-                btnSpan.textContent = container.classList.contains('collapsed') ? 'Show More' : 'Show Less';
-            }
-        }
-    });
-
-    document.getElementById('power-check-notice').addEventListener('click', function(e){
-        const addBtn = e.target.closest('.btn-add');
-        if(addBtn){
-            const { id, type, title, price } = addBtn.dataset;
-            const itemIndex = selectedItems.findIndex(item => item.id === id);
-            if(itemIndex > -1){
-                selectedItems.splice(itemIndex, 1);
-            } else {
-                selectedItems.push({ id, type, title, price: parseFloat(price) });
-            }
-            generateResults();
-        }
-    });
-
-    document.getElementById('generate-email-btn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const firstNameInputContact = document.getElementById('customer-first-name');
-        const lastNameInputContact = document.getElementById('customer-last-name');
-        const phoneInput = document.getElementById('customer-phone');
-        
-        let isValid = true;
-        if (!firstNameInputContact.value) {
-            firstNameInputContact.style.borderColor = 'var(--color-primary)';
-            isValid = false;
-        }
-        if (!lastNameInputContact.value) {
-            lastNameInputContact.style.borderColor = 'var(--color-primary)';
-            isValid = false;
-        }
-        if (!phoneInput.value) {
-            phoneInput.style.borderColor = 'var(--color-primary)';
-            isValid = false;
-        }
-
-        if (!isValid) {
-            setTimeout(() => { 
-                firstNameInputContact.style.borderColor = ''; 
-                lastNameInputContact.style.borderColor = ''; 
-                phoneInput.style.borderColor = ''; 
-            }, 2000);
-            return;
-        }
-        
-        const formData = new FormData(form);
-        const rawData = Object.fromEntries(formData.entries());
-        if (!rawData.transmission) rawData.transmission = document.querySelector('input[name="transmission"]:checked').value;
-        
-        makeSelect.disabled = false;
-        modelSelect.disabled = false;
-        yearSelect.disabled = false;
-        trimSelect.disabled = false;
-
-        const emailData = {
-            year: yearSelect.value,
-            make: makeSelect.value,
-            model: modelSelect.value,
-            trim: trimSelect.value,
-            customer_name: `${rawData.customer_first_name.trim()} ${rawData.customer_last_name.trim()}`,
-            customer_phone: rawData.customer_phone,
-            customer_comments: rawData.customer_comments,
-            transmission: rawData.transmission,
-            hp_delta: rawData.hp_delta,
-            ecu_unlocked: rawData.ecu_unlocked,
-            tcm_unlocked: rawData.transmission === 'Automatic' ? rawData.tcm_unlocked : 'N/A',
-            fuel_type: rawData.fuel_type,
-            prior_tune: rawData.prior_tune,
-            prior_mods: rawData.prior_mods
-        };
-
-        if (userVin) {
-            makeSelect.disabled = true;
-            modelSelect.disabled = true;
-            yearSelect.disabled = true;
-            trimSelect.disabled = true;
-        }
-
-        let selectedItemsText = 'No specific items were added to the inquiry.';
-        if (selectedItems.length > 0) {
-            selectedItemsText = selectedItems.map(item => `- ${item.title}`).join('\n');
-        }
-
-        const subject = `Tuning Inquiry: ${emailData.year} ${emailData.make} ${emailData.model} ${emailData.trim || ''}`.trim();
-
-        const emailBodyText = `
-Hello WIKD Motorsports Team,
-
-My name is ${emailData.customer_name}, and I’ve submitted the tuning configurator. I’m reaching out to review my build and discuss next steps.
-
-Customer Notes:
-${emailData.customer_comments || 'No additional comments provided.'}
-
-------------------------------------
-
-SELECTED UPGRADES FOR DISCUSSION:
-${selectedItemsText}
-
-------------------------------------
-
-MY CONTACT INFO:
-Name: ${emailData.customer_name}
-Phone: ${emailData.customer_phone}
-
-------------------------------------
-
-CONFIGURATOR BUILD SUMMARY:
-Vehicle: ${emailData.year} ${emailData.make} ${emailData.model} ${emailData.trim || ''}
-Transmission: ${emailData.transmission}
-Target WHP Gain: +${emailData.hp_delta} WHP
-ECU Unlocked: ${emailData.ecu_unlocked}
-TCM Unlocked: ${emailData.transmission === 'Automatic' ? rawData.tcm_unlocked : 'N/A'}
-Primary Fuel: ${emailData.fuel_type}
-Prior Tune History: ${emailData.prior_tune}
-Existing Mods: ${emailData.prior_mods || 'None listed'}
-        `;
-
-        window.location.href = `mailto:sales@wikdmotorsports.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBodyText)}`;
-
-        setTimeout(() => {
-            questionnaireContainer.classList.remove('active');
-            questionnaireContainer.classList.add('hidden-field');
-            
-            thankYouContainer.classList.remove('hidden-field');
-            thankYouContainer.classList.add('active');
-            
-            const thankYouNameSpan = thankYouContainer.querySelector('.user-name');
-            if (thankYouNameSpan) {
-                thankYouNameSpan.textContent = userFirstName;
-            }
-            
-            checkBusinessHours();
-            window.scrollTo(0, 0);
-        }, 500);
-    });
-
-    function initializeProgressBar() {
-        const totalSteps = progressSteps.length;
-        const barStartOffset = (1 / totalSteps / 2) * 100;
-        const barTotalWidth = 100 - (barStartOffset * 2);
-        progressBar.style.setProperty('--bar-start-offset', `${barStartOffset}%`);
-        progressBar.style.setProperty('--bar-width', `${barTotalWidth}%`);
-        updateStep(1);
-    }
-
-    function checkBusinessHours() {
-        const callLinkContainers = document.querySelectorAll('#call-link-welcome, #call-link-thank-you');
-
-        const options = {
-            timeZone: 'America/Chicago',
-            weekday: 'short',
-            hour: 'numeric',
-            hour12: false
-        };
-
-        const formatter = new Intl.DateTimeFormat('en-US', options);
-        const parts = formatter.formatToParts(new Date()).reduce((acc, part) => {
-            acc[part.type] = part.value;
-            return acc;
-        }, {});
-
-        const dayOfWeek = parts.weekday;
-        const hour = parseInt(parts.hour, 10);
-
-        const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-        const isOpen = weekdays.includes(dayOfWeek) && hour >= 8 && hour < 17;
-
-        callLinkContainers.forEach(container => {
-            if (container) {
-                container.style.display = isOpen ? 'flex' : 'none';
-            }
-        });
-    }
-    
-    callLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            if (!isMobileDevice()) {
-                e.preventDefault();
-                e.stopPropagation(); 
-                
-                const container = this.parentElement;
-                const tooltip = container.querySelector('.qr-tooltip');
-                const canvas = tooltip.querySelector('.qr-code-canvas');
-                const phoneNumber = this.href;
-
-                const isActive = tooltip.classList.contains('active');
-
-                document.querySelectorAll('.qr-tooltip.active').forEach(activeTooltip => {
-                    activeTooltip.classList.remove('active');
-                });
-
-                if (!isActive) {
-                    tooltip.classList.add('active');
-                    
-                    if (!canvas.dataset.rendered) {
-                         QRCode.toCanvas(canvas, phoneNumber, { 
-                            width: 150, 
-                            margin: 0, 
-                            color: {
-                                dark: '#FF3B30',
-                                light: '#141414'
+                if (newStep > currentStep) {
+                    let isValid = true;
+                    if (currentStep === 1) {
+                        const selectedServices = getSelectedServices();
+                        if (selectedServices.length === 0 && newStep > 1) {
+                            isValid = false;
+                        } else {
+                            for (const service of selectedServices) {
+                                if (!servicesState[service].coverage) {
+                                    isValid = false;
+                                    const tab = serviceTabsContainer.querySelector(`[data-service="${service}"]`);
+                                    tab.style.borderColor = 'var(--color-danger)';
+                                    setTimeout(() => { tab.style.borderColor = 'transparent' }, 2000);
+                                    break;
+                                }
                             }
-                         }, function (error) {
-                            if (error) console.error(error);
-                            canvas.dataset.rendered = 'true';
+                        }
+                    } else if (currentStep === 2) {
+                        const contactForm = document.getElementById('step-2');
+                        const requiredInputs = contactForm.querySelectorAll('[required]');
+                        for(const input of requiredInputs) {
+                            if(!input.value) {
+                                isValid = false;
+                                input.style.borderColor = 'var(--color-danger)';
+                                setTimeout(() => { input.style.borderColor = 'var(--color-border)' }, 2000);
+                            }
+                        }
+                    }
+                    if (!isValid) return;
+                }
+
+                document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+                const newStepEl = document.getElementById(`step-${newStep}`);
+                if (newStepEl) {
+                    newStepEl.classList.add('active');
+                } else { // Thank you page
+                    document.getElementById('configurator-wrapper').style.display = 'none';
+                    document.getElementById('image-display-container').style.display = 'none';
+                    thankYouContainer.classList.remove('hidden-field');
+                    thankYouContainer.classList.add('active');
+                    thankYouContainer.style.flexGrow = 1;
+                    const thankYouNameSpan = thankYouContainer.querySelector('.user-name');
+                    const name = validateAndStoreName();
+                    if (thankYouNameSpan) { thankYouNameSpan.textContent = name; }
+                    window.scrollTo(0, 0);
+                    return;
+                }
+
+                const totalSteps = progressSteps.length;
+                const progressFraction = (newStep - 1) / (totalSteps - 1);
+                const barTotalWidth = 100 - (100 / totalSteps);
+                const fillWidth = progressFraction * barTotalWidth;
+
+                progressBar.style.setProperty('--bar-start-offset', `${(100 / totalSteps) / 2}%`);
+                progressBar.style.setProperty('--bar-width', `${barTotalWidth}%`);
+                progressBar.style.setProperty('--progress-width', `${fillWidth}%`);
+
+                progressSteps.forEach((step, index) => {
+                    const stepNumber = index + 1;
+                    step.classList.remove('active', 'completed');
+                    if (stepNumber < newStep) step.classList.add('completed');
+                    else if (stepNumber === newStep) step.classList.add('active');
+                });
+                currentStep = newStep;
+                window.scrollTo(0, 0);
+            }
+
+            // --- STATE MANAGEMENT ---
+            function initializeState() {
+                servicesState = {};
+                allServices.forEach(service => {
+                    servicesState[service] = {
+                        selected: false,
+                        coverage: '',
+                        addons: [],
+                        option: null
+                    };
+                });
+                currentlyViewingService = null;
+            }
+
+            // --- CORE LOGIC ---
+            function renderTabs() {
+                serviceTabsContainer.innerHTML = '';
+                allServices.forEach(service => {
+                    const state = servicesState[service];
+                    const tab = document.createElement('div');
+                    tab.className = 'service-tab';
+                    tab.dataset.service = service;
+                    tab.innerHTML = `${service} <span class="close-btn">&times;</span>`;
+                    
+                    if(state.selected) {
+                        tab.classList.add('selected');
+                    } else {
+                        tab.classList.add('available');
+                    }
+                    if(service === currentlyViewingService) {
+                        tab.classList.add('viewing');
+                    }
+                    serviceTabsContainer.appendChild(tab);
+                });
+            }
+
+            function renderServiceContent() {
+                dynamicServicesContainer.innerHTML = '';
+                if (!currentlyViewingService) return;
+
+                const service = currentlyViewingService;
+                const state = servicesState[service];
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const serviceData = pricingData[vehicleType][service];
+
+                const selectOptions = Object.keys(serviceData)
+                    .map(coverage => `<option value="${coverage}" ${state.coverage === coverage ? 'selected' : ''}>${coverage}</option>`)
+                    .join('');
+
+                const serviceHtml = `
+                    <div class="form-group service-section" data-service="${service}">
+                        <label for="coverage-${service}">${service} Options</label>
+                        <select id="coverage-${service}" name="coverage-${service}" class="coverage-select form-control" required>
+                            <option value="" disabled ${!state.coverage ? 'selected' : ''}>-- Select a coverage level --</option>
+                            ${selectOptions}
+                        </select>
+                        <div class="addons-container" id="addons-${service}" style="margin-top: 1rem;"></div>
+                    </div>`;
+                dynamicServicesContainer.innerHTML = serviceHtml;
+                
+                const selectEl = document.getElementById(`coverage-${service}`);
+                if(selectEl){
+                    selectEl.addEventListener('change', (e) => {
+                        servicesState[service].coverage = e.target.value;
+                        servicesState[service].addons = [];
+                        servicesState[service].option = null;
+                        renderAddons();
+                        updateImageDisplay();
+                        calculateEstimate();
+                    });
+                }
+                
+                renderAddons();
+            }
+            
+            function getQuantizedColor(hue) {
+                const baseHue = 240; // Royal Blue
+                const finalHue = (baseHue + parseInt(hue, 10)) % 360;
+
+                if (finalHue >= 345 || finalHue < 15) return 'Red';
+                if (finalHue >= 15 && finalHue < 45) return 'Orange';
+                if (finalHue >= 45 && finalHue < 75) return 'Yellow';
+                if (finalHue >= 75 && finalHue < 165) return 'Green';
+                if (finalHue >= 165 && finalHue < 195) return 'Cyan';
+                if (finalHue >= 195 && finalHue < 255) return 'Blue';
+                if (finalHue >= 255 && finalHue < 285) return 'Purple';
+                if (finalHue >= 285 && finalHue < 345) return 'Pink/Magenta';
+                return 'Blue'; // Default fallback
+            }
+
+            function renderAddons() {
+                if (!currentlyViewingService) return;
+                
+                const service = currentlyViewingService;
+                const state = servicesState[service];
+
+                if (!state.coverage) return;
+
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const coverageData = pricingData[vehicleType][service][state.coverage];
+                const addonsContainer = document.getElementById(`addons-${service}`);
+                if(!addonsContainer) return;
+                
+                addonsContainer.innerHTML = '';
+
+                if (coverageData.options) {
+                    if (service === 'Tint') {
+                        const tintOptions = Object.entries(coverageData.options);
+                        const sliderId = `tint-slider-${service}-${state.coverage.replace(/\s/g, '-')}`;
+                        const outputId = `tint-output-${service}-${state.coverage.replace(/\s/g, '-')}`;
+                        
+                        let sliderValueIndex = state.option !== null ? state.option : 1;
+
+                        let labelsHtml = '';
+                        tintOptions.forEach(([option, optionData], index) => {
+                            const tooltipText = typeof optionData === 'object' ? optionData.tooltip : null;
+                            let tooltipHtml = '';
+                            if (tooltipText) {
+                                tooltipHtml = `<div class="info-tooltip">${tooltipText}</div>`;
+                            }
+                            labelsHtml += `<div class="slider-label info-tooltip-container" data-index="${index}">${option}${tooltipHtml}</div>`;
+                        });
+                        
+                        const sliderHtml = `
+                            <div class="form-group">
+                                <label>Select Tint Percentage: <span id="${outputId}" style="color: var(--color-primary); font-weight: bold;"></span></label>
+                                <div class="slider-container">
+                                    <input type="range" min="0" max="${tintOptions.length - 1}" value="${sliderValueIndex}" class="tint-slider" id="${sliderId}" data-options='${JSON.stringify(tintOptions.map(o => o[0]))}'>
+                                    <div class="slider-labels">${labelsHtml}</div>
+                                </div>
+                            </div>`;
+                        addonsContainer.innerHTML = sliderHtml;
+
+                        const slider = document.getElementById(sliderId);
+                        const output = document.getElementById(outputId);
+                        const labels = addonsContainer.querySelectorAll('.slider-label');
+
+                        function updateSliderView() {
+                            const options = JSON.parse(slider.dataset.options);
+                            const selectedValue = options[slider.value];
+                            const isIllegal = ['20%', '5%'].includes(selectedValue);
+                            output.textContent = selectedValue;
+                            slider.classList.toggle('illegal-tint', isIllegal);
+                            labels.forEach(label => {
+                                label.classList.remove('active', 'illegal-tint');
+                                if (label.dataset.index === slider.value) {
+                                    label.classList.add('active');
+                                    if(isIllegal) label.classList.add('illegal-tint');
+                                }
+                            });
+                        }
+                        
+                        slider.addEventListener('input', updateSliderView);
+                        slider.addEventListener('change', () => {
+                             servicesState[service].option = slider.value;
+                             calculateEstimate();
+                        });
+                        updateSliderView();
+                    } else {
+                        const optionsHtml = Object.entries(coverageData.options).map(([option, price]) => {
+                            const uniqueId = `option-${service}-${state.coverage.replace(/\s/g, '-')}-${option.replace(/\s/g, '-')}`;
+                            return `
+                                <div>
+                                    <input type="radio" id="${uniqueId}" name="option-${service}-${state.coverage}" value="${option}" class="choice-input" data-price="${price}" ${state.option === option ? 'checked' : ''} required>
+                                    <label for="${uniqueId}" class="choice-label"><span>${option}</span></label>
+                                </div>`;
+                        }).join('');
+                        let baseText = coverageData.base || 'Select Option';
+                        addonsContainer.innerHTML = `<div class="form-group"><label>${baseText}:</label><div class="choice-group">${optionsHtml}</div></div>`;
+                        
+                        addonsContainer.querySelectorAll('.choice-input').forEach(input => {
+                            input.addEventListener('change', (e) => {
+                                servicesState[service].option = e.target.value;
+                                calculateEstimate();
+                            });
                         });
                     }
+                } else if (service === 'Vinyl' && state.coverage === 'Color Change') {
+                        const sliderId = `hue-slider-${service}`;
+                        const hueValue = state.option || 0;
+
+                        const sliderHtml = `
+                            <div class="form-group">
+                                <label for="${sliderId}">Adjust Wrap Color</label>
+                                <div class="slider-container">
+                                    <input type="range" min="0" max="360" value="${hueValue}" class="hue-slider" id="${sliderId}">
+                                </div>
+                            </div>`;
+                        addonsContainer.innerHTML = sliderHtml;
+
+                        const slider = document.getElementById(sliderId);
+                        slider.addEventListener('input', (e) => {
+                            coverageImage.style.filter = `hue-rotate(${e.target.value}deg)`;
+                        });
+                        slider.addEventListener('change', (e) => {
+                            servicesState[service].option = e.target.value;
+                            calculateEstimate();
+                        });
+
+                } else if (coverageData.addons) {
+                    const addonsHtml = Object.keys(coverageData.addons).map(addon => {
+                        const price = coverageData.addons[addon];
+                        const uniqueId = `addon-${service}-${state.coverage.replace(/\s/g, '-')}-${addon.replace(/\s/g, '-')}`;
+                        return `
+                            <div>
+                                <input type="checkbox" id="${uniqueId}" name="addon-${addon}" class="addon choice-input" data-addon-name="${addon}" data-price="${price}" ${state.addons.includes(addon) ? 'checked' : ''}>
+                                <label for="${uniqueId}" class="choice-label"><span>${addon}</span></label>
+                            </div>`;
+                    }).join('');
+                    addonsContainer.innerHTML = `<div class="form-group"><label>Available Add-ons:</label><div class="choice-group">${addonsHtml}</div></div>`;
+                    
+                    addonsContainer.querySelectorAll('.addon').forEach(checkbox => {
+                        checkbox.addEventListener('change', (e) => {
+                            const addonName = e.target.dataset.addonName;
+                            if (e.target.checked) {
+                                if (!servicesState[service].addons.includes(addonName)) {
+                                    servicesState[service].addons.push(addonName);
+                                }
+                            } else {
+                                servicesState[service].addons = servicesState[service].addons.filter(a => a !== addonName);
+                            }
+                            calculateEstimate();
+                        });
+                    });
                 }
             }
-        });
-    });
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.call-link-container')) {
-            document.querySelectorAll('.qr-tooltip.active').forEach(tooltip => {
-                tooltip.classList.remove('active');
-            });
-        }
-    });
+            function calculateEstimate() {
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                let total = 0;
+                let isConsultationNeeded = false;
+                let finalSelectedItems = [];
 
-    document.querySelectorAll('.btn-primary').forEach(button => {
-        const icon = button.querySelector('animated-icons');
-        if (!icon) return;
-
-        const originalAttrs = JSON.parse(icon.getAttribute('attributes'));
-        const hoverAttrs = JSON.parse(JSON.stringify(originalAttrs));
-
-        hoverAttrs.defaultColours['group-1'] = '#FFFFFF';
-        hoverAttrs.defaultColours['group-2'] = '#FFFFFF';
-
-        button.addEventListener('mouseenter', () => {
-            icon.setAttribute('attributes', JSON.stringify(hoverAttrs));
-        });
-
-        button.addEventListener('mouseleave', () => {
-            icon.setAttribute('attributes', JSON.stringify(originalAttrs));
-        });
-    });
-
-    // --- REFACTOR: INITIALIZATION ---
-    async function initializeApp() {
-        try {
-            const response = await fetch(WIKD_DATA_URL);
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            const data = await response.json();
-            
-            // Assign fetched data to global variables
-            corvetteTechData = data.corvetteTechData;
-            packages = data.packages;
-            products = data.products;
-
-            // Call original initialization functions that are still needed
-            loadCarMakes();
-            populateYears();
-            updateTechInfo();
-            checkBusinessHours();
-
-            // MODIFICATION: Start the cross-fading theme cycling for panel borders
-            const panels = document.querySelectorAll('.panel');
-            const themes = ['theme-exhaust', 'theme-packages', 'theme-wheels', 'theme-cooling'];
-            let currentThemeIndex = 0;
-            let isBeforePrimary = true; // Start with ::before being the visible element
-
-            // Set the initial theme on all panels for the ::before pseudo-element
-            panels.forEach(panel => {
-                panel.classList.add(themes[0] + '-before');
-                panel.classList.add('show-before'); // Make ::before visible initially
-            });
-
-            setInterval(() => {
-                const nextThemeIndex = (currentThemeIndex + 1) % themes.length;
-                const newTheme = themes[nextThemeIndex];
-                
-                panels.forEach(panel => {
-                    if (isBeforePrimary) {
-                        // Currently showing ::before, so fade in ::after with the new theme
-                        // 1. Set the new theme on the ::after element
-                        themes.forEach(t => panel.classList.remove(t + '-after')); // Clean up old themes
-                        panel.classList.add(newTheme + '-after');
-                        
-                        // 2. Trigger the cross-fade by toggling opacity classes
-                        panel.classList.remove('show-before');
-                        panel.classList.add('show-after');
+                for (const service of allServices) {
+                    const state = servicesState[service];
+                    if (!state.selected || !state.coverage) continue;
+                    
+                    const serviceData = pricingData[vehicleType][service];
+                    const coverageData = serviceData[state.coverage];
+                    let serviceItemName = `${service} - ${state.coverage}`;
+                    
+                    if (typeof coverageData.price === 'string') {
+                        isConsultationNeeded = true;
+                        finalSelectedItems.push({ name: serviceItemName, price: 'Call For Free Consultation' });
                     } else {
-                        // Currently showing ::after, so fade in ::before with the new theme
-                        // 1. Set the new theme on the ::before element
-                        themes.forEach(t => panel.classList.remove(t + '-before')); // Clean up old themes
-                        panel.classList.add(newTheme + '-before');
+                        let basePrice = coverageData.price || 0;
+                        total += basePrice;
+                        
+                        if(coverageData.options) {
+                            let optionName = '';
+                            if(service === 'Tint') {
+                                const tintOptions = Object.keys(coverageData.options);
+                                optionName = tintOptions[state.option || 1];
+                            } else if(service === 'Coating' && state.option) {
+                                optionName = state.option;
+                                const optionPrice = coverageData.options[optionName];
+                                if (typeof optionPrice === 'string') {
+                                    isConsultationNeeded = true;
+                                } else {
+                                    total += optionPrice;
+                                    basePrice += optionPrice;
+                                }
+                            }
+                            if(optionName) serviceItemName += ` - ${optionName}`;
+                        }
+                         if(service === 'Vinyl' && state.coverage === 'Color Change' && state.option !== null) {
+                            const colorName = getQuantizedColor(state.option);
+                            serviceItemName += ` - ${colorName}`;
+                        }
+                        
+                        finalSelectedItems.push({ name: serviceItemName, price: basePrice });
+                    }
+                    
+                    state.addons.forEach(addon => {
+                        const addonPrice = coverageData.addons[addon];
+                        if (typeof addonPrice === 'string') {
+                            isConsultationNeeded = true;
+                            finalSelectedItems.push({ name: ` - ${addon}`, price: 'Call For Free Consultation' });
+                        } else {
+                            total += addonPrice;
+                            finalSelectedItems.push({ name: ` - ${addon}`, price: addonPrice });
+                        }
+                    });
+                }
 
-                        // 2. Trigger the cross-fade
-                        panel.classList.remove('show-after');
-                        panel.classList.add('show-before');
+                userSelections.selectedItems = finalSelectedItems;
+
+                const selectedServicesCount = Object.values(servicesState).filter(s => s.selected).length;
+                if (isConsultationNeeded || selectedServicesCount === 0) {
+                    priceDisplay.textContent = selectedServicesCount > 0 ? 'Call For Free Consultation' : '$0.00';
+                    priceDisplay.classList.toggle('consultation', selectedServicesCount > 0);
+                    if (total > 0 && isConsultationNeeded) {
+                        priceDisplay.textContent += ` + $${total.toFixed(2)}`;
+                    }
+                    selectionsNextBtn.disabled = selectedServicesCount === 0;
+                } else {
+                    priceDisplay.textContent = `$${total.toFixed(2)}`;
+                    priceDisplay.classList.remove('consultation');
+                    selectionsNextBtn.disabled = false;
+                }
+
+                summaryItemsList.innerHTML = '';
+                if (userSelections.selectedItems.length > 0) {
+                    toggleSummaryBtn.classList.remove('hidden-field');
+                    userSelections.selectedItems.forEach(item => {
+                        const li = document.createElement('li');
+                        const priceText = typeof item.price === 'number' 
+                            ? `$${item.price.toFixed(2)}` 
+                            : item.price;
+                        li.innerHTML = `<span class="item-name">${item.name}</span> <span class="item-price">${priceText}</span>`;
+                        summaryItemsList.appendChild(li);
+                    });
+                } else {
+                    toggleSummaryBtn.classList.add('hidden-field');
+                    summaryBreakdown.classList.remove('expanded');
+                    toggleSummaryBtn.classList.remove('expanded');
+                }
+            }
+
+
+            function handleTabClick(e) {
+                const target = e.target;
+                const tab = target.closest('.service-tab');
+                if (!tab) return;
+                
+                const service = tab.dataset.service;
+
+                if (target.classList.contains('close-btn')) {
+                    e.stopPropagation();
+                    servicesState[service].selected = false;
+                    servicesState[service].coverage = '';
+                    servicesState[service].addons = [];
+                    servicesState[service].option = null;
+
+                    if(currentlyViewingService === service) {
+                        currentlyViewingService = Object.keys(servicesState).find(s => servicesState[s].selected) || null;
+                    }
+                } else {
+                    if (!servicesState[service].selected) {
+                        servicesState[service].selected = true;
+                    }
+                    currentlyViewingService = service;
+                }
+                
+                selectionsNextBtn.disabled = getSelectedServices().length === 0;
+                renderTabs();
+                renderServiceContent();
+                calculateEstimate();
+                updateImageDisplay();
+            }
+
+            function getSelectedServices() {
+                return allServices.filter(s => servicesState[s].selected);
+            }
+
+            function updateImageDisplay() {
+                const coverageImage = document.getElementById('coverage-image');
+                coverageImage.style.filter = 'hue-rotate(0deg)'; 
+
+                if (currentlyViewingService === 'Vinyl' && servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change') {
+                    coverageImage.src = ppfImageMap['Full Car'];
+                    const hue = servicesState['Vinyl'].option || 0;
+                    coverageImage.style.filter = `hue-rotate(${hue}deg)`;
+                    return;
+                }
+
+                if (servicesState['PPF'].selected && servicesState['PPF'].coverage && ppfImageMap[servicesState['PPF'].coverage]) {
+                    coverageImage.src = ppfImageMap[servicesState['PPF'].coverage];
+                    return;
+                }
+
+                coverageImage.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
+            }
+
+
+            // --- INITIALIZATION & EVENT LISTENERS ---
+            function initializeApp() {
+                initializeState();
+                renderTabs();
+                calculateEstimate();
+                checkAndDisplayCookie();
+                
+                document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        initializeState();
+                        renderTabs();
+                        renderServiceContent();
+                        calculateEstimate();
+                        updateImageDisplay();
+                    });
+                });
+                serviceTabsContainer.addEventListener('click', handleTabClick);
+
+                nextBtns.forEach(btn => btn.addEventListener('click', () => updateStep(currentStep + 1)));
+                prevBtns.forEach(btn => btn.addEventListener('click', () => updateStep(currentStep - 1)));
+                submitFormBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (form.reportValidity()) {
+                        generateEmail();
+                        setTimeout(() => {
+                            updateStep(3);
+                        }, 500);
                     }
                 });
+                
+                toggleSummaryBtn.addEventListener('click', () => {
+                    summaryBreakdown.classList.toggle('expanded');
+                    toggleSummaryBtn.classList.toggle('expanded');
+                });
 
-                currentThemeIndex = nextThemeIndex;
-                isBeforePrimary = !isBeforePrimary; // Swap the primary element for the next cycle
-            }, 7000); // 7-second interval to match the hero banner
+                callLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        if (!isMobileDevice()) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const tooltip = this.parentElement.querySelector('.qr-tooltip');
+                            if (!tooltip) return;
+                            const canvas = tooltip.querySelector('.qr-code-canvas');
+                            const isActive = tooltip.classList.contains('active');
+                            
+                            document.querySelectorAll('.qr-tooltip.active').forEach(activeTooltip => {
+                                activeTooltip.classList.remove('active');
+                            });
 
-        } catch (error) {
-            console.error('Failed to fetch WIKD Motorsports data:', error);
-            // Gracefully handle the error in the UI
-            const welcomePanel = document.querySelector('#welcome-container .panel');
-            if(welcomePanel) {
-                welcomePanel.innerHTML = `<div class="step-header">
-                    <h2 style="color: var(--color-primary);">Error Loading Data</h2>
-                    <p>Could not load the configurator. Please try refreshing the page or contact support if the problem persists.</p>
-                </div>`;
+                            if (!isActive) {
+                                tooltip.classList.add('active');
+                                if (!canvas.dataset.rendered) {
+                                    QRCode.toCanvas(canvas, `tel:${phoneNumber}`, {
+                                        width: 150,
+                                        margin: 0,
+                                        color: {
+                                            dark: '#FFB700',
+                                            light: '#141414'
+                                        }
+                                    }, function (error) {
+                                        if (error) console.error(error);
+                                        canvas.dataset.rendered = 'true';
+                                    });
+                                }
+                            }
+                        }
+                    });
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.call-link-container')) {
+                        document.querySelectorAll('.qr-tooltip.active').forEach(tooltip => {
+                            tooltip.classList.remove('active');
+                        });
+                    }
+                });
             }
-        }
-    }
 
-    initializeApp();
-});
-</script>
+            initializeApp();
+
+        });
+    </script>
 </body>
 </html>
