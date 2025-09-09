@@ -67,7 +67,6 @@
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            /* border: 1px solid var(--color-border); */
             transition: filter 0.3s ease;
             object-fit: contain;
         }
@@ -390,21 +389,91 @@
         .hidden-field { display: none !important; }
 
         .estimate-summary { 
-            display: flex;
-            justify-content: center;
-            align-items: baseline;
-            gap: 0.5rem;
             text-align: center;
             margin-bottom: 1.5rem;
             padding: 0.75rem;
             background-color: var(--color-surface);
             border: 1px solid var(--color-border);
             border-radius: 6px;
+            transition: all 0.3s ease;
         }
+
+        .summary-main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
         .estimate-summary h3 { font-size: 1.25rem; margin: 0; }
+
         .estimate-summary .total-price { font-size: 1.75rem; font-weight: 700; color: var(--color-primary); }
         .estimate-summary .total-price.consultation { color: #888888; font-size: 1.25rem; }
         
+        #toggle-summary-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.3s ease;
+            line-height: 1;
+        }
+
+        #toggle-summary-btn.expanded {
+            transform: rotate(180deg);
+        }
+
+        #summary-breakdown {
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding-top 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+        }
+
+        #summary-breakdown.expanded {
+            border-top: 1px solid var(--color-border);
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+            max-height: 500px;
+        }
+
+        #summary-items-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        #summary-items-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+        }
+
+        #summary-items-list li:not(:last-child) {
+            border-bottom: 1px solid var(--color-background);
+        }
+
+        #summary-items-list .item-name {
+            color: var(--color-text);
+            padding-right: 1rem;
+        }
+
+        #summary-items-list .item-price {
+            color: var(--color-primary);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
         .call-link-container {
             position: relative;
             display: inline-flex;
@@ -646,8 +715,18 @@
                                 </div>
                             </div>
                             <div class="estimate-summary">
-                                <h3>Starting At:</h3>
-                                <div id="price-display" class="total-price">$0.00</div>
+                                <div class="summary-main">
+                                    <div class="summary-total">
+                                        <h3>Starting At:</h3>
+                                        <div id="price-display" class="total-price">$0.00</div>
+                                    </div>
+                                    <button type="button" id="toggle-summary-btn" class="hidden-field" title="View Details">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                                <div id="summary-breakdown">
+                                    <ul id="summary-items-list"></ul>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label>Vehicle Type</label>
@@ -813,6 +892,9 @@
             const coverageImage = document.getElementById('coverage-image');
             const submitFormBtn = document.getElementById('submit-form-btn');
             const callLinks = document.querySelectorAll('.call-link');
+            const summaryBreakdown = document.getElementById('summary-breakdown');
+            const summaryItemsList = document.getElementById('summary-items-list');
+            const toggleSummaryBtn = document.getElementById('toggle-summary-btn');
             
              // --- HELPER FUNCTIONS ---
             function isMobileDevice() {
@@ -1263,6 +1345,23 @@
                     priceDisplay.classList.remove('consultation');
                     selectionsNextBtn.disabled = false;
                 }
+
+                summaryItemsList.innerHTML = '';
+                if (userSelections.selectedItems.length > 0) {
+                    toggleSummaryBtn.classList.remove('hidden-field');
+                    userSelections.selectedItems.forEach(item => {
+                        const li = document.createElement('li');
+                        const priceText = typeof item.price === 'number' 
+                            ? `$${item.price.toFixed(2)}` 
+                            : item.price;
+                        li.innerHTML = `<span class="item-name">${item.name}</span> <span class="item-price">${priceText}</span>`;
+                        summaryItemsList.appendChild(li);
+                    });
+                } else {
+                    toggleSummaryBtn.classList.add('hidden-field');
+                    summaryBreakdown.classList.remove('expanded');
+                    toggleSummaryBtn.classList.remove('expanded');
+                }
             }
 
 
@@ -1350,6 +1449,11 @@
                         }, 500);
                     }
                 });
+                
+                toggleSummaryBtn.addEventListener('click', () => {
+                    summaryBreakdown.classList.toggle('expanded');
+                    toggleSummaryBtn.classList.toggle('expanded');
+                });
 
                 callLinks.forEach(link => {
                     link.addEventListener('click', function(e) {
@@ -1400,12 +1504,4 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
