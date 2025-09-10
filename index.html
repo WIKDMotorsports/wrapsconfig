@@ -626,7 +626,7 @@
             cursor: pointer;
             border-radius: 50%;
             border: 3px solid var(--color-surface);
-            margin-top: -8px; /* Centering tweak */
+            margin-top: -8px; 
             transition: box-shadow 0.3s ease;
         }
         .tint-slider.illegal-tint::-webkit-slider-thumb {
@@ -639,8 +639,7 @@
             background: var(--color-primary);
             cursor: pointer;
             border-radius: 50%;
-            border: 0;
-            box-shadow: 0 0 0 3px var(--color-surface);
+            border: 3px solid var(--color-surface);
             transition: box-shadow 0.3s ease;
         }
         .tint-slider.illegal-tint::-moz-range-thumb {
@@ -956,20 +955,20 @@
 
             // --- PACKAGE SLIDER DATA ---
             const packages = [
-                { id: 'tint-full', name: 'Full Car Tint', tagline: 'Interior Protection from UV Rays and Heat', description: 'NanoCeramic Window Tint for the Full Vehicle.', tag: 'Tint', protectionLevel: 10, prices: { '2Door': 495, '4Door': 595, 'SUV': 595, 'Oversize': 'call' }, discounts: [] },
-                { id: 'tint-complete', name: 'Complete Tint', tagline: 'Upgraded comfort and UV defense.', description: 'NanoCeramic Window Tint for the Full Vehicle and Windshield.', tag: 'Tint', protectionLevel: 15, prices: { '2Door': 945, '4Door': 1045, 'SUV': 1045, 'Oversize': 'call' }, discounts: [] },
-                { id: 'coating-essential', name: 'Essential Paint Coating', tagline: 'Gloss and protection where it matters most.', description: 'Includes Single Stage Polish & Paint Coating Installation. Additional Paint Correction Optional.', tag: 'Coating', protectionLevel: 25, prices: { '2Door': 995, '4Door': 1195, 'SUV': 1395, 'Oversize': 1695 }, discounts: [] },
-                { id: 'tint-panoramic', name: 'Panoramic Tint', tagline: 'Total heat and UV rejection from every angle.', description: 'NanoCeramic Window Tint for the Full Vehicle, Windshield, and Sunroof.', tag: 'Tint', protectionLevel: 20, prices: { '2Door': 1240, '4Door': 1340, 'SUV': 1340, 'Oversize': 'call' }, discounts: [] },
-                { id: 'coating-advanced', name: 'Advanced Exterior Coating', tagline: 'Exterior Protection Beyond Just Paint.', description: 'Includes Single Stage Polish & Paint, Full Wheel, and Windshield Coatings.', tag: 'Coating', protectionLevel: 40, prices: { '2Door': 1395, '4Door': 1595, 'SUV': 1795, 'Oversize': 2095 }, discounts: ['$150 Coating Bundle'] },
-                { id: 'coating-ultimate', name: 'Ultimate Ceramic Package', tagline: 'Every surface shielded, inside and out.', description: 'Includes Full Vehicle Detail, as well as installation of Paint, Glass, Trim, Full Wheels, and Interior Coatings.', tag: 'Coating', protectionLevel: 55, prices: { '2Door': 1915, '4Door': 2245, 'SUV': 2595, 'Oversize': 2995 }, discounts: ['$150 Coating Bundle', 'FREE Trim Coating'] },
-                { id: 'ppf-front', name: 'Full Front PPF', tagline: 'The Best Value in Impact Protection.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, and Mirrors.', tag: 'PPF', protectionLevel: 60, prices: { '2Door': 2495, '4Door': 2495, 'SUV': 2495, 'Oversize': 2495 }, discounts: [] },
-                { id: 'bundle-essential', name: 'Essential Protection Package', tagline: 'Smart combo of PPF and coating for daily drivers.', description: 'Full Front PPF & Full body paint & ppf ceramic coating.', tag: 'Bundle', protectionLevel: 70, prices: { '2Door': 3195, '4Door': 3395, 'SUV': 3595, 'Oversize': 3895 }, discounts: ['$295 PPF & Coating Bundle'] },
-                { id: 'ppf-track', name: 'Track Package PPF', tagline: 'Extended high-impact coverage for spirited or daily driving.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, Mirrors, Rocker Panels, A-Pillars, and a Roof Strip.', tag: 'PPF', protectionLevel: 75, prices: { '2Door': 3295, '4Door': 3295, 'SUV': 3295, 'Oversize': 3295 }, discounts: [] },
-                { id: 'bundle-track-pro', name: 'Track Pro Package', tagline: 'Upgraded Protection Everywhere it Counts.', description: 'Track Pack PPF, Paint & PPF Coating, & Windshield Film.', tag: 'Bundle', protectionLevel: 80, prices: { '2Door': 4345, '4Door': 4545, 'SUV': 4745, 'Oversize': 5045 }, discounts: ['$295 PPF & Coating Bundle'] },
-                { id: 'ppf-full', name: 'Full Car PPF', tagline: 'Complete Protection for Every Painted Surface.', description: 'Full Car PPF.', tag: 'PPF', protectionLevel: 90, prices: { '2Door': 6495, '4Door': 7295, 'SUV': 7995, 'Oversize': 'call' }, discounts: [] },
-                { id: 'bundle-gt3', name: 'GT3 Package', tagline: 'Complete Impact Protection & Weathering Resistance.', description: 'Full Car PPF, PPF Coating, & Windshield Film.', tag: 'Bundle', protectionLevel: 95, prices: { '2Door': 7545, '4Door': 8545, 'SUV': 9445, 'Oversize': 'call' }, discounts: ['$295 PPF & Coating Bundle'] },
-                { id: 'bundle-presidential', name: 'Presidential Package', tagline: 'Ultimate Peace of Mind.', description: 'Full Paint Restoration Prior to PPF Installation; Full car PPF; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', protectionLevel: 98, prices: { '2Door': 10255, '4Door': 11485, 'SUV': 12535, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle & FREE Trim Coating'] },
-                { id: 'bundle-f1', name: 'Formula 1 Package', tagline: 'No Compromises, Maximum Protection.', description: 'Full Paint Restoration Prior to PPF Installation; Track Package in 10 mil PPF with Full car 8 mil PPF on top; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', protectionLevel: 100, prices: { '2Door': 13755, '4Door': 14985, 'SUV': 16035, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle & FREE Trim Coating'] }
+                { id: 'tint-full', name: 'Full Car Tint', tagline: 'Interior Protection from UV Rays and Heat', description: 'NanoCeramic Window Tint for the Full Vehicle.', tag: 'Tint', ppfCoverage: null, protectionLevel: 10, prices: { '2Door': 495, '4Door': 595, 'SUV': 595, 'Oversize': 'call' }, discounts: [] },
+                { id: 'tint-complete', name: 'Complete Tint', tagline: 'Upgraded comfort and UV defense.', description: 'NanoCeramic Window Tint for the Full Vehicle and Windshield.', tag: 'Tint', ppfCoverage: null, protectionLevel: 15, prices: { '2Door': 945, '4Door': 1045, 'SUV': 1045, 'Oversize': 'call' }, discounts: [] },
+                { id: 'coating-essential', name: 'Essential Paint Coating', tagline: 'Gloss and protection where it matters most.', description: 'Includes Single Stage Polish & Paint Coating Installation. Additional Paint Correction Optional.', tag: 'Coating', ppfCoverage: null, protectionLevel: 25, prices: { '2Door': 995, '4Door': 1195, 'SUV': 1395, 'Oversize': 1695 }, discounts: [] },
+                { id: 'tint-panoramic', name: 'Panoramic Tint', tagline: 'Total heat and UV rejection from every angle.', description: 'NanoCeramic Window Tint for the Full Vehicle, Windshield, and Sunroof.', tag: 'Tint', ppfCoverage: null, protectionLevel: 20, prices: { '2Door': 1240, '4Door': 1340, 'SUV': 1340, 'Oversize': 'call' }, discounts: [] },
+                { id: 'coating-advanced', name: 'Advanced Exterior Coating', tagline: 'Exterior Protection Beyond Just Paint.', description: 'Includes Single Stage Polish & Paint, Full Wheel, and Windshield Coatings.', tag: 'Coating', ppfCoverage: null, protectionLevel: 40, prices: { '2Door': 1395, '4Door': 1595, 'SUV': 1795, 'Oversize': 2095 }, discounts: ['$150 Coating Bundle'] },
+                { id: 'coating-ultimate', name: 'Ultimate Ceramic Package', tagline: 'Every surface shielded, inside and out.', description: 'Includes Full Vehicle Detail, as well as installation of Paint, Glass, Trim, Full Wheels, and Interior Coatings.', tag: 'Coating', ppfCoverage: null, protectionLevel: 55, prices: { '2Door': 1915, '4Door': 2245, 'SUV': 2595, 'Oversize': 2995 }, discounts: ['$150 Coating Bundle', 'FREE Trim Coating'] },
+                { id: 'ppf-front', name: 'Full Front PPF', tagline: 'The Best Value in Impact Protection.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, and Mirrors.', tag: 'PPF', ppfCoverage: 'Full Front', protectionLevel: 60, prices: { '2Door': 2495, '4Door': 2495, 'SUV': 2495, 'Oversize': 2495 }, discounts: [] },
+                { id: 'bundle-essential', name: 'Essential Protection Package', tagline: 'Smart combo of PPF and coating for daily drivers.', description: 'Full Front PPF & Full body paint & ppf ceramic coating.', tag: 'Bundle', ppfCoverage: 'Full Front', protectionLevel: 70, prices: { '2Door': 3195, '4Door': 3395, 'SUV': 3595, 'Oversize': 3895 }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'ppf-track', name: 'Track Package PPF', tagline: 'Extended high-impact coverage for spirited or daily driving.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, Mirrors, Rocker Panels, A-Pillars, and a Roof Strip.', tag: 'PPF', ppfCoverage: 'Track Pack', protectionLevel: 75, prices: { '2Door': 3295, '4Door': 3295, 'SUV': 3295, 'Oversize': 3295 }, discounts: [] },
+                { id: 'bundle-track-pro', name: 'Track Pro Package', tagline: 'Upgraded Protection Everywhere it Counts.', description: 'Track Pack PPF, Paint & PPF Coating, & Windshield Film.', tag: 'Bundle', ppfCoverage: 'Track Pack', protectionLevel: 80, prices: { '2Door': 4345, '4Door': 4545, 'SUV': 4745, 'Oversize': 5045 }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'ppf-full', name: 'Full Car PPF', tagline: 'Complete Protection for Every Painted Surface.', description: 'Full Car PPF.', tag: 'PPF', ppfCoverage: 'Full Car', protectionLevel: 90, prices: { '2Door': 6495, '4Door': 7295, 'SUV': 7995, 'Oversize': 'call' }, discounts: [] },
+                { id: 'bundle-gt3', name: 'GT3 Package', tagline: 'Complete Impact Protection & Weathering Resistance.', description: 'Full Car PPF, PPF Coating, & Windshield Film.', tag: 'Bundle', ppfCoverage: 'Full Car', protectionLevel: 95, prices: { '2Door': 7545, '4Door': 8545, 'SUV': 9445, 'Oversize': 'call' }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'bundle-presidential', name: 'Presidential Package', tagline: 'Ultimate Peace of Mind.', description: 'Full Paint Restoration Prior to PPF Installation; Full car PPF; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', ppfCoverage: 'Full Car', protectionLevel: 98, prices: { '2Door': 10405, '4Door': 11635, 'SUV': 12685, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle', 'FREE Trim Coating'] },
+                { id: 'bundle-f1', name: 'Formula 1 Package', tagline: 'No Compromises, Maximum Protection.', description: 'Full Paint Restoration Prior to PPF Installation; Track Package in 10 mil PPF with Full car 8 mil PPF on top; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', ppfCoverage: 'Track Pack', isF1: true, protectionLevel: 100, prices: { '2Door': 13905, '4Door': 15135, 'SUV': 16185, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle', 'FREE Trim Coating'] }
             ];
 
             // --- PACKAGE SELECTION MAPPING ---
@@ -1009,6 +1008,41 @@
                     'Coating': { selected: true, coverage: 'Paint', option: '2 Step Polish/PC', addons: ['Add Wheels (Face & Barrels)', 'Add Windshield'] }
                 }
             };
+            
+            const packageBreakdowns = {
+                'bundle-presidential': {
+                    '2Door': [
+                        { name: 'Full Car PPF', price: 6295 },
+                        { name: 'Windshield Protective Film', price: 350 },
+                        { name: 'Full Tint (Car, Windshield, Sunroof)', price: 1240 },
+                        { name: 'Paint Restoration', price: 1000 },
+                        { name: 'Paint Coating', price: 995 },
+                        { name: 'Full Wheel Coating', price: 400 },
+                        { name: 'Full Glass Coating', price: 255 },
+                        { name: 'Interior Coating', price: 415 },
+                        { name: 'Trim Coating', price: 'Included' },
+                        { name: 'PPF, Tint, & Coating Bundle', price: -395 },
+                        { name: 'Coating Bundle', price: -150 }
+                    ]
+                    // Add breakdowns for 4Door, SUV etc. if they differ in components
+                },
+                'bundle-f1': {
+                    '2Door': [
+                        { name: 'Track Pack in 10 mil PPF', price: 3500 },
+                        { name: 'Full Car 8 mil PPF', price: 6495 },
+                        { name: 'Windshield Protective Film', price: 350 },
+                        { name: 'Full Tint (Car, Windshield, Sunroof)', price: 1240 },
+                        { name: 'Paint Restoration', price: 800 },
+                        { name: 'Paint Coating', price: 995 },
+                        { name: 'Full Wheel Coating', price: 400 },
+                        { name: 'Full Glass Coating', price: 255 },
+                        { name: 'Interior Coating', price: 415 },
+                        { name: 'Trim Coating', price: 'Included' },
+                        { name: 'PPF, Tint, & Coating Bundle', price: -395 },
+                        { name: 'Coating Bundle', price: -150 }
+                    ]
+                }
+            };
 
 
             const sliderMap = [
@@ -1031,7 +1065,8 @@
             const selectionsNextBtn = document.getElementById('selections-next-btn');
             const priceDisplay = document.getElementById('price-display');
             const thankYouContainer = document.getElementById('thank-you-container');
-            const coverageImage = document.getElementById('coverage-image-base'); // updated
+            const coverageImageBase = document.getElementById('coverage-image-base');
+            const coverageImageOverlay = document.getElementById('coverage-image-overlay');
             const submitFormBtn = document.getElementById('submit-form-btn');
             const callLinks = document.querySelectorAll('.call-link');
             const summaryBreakdown = document.getElementById('summary-breakdown');
@@ -1445,7 +1480,7 @@ Please get in touch with me to discuss this further.`;
 
                         const slider = document.getElementById(sliderId);
                         slider.addEventListener('input', (e) => {
-                            coverageImage.style.filter = `hue-rotate(${e.target.value}deg)`;
+                            coverageImageBase.style.filter = `hue-rotate(${e.target.value}deg)`;
                         });
                         slider.addEventListener('change', (e) => {
                             selectedPackageId = null;
@@ -1487,9 +1522,10 @@ Please get in touch with me to discuss this further.`;
             }
 
             function calculateEstimate() {
-                 const nonPackageServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const nonPackageServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
 
-                if (currentlyViewingService === 'Packages' && !nonPackageServicesSelected) {
+                if (currentlyViewingService === 'Packages' && !nonPackageServicesSelected && !selectedPackageId) {
                     priceDisplay.textContent = '$0.00';
                     priceDisplay.classList.remove('consultation');
                     summaryItemsList.innerHTML = '';
@@ -1501,72 +1537,90 @@ Please get in touch with me to discuss this further.`;
                 
                 estimateSummaryEl.classList.remove('hidden-field');
                 
-                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
                 let total = 0;
                 let isConsultationNeeded = false;
-                let finalSelectedItems = [];
+                userSelections.selectedItems = [];
 
-                for (const service of allServices) {
-                    if (service === 'Packages') continue;
-                    const state = servicesState[service];
-                    if (!state.selected || !state.coverage) continue;
-                    
-                    const serviceData = pricingData[vehicleType][service];
-                    const coverageData = serviceData[state.coverage];
-                    let serviceItemName = `${service} - ${state.coverage}`;
-                    
-                    if (typeof coverageData.price === 'string') {
-                        isConsultationNeeded = true;
-                        finalSelectedItems.push({ name: serviceItemName, price: 'Call For Free Consultation' });
-                    } else {
-                        let basePrice = coverageData.price || 0;
-                        
-                        if(coverageData.options) {
-                            let optionName = '';
-                            if(service === 'Tint') {
-                                const tintOptions = Object.keys(coverageData.options);
-                                optionName = tintOptions[state.option || 1];
-                            } else if(service === 'Coating' && state.option) {
-                                optionName = state.option;
-                                const optionPrice = coverageData.options[optionName];
-                                if (typeof optionPrice === 'string') {
-                                    isConsultationNeeded = true;
-                                } else {
-                                    basePrice += optionPrice;
-                                }
-                            }
-                            if(optionName) serviceItemName += ` - ${optionName}`;
-                        }
-                         if(service === 'Vinyl' && state.coverage === 'Color Change' && state.option !== null) {
-                            const colorName = getQuantizedColor(state.option);
-                            serviceItemName += ` - ${colorName}`;
-                        }
-                        
-                        if (!isConsultationNeeded) total += basePrice;
-                        finalSelectedItems.push({ name: serviceItemName, price: basePrice });
-                    }
+                if(selectedPackageId) {
+                     const pkg = packages.find(p => p.id === selectedPackageId);
+                     const breakdown = packageBreakdowns[selectedPackageId] ? packageBreakdowns[selectedPackageId][vehicleType] : null;
                      
-                    if (coverageData.addons) {
-                        state.addons.forEach(addon => {
-                            const addonPrice = coverageData.addons[addon];
-                            if (typeof addonPrice === 'string') {
-                                isConsultationNeeded = true;
-                                finalSelectedItems.push({ name: `+ ${addon}`, price: 'Call For Free Consultation' });
-                            } else {
-                                if (!isConsultationNeeded) total += addonPrice;
-                                finalSelectedItems.push({ name: `+ ${addon}`, price: addonPrice });
+                     if (pkg) {
+                        const price = pkg.prices[vehicleType];
+                        if (typeof price === 'number') {
+                             total = price;
+                             if(breakdown) {
+                                userSelections.selectedItems = [...breakdown];
+                             } else {
+                                // Fallback for simple packages without detailed breakdown
+                                 userSelections.selectedItems.push({ name: pkg.name, price: price });
+                             }
+                        } else {
+                            isConsultationNeeded = true;
+                        }
+                     }
+                } else {
+                    for (const service of allServices) {
+                        if (service === 'Packages') continue;
+                        const state = servicesState[service];
+                        if (!state.selected || !state.coverage) continue;
+                        
+                        const serviceData = pricingData[vehicleType][service];
+                        const coverageData = serviceData[state.coverage];
+                        let serviceItemName = `${service} - ${state.coverage}`;
+                        
+                        if (typeof coverageData.price === 'string') {
+                            isConsultationNeeded = true;
+                            userSelections.selectedItems.push({ name: serviceItemName, price: 'Call For Free Consultation' });
+                        } else {
+                            let basePrice = coverageData.price || 0;
+                            
+                            if(coverageData.options) {
+                                let optionName = '';
+                                if(service === 'Tint') {
+                                    const tintOptions = Object.keys(coverageData.options);
+                                    optionName = tintOptions[state.option || 1];
+                                } else if(service === 'Coating' && state.option) {
+                                    optionName = state.option;
+                                    const optionPrice = coverageData.options[optionName];
+                                    if (typeof optionPrice === 'string') {
+                                        isConsultationNeeded = true;
+                                    } else {
+                                        basePrice += optionPrice;
+                                    }
+                                }
+                                if(optionName) serviceItemName += ` - ${optionName}`;
                             }
-                        });
+                             if(service === 'Vinyl' && state.coverage === 'Color Change' && state.option !== null) {
+                                const colorName = getQuantizedColor(state.option);
+                                serviceItemName += ` - ${colorName}`;
+                            }
+                            
+                            if (!isConsultationNeeded) total += basePrice;
+                            userSelections.selectedItems.push({ name: serviceItemName, price: basePrice });
+                        }
+                         
+                        if (coverageData.addons) {
+                            state.addons.forEach(addon => {
+                                const addonPrice = coverageData.addons[addon];
+                                if (typeof addonPrice === 'string') {
+                                    isConsultationNeeded = true;
+                                    userSelections.selectedItems.push({ name: `+ ${addon}`, price: 'Call For Free Consultation' });
+                                } else {
+                                    if (!isConsultationNeeded) total += addonPrice;
+                                    userSelections.selectedItems.push({ name: `+ ${addon}`, price: addonPrice });
+                                }
+                            });
+                        }
                     }
+                
+                    const discounts = getApplicableDiscounts(servicesState);
+                    discounts.forEach(discount => {
+                        total += discount.value;
+                        userSelections.selectedItems.push({ name: discount.name, price: discount.value });
+                    });
                 }
                 
-                const discounts = getApplicableDiscounts(servicesState);
-                discounts.forEach(discount => {
-                    total += discount.value;
-                    finalSelectedItems.push({ name: discount.name, price: discount.value });
-                });
-
-                userSelections.selectedItems = finalSelectedItems;
 
                 const selectedServicesCount = Object.values(servicesState).filter(s => s.selected && s.coverage).length;
                 if (isConsultationNeeded) {
@@ -1575,15 +1629,14 @@ Please get in touch with me to discuss this further.`;
                     if (total > 0) {
                         priceDisplay.textContent += ` + $${total.toFixed(2)}`;
                     }
-                } else if (selectedServicesCount === 0) {
+                } else if (selectedServicesCount === 0 && !selectedPackageId) {
                     priceDisplay.textContent = '$0.00';
                     priceDisplay.classList.remove('consultation');
                 } else {
                     priceDisplay.textContent = `$${total.toFixed(2)}`;
                     priceDisplay.classList.remove('consultation');
                 }
-                selectionsNextBtn.disabled = selectedServicesCount === 0;
-
+                selectionsNextBtn.disabled = selectedServicesCount === 0 && selectedPackageId === null;
 
                 summaryItemsList.innerHTML = '';
                 if (userSelections.selectedItems.length > 0) {
@@ -1666,6 +1719,10 @@ Please get in touch with me to discuss this further.`;
                     activePackage = allPackagesWithPrice.sort((a, b) => a.currentPrice - b.currentPrice)[0];
                 }
                 
+                if (activePackage) {
+                    updateImageDisplay(activePackage);
+                }
+
                 const priceSortedPackages = [...allPackagesWithPrice].sort((a, b) => a.currentPrice - b.currentPrice);
                 const activePackageIndex = priceSortedPackages.findIndex(p => p.id === activePackage.id);
 
@@ -1736,7 +1793,7 @@ Please get in touch with me to discuss this further.`;
                                 </button>
                                 <div class="parts-content mt-3 pl-2 hidden">
                                     <p class="mb-3">${pkg.description}</p>
-                                    ${pkg.discounts.length > 0 ? `
+                                    ${pkg.discounts && pkg.discounts.length > 0 ? `
                                     <h4 class="font-semibold text-green-400 text-sm mb-1">Applicable Discounts:</h4>
                                     <ul class="list-disc text-green-400 space-y-1 pl-5 text-sm">
                                         ${pkg.discounts.map(d => `<li>${d}</li>`).join('')}
@@ -1864,53 +1921,58 @@ Please get in touch with me to discuss this further.`;
                 return allServices.filter(s => servicesState[s].selected);
             }
 
-            function updateImageDisplay() {
-                const baseImage = document.getElementById('coverage-image-base');
-                const overlayImage = document.getElementById('coverage-image-overlay');
-
+            function updateImageDisplay(activePackage = null) {
                 // Reset styles first
-                baseImage.style.filter = 'none';
-                overlayImage.style.display = 'none';
-                overlayImage.style.filter = 'none';
-                overlayImage.style.mixBlendMode = 'normal';
-                overlayImage.style.opacity = '1';
+                coverageImageBase.style.filter = 'none';
+                coverageImageOverlay.style.display = 'none';
+                coverageImageOverlay.style.filter = 'none';
+                coverageImageOverlay.style.mixBlendMode = 'normal';
+                coverageImageOverlay.style.opacity = '1';
 
-                if (selectedPackageId === 'bundle-f1') {
-                    baseImage.src = ppfImageMap['Full Car'];
-                    overlayImage.src = ppfImageMap['Track Pack'];
-                    overlayImage.style.display = 'block';
-                    overlayImage.style.opacity = '0.5';
-                    overlayImage.style.mixBlendMode = 'screen';
-                    overlayImage.style.filter = 'hue-rotate(90deg)'; // Greenish hue for contrast
+                const packageToDisplay = activePackage || packages.find(p => p.id === selectedPackageId);
+
+                if (packageToDisplay?.isF1) {
+                    coverageImageBase.src = ppfImageMap['Full Car'];
+                    coverageImageOverlay.src = ppfImageMap['Track Pack'];
+                    coverageImageOverlay.style.display = 'block';
+                    coverageImageOverlay.style.opacity = '0.7';
+                    coverageImageOverlay.style.mixBlendMode = 'lighten';
+                    coverageImageOverlay.style.filter = 'hue-rotate(180deg) saturate(3)';
                     return;
                 }
 
-                // Fallback to service-based logic
+                if (packageToDisplay?.ppfCoverage) {
+                    coverageImageBase.src = ppfImageMap[packageToDisplay.ppfCoverage] || ppfImageMap['Partial'];
+                    return;
+                }
+
+                // Fallback to service-based logic for manual customization
                 const hasPPF = servicesState['PPF'].selected && servicesState['PPF'].coverage;
                 const hasVinyl = servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change';
 
                 if (hasPPF) {
-                    baseImage.src = ppfImageMap[servicesState['PPF'].coverage] || ppfImageMap['Partial'];
+                    coverageImageBase.src = ppfImageMap[servicesState['PPF'].coverage] || ppfImageMap['Partial'];
                     return;
                 }
 
                 if (hasVinyl) {
-                    baseImage.src = ppfImageMap['Full Car']; // Vinyl uses the full car image for hue rotation
+                    coverageImageBase.src = ppfImageMap['Full Car']; // Vinyl uses the full car image for hue rotation
                     const hue = servicesState['Vinyl'].option || 0;
-                    baseImage.style.filter = `hue-rotate(${hue}deg)`;
+                    coverageImageBase.style.filter = `hue-rotate(${hue}deg)`;
                     return;
                 }
 
                 // Default image
-                baseImage.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
+                coverageImageBase.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
             }
+
 
             function selectPackage(packageId) {
                 const selection = packageSelections[packageId];
                 if (!selection) return;
-                
+
+                initializeState();
                 selectedPackageId = packageId;
-                initializeState(); // Reset everything first
 
                 Object.keys(selection).forEach(service => {
                     const serviceSelection = selection[service];
@@ -1969,20 +2031,24 @@ Please get in touch with me to discuss this further.`;
                 
                 document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
                     radio.addEventListener('change', () => {
-                        selectedPackageId = null;
                         const previousService = currentlyViewingService;
-                        const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
-
-                        initializeState();
+                        const wasPackageSelected = !!selectedPackageId;
                         
-                        if(wereServicesSelected) {
-                             // If user was customizing, keep them on the last viewed service tab
-                             servicesState[previousService].selected = true;
-                             currentlyViewingService = previousService;
+                        // Recalculate based on current state before resetting
+                        if(wasPackageSelected) {
+                            const tempState = JSON.parse(JSON.stringify(servicesState));
+                            initializeState();
+                            servicesState = tempState;
                         } else {
-                            // Otherwise default back to packages view
-                            servicesState['Packages'].selected = true;
-                            currentlyViewingService = 'Packages';
+                            const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
+                            initializeState();
+                             if(wereServicesSelected) {
+                                servicesState[previousService].selected = true;
+                                currentlyViewingService = previousService;
+                            } else {
+                                servicesState['Packages'].selected = true;
+                                currentlyViewingService = 'Packages';
+                            }
                         }
                         
                         renderTabs();
