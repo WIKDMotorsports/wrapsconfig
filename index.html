@@ -64,14 +64,23 @@
             top: 50vh;
             transform: translateY(-50%);
             text-align: center;
+            position: relative;
         }
-        #coverage-image {
+        #coverage-image-base, #coverage-image-overlay {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            transition: filter 0.3s ease;
+            transition: all 0.3s ease;
             object-fit: contain;
         }
+        #coverage-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            pointer-events: none;
+        }
+
 
         #configurator-wrapper {
             flex: 1 1 60%;
@@ -617,7 +626,7 @@
             cursor: pointer;
             border-radius: 50%;
             border: 3px solid var(--color-surface);
-            margin-top: -8px; /* Center thumb on track */
+            margin-top: -8px; /* Centering tweak */
             transition: box-shadow 0.3s ease;
         }
         .tint-slider.illegal-tint::-webkit-slider-thumb {
@@ -625,12 +634,13 @@
             animation: pulse-red 2s infinite;
         }
         .tint-slider::-moz-range-thumb, .hue-slider::-moz-range-thumb, .budget-slider-input::-moz-range-thumb {
-            width: 14px; /* (20px - 3px*2) */
-            height: 14px;
+            width: 20px;
+            height: 20px;
             background: var(--color-primary);
             cursor: pointer;
             border-radius: 50%;
-            border: 3px solid var(--color-surface);
+            border: 0;
+            box-shadow: 0 0 0 3px var(--color-surface);
             transition: box-shadow 0.3s ease;
         }
         .tint-slider.illegal-tint::-moz-range-thumb {
@@ -746,7 +756,8 @@
     <div class="widget-container">
         <!-- Image Display Area -->
         <div id="image-display-container">
-            <img id="coverage-image" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
+            <img id="coverage-image-base" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
+            <img id="coverage-image-overlay" src="" alt="" style="display: none;">
         </div>
 
         <div id="configurator-wrapper">
@@ -941,6 +952,7 @@
             let userSelections = { selectedItems: [] };
             let currentStep = 1;
             let userFirstName = '';
+            let selectedPackageId = null;
 
             // --- PACKAGE SLIDER DATA ---
             const packages = [
@@ -1019,7 +1031,7 @@
             const selectionsNextBtn = document.getElementById('selections-next-btn');
             const priceDisplay = document.getElementById('price-display');
             const thankYouContainer = document.getElementById('thank-you-container');
-            const coverageImage = document.getElementById('coverage-image');
+            const coverageImage = document.getElementById('coverage-image-base'); // updated
             const submitFormBtn = document.getElementById('submit-form-btn');
             const callLinks = document.querySelectorAll('.call-link');
             const summaryBreakdown = document.getElementById('summary-breakdown');
@@ -1227,6 +1239,7 @@ Please get in touch with me to discuss this further.`;
             // --- STATE MANAGEMENT ---
             function initializeState() {
                 servicesState = {};
+                selectedPackageId = null;
                 allServices.forEach(service => {
                     servicesState[service] = {
                         selected: false,
@@ -1283,6 +1296,7 @@ Please get in touch with me to discuss this further.`;
                 const selectEl = document.getElementById(`coverage-${service}`);
                 if(selectEl){
                     selectEl.addEventListener('change', (e) => {
+                        selectedPackageId = null;
                         servicesState[service].coverage = e.target.value;
                         servicesState[service].addons = [];
                         servicesState[service].option = null;
@@ -1362,6 +1376,7 @@ Please get in touch with me to discuss this further.`;
                         
                         slider.addEventListener('input', updateSliderView);
                         slider.addEventListener('change', () => {
+                             selectedPackageId = null;
                              servicesState[service].option = slider.value;
                              calculateEstimate();
                         });
@@ -1380,6 +1395,7 @@ Please get in touch with me to discuss this further.`;
                         
                         addonsContainer.querySelectorAll('.choice-input').forEach(input => {
                             input.addEventListener('change', (e) => {
+                                selectedPackageId = null;
                                 servicesState[service].option = e.target.value;
                                 calculateEstimate();
                             });
@@ -1402,6 +1418,7 @@ Please get in touch with me to discuss this further.`;
                     
                     addonsContainer.querySelectorAll('.addon').forEach(checkbox => {
                         checkbox.addEventListener('change', (e) => {
+                            selectedPackageId = null;
                             const addonName = e.target.dataset.addonName;
                             if (e.target.checked) {
                                 if (!servicesState[service].addons.includes(addonName)) {
@@ -1431,6 +1448,7 @@ Please get in touch with me to discuss this further.`;
                             coverageImage.style.filter = `hue-rotate(${e.target.value}deg)`;
                         });
                         slider.addEventListener('change', (e) => {
+                            selectedPackageId = null;
                             servicesState[service].option = e.target.value;
                             calculateEstimate();
                         });
@@ -1796,15 +1814,20 @@ Please get in touch with me to discuss this further.`;
 
                 if (target.classList.contains('close-btn')) {
                     e.stopPropagation();
+                    selectedPackageId = null;
                     servicesState[service].selected = false;
                     servicesState[service].coverage = '';
                     servicesState[service].addons = [];
                     servicesState[service].option = null;
 
                     if(currentlyViewingService === service) {
-                        currentlyViewingService = Object.keys(servicesState).find(s => servicesState[s].selected) || null;
+                        currentlyViewingService = Object.keys(servicesState).find(s => servicesState[s].selected) || 'Packages';
                     }
                 } else {
+                    if (currentlyViewingService === 'Packages' && service !== 'Packages') {
+                        selectedPackageId = null;
+                    }
+
                     if (service !== 'Packages' && !servicesState[service].selected) {
                         servicesState[service].selected = true;
                     } else if (service === 'Packages') {
@@ -1815,14 +1838,21 @@ Please get in touch with me to discuss this further.`;
                     currentlyViewingService = service;
                 }
                 
-                selectionsNextBtn.disabled = getSelectedServices().length === 0;
+                // If all individual services are deselected, go back to packages
+                if (!allServices.slice(1).some(s => servicesState[s].selected)) {
+                    servicesState['Packages'].selected = true;
+                    if(document.activeElement.closest('.close-btn')) {
+                        currentlyViewingService = 'Packages';
+                    }
+                } else {
+                     servicesState['Packages'].selected = false;
+                }
+
                 renderTabs();
 
                 if(currentlyViewingService === 'Packages') {
-                    estimateSummaryEl.classList.add('hidden-field');
                     renderPackagesView(dynamicServicesContainer);
                 } else {
-                    estimateSummaryEl.classList.remove('hidden-field');
                     renderServiceContent();
                 }
                 
@@ -1835,30 +1865,51 @@ Please get in touch with me to discuss this further.`;
             }
 
             function updateImageDisplay() {
-                coverageImage.style.filter = 'hue-rotate(0deg)'; 
+                const baseImage = document.getElementById('coverage-image-base');
+                const overlayImage = document.getElementById('coverage-image-overlay');
 
-                if (currentlyViewingService === 'Packages') {
-                    coverageImage.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
+                // Reset styles first
+                baseImage.style.filter = 'none';
+                overlayImage.style.display = 'none';
+                overlayImage.style.filter = 'none';
+                overlayImage.style.mixBlendMode = 'normal';
+                overlayImage.style.opacity = '1';
+
+                if (selectedPackageId === 'bundle-f1') {
+                    baseImage.src = ppfImageMap['Full Car'];
+                    overlayImage.src = ppfImageMap['Track Pack'];
+                    overlayImage.style.display = 'block';
+                    overlayImage.style.opacity = '0.5';
+                    overlayImage.style.mixBlendMode = 'screen';
+                    overlayImage.style.filter = 'hue-rotate(90deg)'; // Greenish hue for contrast
                     return;
                 }
-                if (currentlyViewingService === 'Vinyl' && servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change') {
-                    coverageImage.src = ppfImageMap['Full Car'];
+
+                // Fallback to service-based logic
+                const hasPPF = servicesState['PPF'].selected && servicesState['PPF'].coverage;
+                const hasVinyl = servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change';
+
+                if (hasPPF) {
+                    baseImage.src = ppfImageMap[servicesState['PPF'].coverage] || ppfImageMap['Partial'];
+                    return;
+                }
+
+                if (hasVinyl) {
+                    baseImage.src = ppfImageMap['Full Car']; // Vinyl uses the full car image for hue rotation
                     const hue = servicesState['Vinyl'].option || 0;
-                    coverageImage.style.filter = `hue-rotate(${hue}deg)`;
+                    baseImage.style.filter = `hue-rotate(${hue}deg)`;
                     return;
                 }
 
-                if (servicesState['PPF'].selected && servicesState['PPF'].coverage && ppfImageMap[servicesState['PPF'].coverage]) {
-                    coverageImage.src = ppfImageMap[servicesState['PPF'].coverage];
-                    return;
-                }
-                coverageImage.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
+                // Default image
+                baseImage.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
             }
 
             function selectPackage(packageId) {
                 const selection = packageSelections[packageId];
                 if (!selection) return;
-
+                
+                selectedPackageId = packageId;
                 initializeState(); // Reset everything first
 
                 Object.keys(selection).forEach(service => {
@@ -1912,13 +1963,13 @@ Please get in touch with me to discuss this further.`;
                 currentlyViewingService = 'Packages';
 
                 renderTabs();
-                estimateSummaryEl.classList.add('hidden-field');
                 renderPackagesView(dynamicServicesContainer);
                 calculateEstimate();
                 checkAndDisplayCookie();
                 
                 document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
                     radio.addEventListener('change', () => {
+                        selectedPackageId = null;
                         const previousService = currentlyViewingService;
                         const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
 
@@ -1937,10 +1988,8 @@ Please get in touch with me to discuss this further.`;
                         renderTabs();
 
                         if (currentlyViewingService === 'Packages') {
-                            estimateSummaryEl.classList.add('hidden-field');
                             renderPackagesView(dynamicServicesContainer);
                         } else {
-                            estimateSummaryEl.classList.remove('hidden-field');
                             renderServiceContent();
                         }
                         
