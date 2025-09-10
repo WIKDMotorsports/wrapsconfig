@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://animatedicons.co/scripts/embed-animated-icons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <style>
@@ -19,6 +20,7 @@
             --color-surface: #141414;
             --color-border: #2A2A2A;
             --color-danger: #ff4d4d;
+            --color-success: #4ade80;
             --font-heading: 'Rajdhani', sans-serif;
             --font-body: 'Inter', sans-serif;
         }
@@ -248,7 +250,8 @@
 
         .service-tab.selected {
             background-color: var(--color-primary);
-            color: white;
+            color: var(--color-background);
+            font-weight: 700;
             padding-right: 30px; /* Space for the X */
         }
         .service-tab.viewing {
@@ -273,7 +276,7 @@
             text-align: center;
             font-size: 14px;
             font-weight: bold;
-            color: white;
+            color: var(--color-background);
             cursor: pointer;
             z-index: 2;
             border-radius: 50%;
@@ -315,7 +318,8 @@
         .choice-input:checked + .choice-label {
             background-color: var(--color-primary);
             border-color: var(--color-primary);
-            color: white;
+            color: var(--color-background);
+            font-weight: 700;
         }
         
         .btn-group {
@@ -372,7 +376,8 @@
             color: var(--color-primary);
         }
         .btn-primary:hover {
-            color: white;
+            color: var(--color-background);
+            font-weight: 700;
             border-color: var(--color-primary);
         }
         .btn-primary:hover::before {
@@ -467,11 +472,19 @@
             color: var(--color-text);
             padding-right: 1rem;
         }
+        
+        #summary-items-list .item-name.discount {
+            color: var(--color-success);
+        }
 
         #summary-items-list .item-price {
             color: var(--color-primary);
             font-weight: 600;
             white-space: nowrap;
+        }
+
+        #summary-items-list .item-price.discount {
+            color: var(--color-success);
         }
 
         .call-link-container {
@@ -572,11 +585,9 @@
             transform: translateX(-50%) translateY(-5px);
         }
 
-        .slider-container {
-            padding: 1rem 0.5rem;
-        }
-
-        .tint-slider, .hue-slider {
+        /* --- Slider Styles --- */
+        .slider-container { padding: 1rem 0.5rem; }
+        .tint-slider, .hue-slider, .budget-slider-input {
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
@@ -589,7 +600,7 @@
             margin: 0;
         }
 
-        .tint-slider:hover, .hue-slider:hover { opacity: 1; }
+        .tint-slider:hover, .hue-slider:hover, .budget-slider-input:hover { opacity: 1; }
 
         @keyframes pulse-red {
             0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
@@ -597,7 +608,7 @@
             100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
         }
 
-        .tint-slider::-webkit-slider-thumb, .hue-slider::-webkit-slider-thumb {
+        .tint-slider::-webkit-slider-thumb, .hue-slider::-webkit-slider-thumb, .budget-slider-input::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 20px;
@@ -613,8 +624,7 @@
             background-color: var(--color-danger);
             animation: pulse-red 2s infinite;
         }
-
-        .tint-slider::-moz-range-thumb, .hue-slider::-moz-range-thumb {
+        .tint-slider::-moz-range-thumb, .hue-slider::-moz-range-thumb, .budget-slider-input::-moz-range-thumb {
             width: 14px; /* (20px - 3px*2) */
             height: 14px;
             background: var(--color-primary);
@@ -627,13 +637,8 @@
             background-color: var(--color-danger);
             box-shadow: 0 0 8px var(--color-danger);
         }
-        .hue-slider::-webkit-slider-thumb {
-            background: #EAEAEA;
-        }
-        .hue-slider::-moz-range-thumb {
-            background: #EAEAEA;
-        }
-
+        .hue-slider::-webkit-slider-thumb { background: #EAEAEA; }
+        .hue-slider::-moz-range-thumb { background: #EAEAEA; }
 
         .slider-labels {
             display: flex;
@@ -655,10 +660,68 @@
             transition: color 0.3s ease;
         }
 
+        /* --- Integrated Package Slider Styles --- */
+        .package-slider-container { color: var(--color-text); }
+        
+        .package-card {
+            background-color: var(--color-background) !important;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            transition: all 0.3s ease;
+            transform: scale(0.95);
+            opacity: 0.7;
+        }
+        .package-card.active {
+            transform: scale(1);
+            opacity: 1;
+            border-color: var(--color-primary) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .protection-meter-bg {
+            background-color: var(--color-border);
+        }
+        
+        .protection-meter-fill {
+            height: 100%;
+            background: var(--color-primary);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(255, 183, 0, 0.5);
+            transition: width 0.4s ease-out;
+        }
+        .package-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-family: var(--font-heading);
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            width: 100%;
+            background-color: var(--color-primary);
+            color: var(--color-background) !important;
+            border: 2px solid transparent;
+        }
+        .package-btn:hover {
+            background-color: #ffc733; /* Lighter yellow */
+        }
+        .parts-toggle-btn {
+             background-color: var(--color-surface);
+             border: 1px solid var(--color-border);
+             color: var(--color-text);
+        }
+         .parts-toggle-btn:hover {
+             background-color: var(--color-border);
+         }
 
         @media (max-width: 992px) {
              .widget-container {
-                flex-direction: column;
+                 flex-direction: column;
             }
             #image-display-container {
                 position: static;
@@ -835,31 +898,33 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURATOR DATA ---
             const phoneNumber = '4696251127';
-            const pricingData = {
+            // NOTE: Base pricing data is modified by augmentPricingData() on init to add addon structures for packages.
+            let pricingData = {
                 '2Door': {
-                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 6295.00, addons: { 'Add Ceramic Coating': 0 } } },
-                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 495.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
-                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 995.00, '2 Step Polish/PC': 1295.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 0 } } },
-                    'Vinyl': { 'Color Change': { price: 3495.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 6295.00 } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 495.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 995.00, '2 Step Polish/PC': 1295.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00 } },
+                    'Vinyl': { 'Color Change': { price: 3495.00 }, 'Custom Graphic': { price: 'Call For Free Consultation' } }
                 },
                 '4Door': {
-                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 7095.00, addons: { 'Add Ceramic Coating': 0 } } },
-                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 595.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
-                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1195.00, '2 Step Polish/PC': 1545.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 335.00 } } },
-                    'Vinyl': { 'Color Change': { price: 3995.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 7095.00 } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 595.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1195.00, '2 Step Polish/PC': 1545.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00 } },
+                    'Vinyl': { 'Color Change': { price: 3995.00 }, 'Custom Graphic': { price: 'Call For Free Consultation' } }
                 },
                 'SUV': {
-                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 7895.00, addons: { 'Add Ceramic Coating': 0 } } },
-                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 645.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
-                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1395.00, '2 Step Polish/PC': 1795.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 115.00, addons: { 'Add Side Windows': 375.00 } } },
-                    'Vinyl': { 'Color Change': { price: 4295.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 7895.00 } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 645.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1395.00, '2 Step Polish/PC': 1795.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 115.00 } },
+                    'Vinyl': { 'Color Change': { price: 4295.00 }, 'Custom Graphic': { price: 'Call For Free Consultation' } }
                 },
                 'Oversize': {
-                    'PPF': { 'Partial': { price: 600.00, addons: { 'Hood Strip': 0, 'Mirrors': 0, 'Add Ceramic Coating': 0 } }, 'Full Front': { price: 2495.00, addons: { 'A Pillars & Roof Strip': 0, 'Add Ceramic Coating': 0 } }, 'Track Pack': { price: 3295.00, addons: { 'A Pillars & Roof Strip': 0, 'Hip Tear Offs': 0, 'Add Ceramic Coating': 0 } }, 'Full Car': { price: 8795.00, addons: { 'Add Ceramic Coating': 0 } } },
-                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 695.00, addons: { 'Add Windshield': 0 }, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
-                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1495.00, '2 Step Polish/PC': 1995.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00, addons: { 'Add Side Windows': 425.00 } } },
-                    'Vinyl': { 'Color Change': { price: 4995.00, addons: { 'Add Door Jambs': 0 } }, 'Custom Graphic': { price: 'Call For Free Consultation', addons: { 'Add Door Jambs': 'Call For Free Consultation' } } }
+                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 8795.00 } },
+                    'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 695.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
+                    'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1495.00, '2 Step Polish/PC': 1995.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00 } },
+                    'Vinyl': { 'Color Change': { price: 4995.00 }, 'Custom Graphic': { price: 'Call For Free Consultation' } }
                 }
             };
             
@@ -870,13 +935,78 @@
                 'Full Car': 'https://wikdwraps.com/cdn/shop/files/Full_Wrap.webp?v=1738074454&width=535'
             };
 
-            const allServices = ['PPF', 'Tint', 'Coating', 'Vinyl'];
+            const allServices = ['Packages', 'PPF', 'Tint', 'Coating', 'Vinyl'];
             let servicesState = {};
             let currentlyViewingService = null;
             let userSelections = { selectedItems: [] };
             let currentStep = 1;
             let userFirstName = '';
 
+            // --- PACKAGE SLIDER DATA ---
+            const packages = [
+                { id: 'tint-full', name: 'Full Car Tint', tagline: 'Interior Protection from UV Rays and Heat', description: 'NanoCeramic Window Tint for the Full Vehicle.', tag: 'Tint', protectionLevel: 10, prices: { '2Door': 495, '4Door': 595, 'SUV': 595, 'Oversize': 'call' }, discounts: [] },
+                { id: 'tint-complete', name: 'Complete Tint', tagline: 'Upgraded comfort and UV defense.', description: 'NanoCeramic Window Tint for the Full Vehicle and Windshield.', tag: 'Tint', protectionLevel: 15, prices: { '2Door': 945, '4Door': 1045, 'SUV': 1045, 'Oversize': 'call' }, discounts: [] },
+                { id: 'coating-essential', name: 'Essential Paint Coating', tagline: 'Gloss and protection where it matters most.', description: 'Includes Single Stage Polish & Paint Coating Installation. Additional Paint Correction Optional.', tag: 'Coating', protectionLevel: 25, prices: { '2Door': 995, '4Door': 1195, 'SUV': 1395, 'Oversize': 1695 }, discounts: [] },
+                { id: 'tint-panoramic', name: 'Panoramic Tint', tagline: 'Total heat and UV rejection from every angle.', description: 'NanoCeramic Window Tint for the Full Vehicle, Windshield, and Sunroof.', tag: 'Tint', protectionLevel: 20, prices: { '2Door': 1240, '4Door': 1340, 'SUV': 1340, 'Oversize': 'call' }, discounts: [] },
+                { id: 'coating-advanced', name: 'Advanced Exterior Coating', tagline: 'Exterior Protection Beyond Just Paint.', description: 'Includes Single Stage Polish & Paint, Full Wheel, and Windshield Coatings.', tag: 'Coating', protectionLevel: 40, prices: { '2Door': 1395, '4Door': 1595, 'SUV': 1795, 'Oversize': 2095 }, discounts: ['$150 Coating Bundle'] },
+                { id: 'coating-ultimate', name: 'Ultimate Ceramic Package', tagline: 'Every surface shielded, inside and out.', description: 'Includes Full Vehicle Detail, as well as installation of Paint, Glass, Trim, Full Wheels, and Interior Coatings.', tag: 'Coating', protectionLevel: 55, prices: { '2Door': 1915, '4Door': 2245, 'SUV': 2595, 'Oversize': 2995 }, discounts: ['$150 Coating Bundle', 'FREE Trim Coating'] },
+                { id: 'ppf-front', name: 'Full Front PPF', tagline: 'The Best Value in Impact Protection.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, and Mirrors.', tag: 'PPF', protectionLevel: 60, prices: { '2Door': 2495, '4Door': 2495, 'SUV': 2495, 'Oversize': 2495 }, discounts: [] },
+                { id: 'bundle-essential', name: 'Essential Protection Package', tagline: 'Smart combo of PPF and coating for daily drivers.', description: 'Full Front PPF & Full body paint & ppf ceramic coating.', tag: 'Bundle', protectionLevel: 70, prices: { '2Door': 3195, '4Door': 3395, 'SUV': 3595, 'Oversize': 3895 }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'ppf-track', name: 'Track Package PPF', tagline: 'Extended high-impact coverage for spirited or daily driving.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, Mirrors, Rocker Panels, A-Pillars, and a Roof Strip.', tag: 'PPF', protectionLevel: 75, prices: { '2Door': 3295, '4Door': 3295, 'SUV': 3295, 'Oversize': 3295 }, discounts: [] },
+                { id: 'bundle-track-pro', name: 'Track Pro Package', tagline: 'Upgraded Protection Everywhere it Counts.', description: 'Track Pack PPF, Paint & PPF Coating, & Windshield Film.', tag: 'Bundle', protectionLevel: 80, prices: { '2Door': 4345, '4Door': 4545, 'SUV': 4745, 'Oversize': 5045 }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'ppf-full', name: 'Full Car PPF', tagline: 'Complete Protection for Every Painted Surface.', description: 'Full Car PPF.', tag: 'PPF', protectionLevel: 90, prices: { '2Door': 6495, '4Door': 7295, 'SUV': 7995, 'Oversize': 'call' }, discounts: [] },
+                { id: 'bundle-gt3', name: 'GT3 Package', tagline: 'Complete Impact Protection & Weathering Resistance.', description: 'Full Car PPF, PPF Coating, & Windshield Film.', tag: 'Bundle', protectionLevel: 95, prices: { '2Door': 7545, '4Door': 8545, 'SUV': 9445, 'Oversize': 'call' }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'bundle-presidential', name: 'Presidential Package', tagline: 'Ultimate Peace of Mind.', description: 'Full Paint Restoration Prior to PPF Installation; Full car PPF; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', protectionLevel: 98, prices: { '2Door': 10255, '4Door': 11485, 'SUV': 12535, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle & FREE Trim Coating'] },
+                { id: 'bundle-f1', name: 'Formula 1 Package', tagline: 'No Compromises, Maximum Protection.', description: 'Full Paint Restoration Prior to PPF Installation; Track Package in 10 mil PPF with Full car 8 mil PPF on top; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', protectionLevel: 100, prices: { '2Door': 13755, '4Door': 14985, 'SUV': 16035, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle & FREE Trim Coating'] }
+            ];
+
+            // --- PACKAGE SELECTION MAPPING ---
+            // Maps a package ID to the state selections it should trigger.
+            const packageSelections = {
+                'tint-full': { 'Tint': { selected: true, coverage: 'Full Car', addons: [], option: '1' } },
+                'tint-complete': { 'Tint': { selected: true, coverage: 'Full Car', addons: ['Add Windshield'], option: '1' } },
+                'coating-essential': { 'Coating': { selected: true, coverage: 'Paint', option: '1 Step Polish' } },
+                'tint-panoramic': { 'Tint': { selected: true, coverage: 'Full Car', addons: ['Add Windshield', 'Add Sunroof'], option: '1' } },
+                'coating-advanced': { 'Coating': { selected: true, coverage: 'Paint', option: '1 Step Polish', addons: ['Add Wheels (Face & Barrels)', 'Add Windshield'] } },
+                'coating-ultimate': { 'Coating': { selected: true, coverage: 'Paint', option: '1 Step Polish', addons: ['Add Wheels (Face & Barrels)', 'Add Windshield'] } }, // Simplified, as interior/trim coatings aren't options
+                'ppf-front': { 'PPF': { selected: true, coverage: 'Full Front' } },
+                'bundle-essential': {
+                    'PPF': { selected: true, coverage: 'Full Front' },
+                    'Coating': { selected: true, coverage: 'Paint', option: '1 Step Polish' }
+                },
+                'ppf-track': { 'PPF': { selected: true, coverage: 'Track Pack' } },
+                'bundle-track-pro': {
+                    'PPF': { selected: true, coverage: 'Track Pack' },
+                    'Coating': { selected: true, coverage: 'Paint', option: '1 Step Polish' },
+                    'Tint': { selected: true, coverage: 'Windshield', option: '1' } // Assuming windshield film means windshield tint
+                },
+                'ppf-full': { 'PPF': { selected: true, coverage: 'Full Car' } },
+                'bundle-gt3': {
+                    'PPF': { selected: true, coverage: 'Full Car' },
+                    'Coating': { selected: true, coverage: 'Paint', option: '1 Step Polish' }, // Assuming PPF coating is similar to paint coating
+                    'Tint': { selected: true, coverage: 'Windshield', option: '1' }
+                },
+                'bundle-presidential': {
+                    'PPF': { selected: true, coverage: 'Full Car' },
+                    'Tint': { selected: true, coverage: 'Full Car', addons: ['Add Windshield', 'Add Sunroof'], option: '1' },
+                    'Coating': { selected: true, coverage: 'Paint', option: '2 Step Polish/PC', addons: ['Add Wheels (Face & Barrels)', 'Add Windshield'] }
+                },
+                 'bundle-f1': {
+                    'PPF': { selected: true, coverage: 'Track Pack' }, // Simplified - this is complex, making Track Pack the base
+                    'Tint': { selected: true, coverage: 'Full Car', addons: ['Add Windshield', 'Add Sunroof'], option: '1' },
+                    'Coating': { selected: true, coverage: 'Paint', option: '2 Step Polish/PC', addons: ['Add Wheels (Face & Barrels)', 'Add Windshield'] }
+                }
+            };
+
+
+            const sliderMap = [
+                { slider: 0,    budget: 0 },
+                { slider: 100,  budget: 1500 },
+                { slider: 300,  budget: 4000 },
+                { slider: 700,  budget: 10000 },
+                { slider: 1000, budget: 18000 }
+            ];
+            
             // --- UI & FORM ELEMENTS ---
             const form = document.getElementById('configurator-form');
             const welcomeMessageEl = document.getElementById('welcome-message');
@@ -895,11 +1025,44 @@
             const summaryBreakdown = document.getElementById('summary-breakdown');
             const summaryItemsList = document.getElementById('summary-items-list');
             const toggleSummaryBtn = document.getElementById('toggle-summary-btn');
-            
-             // --- HELPER FUNCTIONS ---
-            function isMobileDevice() {
-                return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const estimateSummaryEl = document.querySelector('.estimate-summary');
+
+            // --- PACKAGE SLIDER HELPER FUNCTIONS ---
+            function convertSliderValueToBudget(value) {
+                const segment = sliderMap.find((point, index) => {
+                    const nextPoint = sliderMap[index + 1];
+                    return value >= point.slider && value <= (nextPoint ? nextPoint.slider : 1000);
+                });
+                const nextPoint = sliderMap[sliderMap.indexOf(segment) + 1];
+                if (!nextPoint) return sliderMap[sliderMap.length - 1].budget;
+
+                const sliderRange = nextPoint.slider - segment.slider;
+                const budgetRange = nextPoint.budget - segment.budget;
+                const sliderProgress = (value - segment.slider) / sliderRange;
+                return segment.budget + (sliderProgress * budgetRange);
             }
+
+            function convertBudgetToSliderValue(budget) {
+                const segment = sliderMap.find((point, index) => {
+                    const nextPoint = sliderMap[index + 1];
+                    if (!nextPoint) return true;
+                    return budget >= point.budget && budget <= nextPoint.budget;
+                });
+                const nextPoint = sliderMap[sliderMap.indexOf(segment) + 1];
+                if (!nextPoint) {
+                    return budget >= sliderMap[sliderMap.length - 1].budget 
+                        ? sliderMap[sliderMap.length - 1].slider 
+                        : segment.slider;
+                }
+                const sliderRange = nextPoint.slider - segment.slider;
+                const budgetRange = nextPoint.budget - segment.budget;
+                if (budgetRange === 0) return segment.slider;
+                const budgetProgress = (budget - segment.budget) / budgetRange;
+                return segment.slider + (budgetProgress * sliderRange);
+            }
+            
+            // --- HELPER FUNCTIONS ---
+            function isMobileDevice() { return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0); }
 
             function setCookie(name, value, days) {
                 let expires = "";
@@ -945,9 +1108,26 @@
                 setCookie('userFirstName', firstName, 30);
 
                 let itemsText = 'No services selected.';
-                const total = priceDisplay.textContent;
+                let total = priceDisplay.textContent;
 
-                if (userSelections.selectedItems && userSelections.selectedItems.length > 0) {
+                if (servicesState['Packages'].selected) {
+                    const budgetSlider = document.getElementById('budget-slider');
+                    const budget = convertSliderValueToBudget(parseInt(budgetSlider.value));
+                    const selectedVehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                    const getPrice = (pkg) => pkg.prices[selectedVehicleType];
+                    const allPackagesWithPrice = packages
+                        .map(pkg => ({ ...pkg, currentPrice: getPrice(pkg) }))
+                        .filter(pkg => pkg.currentPrice !== 'call');
+                    const affordablePackages = allPackagesWithPrice.filter(p => p.currentPrice <= budget);
+                     let activePackage;
+                    if (affordablePackages.length > 0) {
+                        activePackage = affordablePackages.sort((a, b) => b.currentPrice - a.currentPrice)[0];
+                    } else {
+                        activePackage = allPackagesWithPrice.sort((a, b) => a.currentPrice - b.currentPrice)[0];
+                    }
+                    itemsText = `Selected Package: ${activePackage.name} - $${activePackage.currentPrice.toLocaleString()}`;
+                    total = `(From Package Slider) $${Math.round(budget).toLocaleString()}`;
+                } else if (userSelections.selectedItems && userSelections.selectedItems.length > 0) {
                     itemsText = userSelections.selectedItems.map(item => {
                         const price = typeof item.price === 'number' ? ` ($${item.price.toFixed(2)})` : ` (${item.price})`;
                         return `${item.name}${price}`;
@@ -955,27 +1135,24 @@
                 }
 
                 const subject = `WIKD Wraps Estimate Inquiry from ${firstName} ${lastName}`;
-                const emailBody = `
-    Hello WIKD Wraps Team,
-    I have submitted an estimate request through your online configurator. I am interested in the following services for my vehicle:
-    Vehicle Type: ${document.querySelector('input[name="vehicle"]:checked').value}
-    Total Estimate: ${total}
-    Selected Services:
-    ${itemsText}
-    ---
-    Customer Details:
-    Name: ${firstName} ${lastName}
-    Phone: ${phone}
-    Email: ${email}
-    Comments:
-    ${comments || 'No additional comments provided.'}
-    Please get in touch with me to discuss this further.
-                `;
+                const emailBody = `Hello WIKD Wraps Team,
+I have submitted an estimate request through your online configurator. I am interested in the following services for my vehicle:
+Vehicle Type: ${document.querySelector('input[name="vehicle"]:checked').value}
+Total Estimate: ${total}
+Selected Services:
+${itemsText}
+---
+Customer Details:
+Name: ${firstName} ${lastName}
+Phone: ${phone}
+Email: ${email}
+Comments:
+${comments || 'No additional comments provided.'}
+Please get in touch with me to discuss this further.`;
                 window.location.href = `mailto:sales@wikdwraps.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
             }
 
             function updateStep(newStep) {
-                const questionnaireContainer = document.getElementById('questionnaire-container');
                 const thankYouContainer = document.getElementById('thank-you-container');
 
                 if (newStep > currentStep) {
@@ -985,15 +1162,17 @@
                         if (selectedServices.length === 0 && newStep > 1) {
                             isValid = false;
                         } else {
-                            for (const service of selectedServices) {
-                                if (!servicesState[service].coverage) {
-                                    isValid = false;
-                                    const tab = serviceTabsContainer.querySelector(`[data-service="${service}"]`);
-                                    tab.style.borderColor = 'var(--color-danger)';
-                                    setTimeout(() => { tab.style.borderColor = 'transparent' }, 2000);
-                                    break;
+                             if (!servicesState['Packages'].selected) {
+                                for (const service of selectedServices) {
+                                    if (!servicesState[service].coverage) {
+                                        isValid = false;
+                                        const tab = serviceTabsContainer.querySelector(`[data-service="${service}"]`);
+                                        tab.style.borderColor = 'var(--color-danger)';
+                                        setTimeout(() => { tab.style.borderColor = 'transparent' }, 2000);
+                                        break;
+                                    }
                                 }
-                            }
+                             }
                         }
                     } else if (currentStep === 2) {
                         const contactForm = document.getElementById('step-2');
@@ -1069,14 +1248,10 @@
                     tab.dataset.service = service;
                     tab.innerHTML = `${service} <span class="close-btn">&times;</span>`;
                     
-                    if(state.selected) {
-                        tab.classList.add('selected');
-                    } else {
-                        tab.classList.add('available');
-                    }
-                    if(service === currentlyViewingService) {
-                        tab.classList.add('viewing');
-                    }
+                    if(state.selected) tab.classList.add('selected');
+                    else tab.classList.add('available');
+                    if(service === currentlyViewingService) tab.classList.add('viewing');
+                    
                     serviceTabsContainer.appendChild(tab);
                 });
             }
@@ -1136,7 +1311,7 @@
             }
 
             function renderAddons() {
-                if (!currentlyViewingService) return;
+                if (!currentlyViewingService || currentlyViewingService === 'Packages') return;
                 
                 const service = currentlyViewingService;
                 const state = servicesState[service];
@@ -1158,15 +1333,11 @@
                         
                         let sliderValueIndex = state.option !== null ? state.option : 1;
 
-                        let labelsHtml = '';
-                        tintOptions.forEach(([option, optionData], index) => {
+                        let labelsHtml = tintOptions.map(([option, optionData], index) => {
                             const tooltipText = typeof optionData === 'object' ? optionData.tooltip : null;
-                            let tooltipHtml = '';
-                            if (tooltipText) {
-                                tooltipHtml = `<div class="info-tooltip">${tooltipText}</div>`;
-                            }
-                            labelsHtml += `<div class="slider-label info-tooltip-container" data-index="${index}">${option}${tooltipHtml}</div>`;
-                        });
+                            const tooltipHtml = tooltipText ? `<div class="info-tooltip">${tooltipText}</div>` : '';
+                            return `<div class="slider-label info-tooltip-container" data-index="${index}">${option}${tooltipHtml}</div>`;
+                        }).join('');
                         
                         const sliderHtml = `
                             <div class="form-group">
@@ -1180,21 +1351,13 @@
 
                         const slider = document.getElementById(sliderId);
                         const output = document.getElementById(outputId);
-                        const labels = addonsContainer.querySelectorAll('.slider-label');
-
+                        
                         function updateSliderView() {
                             const options = JSON.parse(slider.dataset.options);
                             const selectedValue = options[slider.value];
                             const isIllegal = ['20%', '5%'].includes(selectedValue);
                             output.textContent = selectedValue;
                             slider.classList.toggle('illegal-tint', isIllegal);
-                            labels.forEach(label => {
-                                label.classList.remove('active', 'illegal-tint');
-                                if (label.dataset.index === slider.value) {
-                                    label.classList.add('active');
-                                    if(isIllegal) label.classList.add('illegal-tint');
-                                }
-                            });
                         }
                         
                         slider.addEventListener('input', updateSliderView);
@@ -1222,6 +1385,34 @@
                             });
                         });
                     }
+                }
+                
+                if (coverageData.addons) {
+                    const addonsHtml = Object.keys(coverageData.addons).map(addon => {
+                        const price = coverageData.addons[addon];
+                        const uniqueId = `addon-${service}-${state.coverage.replace(/\s/g, '-')}-${addon.replace(/\s/g, '-')}`;
+                        return `
+                            <div>
+                                <input type="checkbox" id="${uniqueId}" name="addon-${addon}" class="addon choice-input" data-addon-name="${addon}" data-price="${price}" ${state.addons.includes(addon) ? 'checked' : ''}>
+                                <label for="${uniqueId}" class="choice-label"><span>${addon}</span></label>
+                            </div>`;
+                    }).join('');
+                    const existingContent = addonsContainer.innerHTML;
+                    addonsContainer.innerHTML = existingContent + `<div class="form-group" style="margin-top: 1rem;"><label>Available Add-ons:</label><div class="choice-group">${addonsHtml}</div></div>`;
+                    
+                    addonsContainer.querySelectorAll('.addon').forEach(checkbox => {
+                        checkbox.addEventListener('change', (e) => {
+                            const addonName = e.target.dataset.addonName;
+                            if (e.target.checked) {
+                                if (!servicesState[service].addons.includes(addonName)) {
+                                    servicesState[service].addons.push(addonName);
+                                }
+                            } else {
+                                servicesState[service].addons = servicesState[service].addons.filter(a => a !== addonName);
+                            }
+                            calculateEstimate();
+                        });
+                    });
                 } else if (service === 'Vinyl' && state.coverage === 'Color Change') {
                         const sliderId = `hue-slider-${service}`;
                         const hueValue = state.option || 0;
@@ -1243,42 +1434,62 @@
                             servicesState[service].option = e.target.value;
                             calculateEstimate();
                         });
-
-                } else if (coverageData.addons) {
-                    const addonsHtml = Object.keys(coverageData.addons).map(addon => {
-                        const price = coverageData.addons[addon];
-                        const uniqueId = `addon-${service}-${state.coverage.replace(/\s/g, '-')}-${addon.replace(/\s/g, '-')}`;
-                        return `
-                            <div>
-                                <input type="checkbox" id="${uniqueId}" name="addon-${addon}" class="addon choice-input" data-addon-name="${addon}" data-price="${price}" ${state.addons.includes(addon) ? 'checked' : ''}>
-                                <label for="${uniqueId}" class="choice-label"><span>${addon}</span></label>
-                            </div>`;
-                    }).join('');
-                    addonsContainer.innerHTML = `<div class="form-group"><label>Available Add-ons:</label><div class="choice-group">${addonsHtml}</div></div>`;
-                    
-                    addonsContainer.querySelectorAll('.addon').forEach(checkbox => {
-                        checkbox.addEventListener('change', (e) => {
-                            const addonName = e.target.dataset.addonName;
-                            if (e.target.checked) {
-                                if (!servicesState[service].addons.includes(addonName)) {
-                                    servicesState[service].addons.push(addonName);
-                                }
-                            } else {
-                                servicesState[service].addons = servicesState[service].addons.filter(a => a !== addonName);
-                            }
-                            calculateEstimate();
-                        });
-                    });
                 }
+            }
+            
+            function getApplicableDiscounts(state) {
+                const appliedDiscounts = [];
+                const appliedDiscountIds = new Set();
+
+                const hasPPF = state['PPF']?.selected && state['PPF']?.coverage;
+                const hasTint = state['Tint']?.selected && state['Tint']?.coverage;
+                const hasCoating = state['Coating']?.selected && state['Coating']?.coverage === 'Paint';
+
+                if (hasPPF && hasTint && hasCoating) {
+                    appliedDiscounts.push({ name: 'PPF, Tint, & Coating Bundle', value: -395 });
+                    appliedDiscountIds.add('ppf-tint-coating');
+                }
+
+                if (hasPPF && hasCoating && !appliedDiscountIds.has('ppf-tint-coating')) {
+                    appliedDiscounts.push({ name: 'PPF & Coating Bundle', value: -295 });
+                    appliedDiscountIds.add('ppf-coating');
+                }
+                
+                const isAdvancedCoating = hasCoating &&
+                                          state['Coating'].addons.includes('Add Wheels (Face & Barrels)') &&
+                                          state['Coating'].addons.includes('Add Windshield');
+
+                if (isAdvancedCoating) {
+                    appliedDiscounts.push({ name: 'Coating Bundle', value: -150 });
+                    appliedDiscounts.push({ name: 'FREE Trim Coating', value: 0 }); 
+                    appliedDiscountIds.add('coating-bundle');
+                }
+
+                return appliedDiscounts;
             }
 
             function calculateEstimate() {
+                 const nonPackageServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
+
+                if (currentlyViewingService === 'Packages' && !nonPackageServicesSelected) {
+                    priceDisplay.textContent = '$0.00';
+                    priceDisplay.classList.remove('consultation');
+                    summaryItemsList.innerHTML = '';
+                    toggleSummaryBtn.classList.add('hidden-field');
+                    summaryBreakdown.classList.remove('expanded');
+                    estimateSummaryEl.classList.add('hidden-field');
+                    return;
+                }
+                
+                estimateSummaryEl.classList.remove('hidden-field');
+                
                 const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
                 let total = 0;
                 let isConsultationNeeded = false;
                 let finalSelectedItems = [];
 
                 for (const service of allServices) {
+                    if (service === 'Packages') continue;
                     const state = servicesState[service];
                     if (!state.selected || !state.coverage) continue;
                     
@@ -1291,7 +1502,6 @@
                         finalSelectedItems.push({ name: serviceItemName, price: 'Call For Free Consultation' });
                     } else {
                         let basePrice = coverageData.price || 0;
-                        total += basePrice;
                         
                         if(coverageData.options) {
                             let optionName = '';
@@ -1304,7 +1514,6 @@
                                 if (typeof optionPrice === 'string') {
                                     isConsultationNeeded = true;
                                 } else {
-                                    total += optionPrice;
                                     basePrice += optionPrice;
                                 }
                             }
@@ -1315,46 +1524,72 @@
                             serviceItemName += ` - ${colorName}`;
                         }
                         
+                        if (!isConsultationNeeded) total += basePrice;
                         finalSelectedItems.push({ name: serviceItemName, price: basePrice });
                     }
-                    
-                    state.addons.forEach(addon => {
-                        const addonPrice = coverageData.addons[addon];
-                        if (typeof addonPrice === 'string') {
-                            isConsultationNeeded = true;
-                            finalSelectedItems.push({ name: ` - ${addon}`, price: 'Call For Free Consultation' });
-                        } else {
-                            total += addonPrice;
-                            finalSelectedItems.push({ name: ` - ${addon}`, price: addonPrice });
-                        }
-                    });
+                     
+                    if (coverageData.addons) {
+                        state.addons.forEach(addon => {
+                            const addonPrice = coverageData.addons[addon];
+                            if (typeof addonPrice === 'string') {
+                                isConsultationNeeded = true;
+                                finalSelectedItems.push({ name: `+ ${addon}`, price: 'Call For Free Consultation' });
+                            } else {
+                                if (!isConsultationNeeded) total += addonPrice;
+                                finalSelectedItems.push({ name: `+ ${addon}`, price: addonPrice });
+                            }
+                        });
+                    }
                 }
+                
+                const discounts = getApplicableDiscounts(servicesState);
+                discounts.forEach(discount => {
+                    total += discount.value;
+                    finalSelectedItems.push({ name: discount.name, price: discount.value });
+                });
 
                 userSelections.selectedItems = finalSelectedItems;
 
-                const selectedServicesCount = Object.values(servicesState).filter(s => s.selected).length;
-                if (isConsultationNeeded || selectedServicesCount === 0) {
-                    priceDisplay.textContent = selectedServicesCount > 0 ? 'Call For Free Consultation' : '$0.00';
-                    priceDisplay.classList.toggle('consultation', selectedServicesCount > 0);
-                    if (total > 0 && isConsultationNeeded) {
+                const selectedServicesCount = Object.values(servicesState).filter(s => s.selected && s.coverage).length;
+                if (isConsultationNeeded) {
+                    priceDisplay.textContent = 'Call For Free Consultation';
+                    priceDisplay.classList.add('consultation');
+                    if (total > 0) {
                         priceDisplay.textContent += ` + $${total.toFixed(2)}`;
                     }
-                    selectionsNextBtn.disabled = selectedServicesCount === 0;
+                } else if (selectedServicesCount === 0) {
+                    priceDisplay.textContent = '$0.00';
+                    priceDisplay.classList.remove('consultation');
                 } else {
                     priceDisplay.textContent = `$${total.toFixed(2)}`;
                     priceDisplay.classList.remove('consultation');
-                    selectionsNextBtn.disabled = false;
                 }
+                selectionsNextBtn.disabled = selectedServicesCount === 0;
+
 
                 summaryItemsList.innerHTML = '';
                 if (userSelections.selectedItems.length > 0) {
                     toggleSummaryBtn.classList.remove('hidden-field');
                     userSelections.selectedItems.forEach(item => {
                         const li = document.createElement('li');
-                        const priceText = typeof item.price === 'number' 
-                            ? `$${item.price.toFixed(2)}` 
-                            : item.price;
+                        const isDiscount = typeof item.price === 'number' && item.price < 0;
+                        const isFreebie = typeof item.price === 'number' && item.price === 0;
+
+                        let priceText = 'Included';
+                        if (typeof item.price === 'string') {
+                           priceText = item.price;
+                        } else if (isDiscount) {
+                            priceText = `-$${Math.abs(item.price).toFixed(2)}`;
+                        } else if (!isFreebie) {
+                            priceText = `$${item.price.toFixed(2)}`;
+                        }
+                        
                         li.innerHTML = `<span class="item-name">${item.name}</span> <span class="item-price">${priceText}</span>`;
+                        
+                        if (isDiscount || isFreebie) {
+                            li.querySelector('.item-price').classList.add('discount');
+                            li.querySelector('.item-name').classList.add('discount');
+                        }
                         summaryItemsList.appendChild(li);
                     });
                 } else {
@@ -1363,7 +1598,194 @@
                     toggleSummaryBtn.classList.remove('expanded');
                 }
             }
+            
+            // --- PACKAGE SLIDER RENDER FUNCTIONS ---
+             function renderPackageSliderLabels(container) {
+                const labelsContainer = container.querySelector('#package-slider-labels');
+                if (!labelsContainer) return;
+                labelsContainer.innerHTML = '';
+                const labelValues = [500, 2500, 7500, 15000];
+                labelValues.forEach(budget => {
+                    const sliderValue = convertBudgetToSliderValue(budget);
+                    const percentage = (sliderValue / 1000) * 100;
+                    const label = document.createElement('span');
+                    label.className = 'absolute text-xs transform -translate-x-1/2';
+                    label.style.color = 'var(--color-text-muted)';
+                    label.textContent = `$${(budget / 1000).toFixed(1)}K`;
+                    label.style.left = `${percentage}%`;
+                    labelsContainer.appendChild(label);
+                });
+            }
 
+            function renderPackageCards(container) {
+                const budgetSlider = container.querySelector('#budget-slider');
+                const budgetValue = container.querySelector('#budget-value');
+                const packageContainer = container.querySelector('#package-container');
+                const protectionMeterFill = container.querySelector('#protection-meter-fill');
+                const protectionLevelTag = container.querySelector('#protection-level-tag');
+                
+                if(!budgetSlider || !packageContainer) return;
+
+                const budget = convertSliderValueToBudget(parseInt(budgetSlider.value));
+                const selectedVehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                
+                packageContainer.innerHTML = '';
+                
+                const getPrice = (pkg) => pkg.prices[selectedVehicleType];
+
+                const allPackagesWithPrice = packages
+                    .map(pkg => ({ ...pkg, currentPrice: getPrice(pkg) }))
+                    .filter(pkg => pkg.currentPrice !== 'call');
+                    
+                const callForEstimatePackages = packages.filter(pkg => getPrice(pkg) === 'call');
+
+                let activePackage;
+                const affordablePackages = allPackagesWithPrice.filter(p => p.currentPrice <= budget);
+
+                if (affordablePackages.length > 0) {
+                    activePackage = affordablePackages.sort((a, b) => b.currentPrice - a.currentPrice)[0];
+                } else {
+                    activePackage = allPackagesWithPrice.sort((a, b) => a.currentPrice - b.currentPrice)[0];
+                }
+                
+                const priceSortedPackages = [...allPackagesWithPrice].sort((a, b) => a.currentPrice - b.currentPrice);
+                const activePackageIndex = priceSortedPackages.findIndex(p => p.id === activePackage.id);
+
+                const packagesToRender = [];
+                if (activePackage) {
+                    packagesToRender.push(activePackage);
+                }
+
+                let nextPackage;
+                if (activePackageIndex < priceSortedPackages.length - 1) {
+                    nextPackage = priceSortedPackages[activePackageIndex + 1];
+                } else if (callForEstimatePackages.length > 0) {
+                     nextPackage = { ...callForEstimatePackages[0], currentPrice: 'Call for Estimate' };
+                }
+                if (nextPackage) {
+                    packagesToRender.push(nextPackage);
+                }
+                
+                budgetValue.textContent = `$${Math.round(budget).toLocaleString('en-US')}`;
+                if (activePackage) {
+                    protectionMeterFill.style.width = `${activePackage.protectionLevel}%`;
+                    protectionLevelTag.textContent = activePackage.tag;
+
+                    const tagColorClasses = {
+                        'Tint': 'text-blue-400',
+                        'Coating': 'text-green-400',
+                        'PPF': 'text-yellow-400',
+                        'Bundle': 'text-purple-400'
+                    };
+                    protectionLevelTag.className = `ml-2 font-bold ${tagColorClasses[activePackage.tag] || 'text-gray-400'}`;
+                }
+
+
+                packagesToRender.forEach((pkg, index) => {
+                    const isActiveCard = index === 0;
+                    
+                    const displayPrice = typeof pkg.currentPrice === 'number'
+                        ? `$${pkg.currentPrice.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`
+                        : pkg.currentPrice;
+
+                    const tagBgClasses = {
+                        'Tint': 'bg-blue-900 text-blue-300',
+                        'Coating': 'bg-green-900 text-green-300',
+                        'PPF': 'bg-yellow-900 text-yellow-300',
+                        'Bundle': 'bg-purple-900 text-purple-300'
+                    };
+                    
+                    const [tagBg, tagText] = (tagBgClasses[pkg.tag] || 'bg-gray-700 text-gray-200').split(' ');
+
+                    const packageCard = document.createElement('div');
+                    packageCard.className = `package-card rounded-lg border shadow-sm overflow-hidden ${isActiveCard ? 'active' : ''}`;
+
+                    packageCard.innerHTML = `
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-xl font-bold text-white">${pkg.name}</h3>
+                                <span class="${tagBg} ${tagText} text-xs font-semibold px-2.5 py-0.5 rounded-full">${pkg.tag}</span>
+                            </div>
+                            <div class="mb-4">
+                                <p class="text-3xl font-bold" style="color: var(--color-primary);">${displayPrice}</p>
+                                <p class="text-sm" style="color: var(--color-text-muted);">${pkg.tagline}</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <button class="parts-toggle-btn w-full flex justify-between items-center py-2 px-4 rounded-lg transition">
+                                    <span class="font-medium">Package Details</span>
+                                    <i class="fas fa-chevron-down text-xs transition-transform"></i>
+                                </button>
+                                <div class="parts-content mt-3 pl-2 hidden">
+                                    <p class="mb-3">${pkg.description}</p>
+                                    ${pkg.discounts.length > 0 ? `
+                                    <h4 class="font-semibold text-green-400 text-sm mb-1">Applicable Discounts:</h4>
+                                    <ul class="list-disc text-green-400 space-y-1 pl-5 text-sm">
+                                        ${pkg.discounts.map(d => `<li>${d}</li>`).join('')}
+                                    </ul>` : ''}
+                                </div>
+                            </div>
+                             <button class="package-btn mt-4 select-package-btn" data-package-id="${pkg.id}">
+                                <i class="fas fa-check-circle mr-2"></i> Select Package
+                            </button>
+                        </div>`;
+                    packageContainer.appendChild(packageCard);
+
+                    const toggleBtn = packageCard.querySelector('.parts-toggle-btn');
+                    const partsContent = packageCard.querySelector('.parts-content');
+                    const toggleIcon = packageCard.querySelector('.parts-toggle-btn i');
+                    toggleBtn.addEventListener('click', () => {
+                        partsContent.classList.toggle('hidden');
+                        toggleIcon.classList.toggle('rotate-180');
+                    });
+                });
+
+                // Add event listeners to the new select buttons
+                container.querySelectorAll('.select-package-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const packageId = e.currentTarget.dataset.packageId;
+                        selectPackage(packageId);
+                    });
+                });
+            }
+
+            function renderPackagesView(container) {
+                container.innerHTML = `
+                    <div class="package-slider-container">
+                        <div class="bg-transparent rounded-lg p-0 mb-8" id="control-panel">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                                <div class="mb-4 md:mb-0">
+                                    <h3 class="text-lg font-semibold mb-3 uppercase" style="color: var(--color-text);">Your Budget</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span id="budget-value" class="text-3xl font-bold" style="color: var(--color-primary);">$2,500</span>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <input type="range" min="0" max="1000" step="1" value="200" class="w-full h-2 rounded-lg appearance-none cursor-pointer budget-slider-input" id="budget-slider">
+                                <div id="package-slider-labels" class="relative mt-2 h-4"></div>
+                            </div>
+                        </div>
+                        <div class="mb-8">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-lg font-semibold uppercase" style="color: var(--color-text);">Protection Level</h3>
+                                <span id="protection-level-tag" class="ml-2 font-bold">Basic</span>
+                            </div>
+                            <div class="flex justify-between text-xs" style="color: var(--color-text-muted);"><span class="uppercase">Basic</span><span class="uppercase">Ultimate</span></div>
+                            <div class="protection-meter-bg relative h-2 rounded">
+                                <div id="protection-meter-fill" class="protection-meter-fill" style="width: 5%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="package-container"></div>
+                    </div>
+                `;
+                
+                const budgetSlider = container.querySelector('#budget-slider');
+                budgetSlider.addEventListener('input', () => renderPackageCards(container));
+                
+                renderPackageSliderLabels(container);
+                renderPackageCards(container);
+            }
 
             function handleTabClick(e) {
                 const target = e.target;
@@ -1383,15 +1805,27 @@
                         currentlyViewingService = Object.keys(servicesState).find(s => servicesState[s].selected) || null;
                     }
                 } else {
-                    if (!servicesState[service].selected) {
+                    if (service !== 'Packages' && !servicesState[service].selected) {
                         servicesState[service].selected = true;
+                    } else if (service === 'Packages') {
+                        // Deselect other services when going back to packages
+                        initializeState();
+                        servicesState['Packages'].selected = true;
                     }
                     currentlyViewingService = service;
                 }
                 
                 selectionsNextBtn.disabled = getSelectedServices().length === 0;
                 renderTabs();
-                renderServiceContent();
+
+                if(currentlyViewingService === 'Packages') {
+                    estimateSummaryEl.classList.add('hidden-field');
+                    renderPackagesView(dynamicServicesContainer);
+                } else {
+                    estimateSummaryEl.classList.remove('hidden-field');
+                    renderServiceContent();
+                }
+                
                 calculateEstimate();
                 updateImageDisplay();
             }
@@ -1401,9 +1835,12 @@
             }
 
             function updateImageDisplay() {
-                const coverageImage = document.getElementById('coverage-image');
                 coverageImage.style.filter = 'hue-rotate(0deg)'; 
 
+                if (currentlyViewingService === 'Packages') {
+                    coverageImage.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
+                    return;
+                }
                 if (currentlyViewingService === 'Vinyl' && servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change') {
                     coverageImage.src = ppfImageMap['Full Car'];
                     const hue = servicesState['Vinyl'].option || 0;
@@ -1415,23 +1852,98 @@
                     coverageImage.src = ppfImageMap[servicesState['PPF'].coverage];
                     return;
                 }
-
                 coverageImage.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
+            }
+
+            function selectPackage(packageId) {
+                const selection = packageSelections[packageId];
+                if (!selection) return;
+
+                initializeState(); // Reset everything first
+
+                Object.keys(selection).forEach(service => {
+                    const serviceSelection = selection[service];
+                    servicesState[service] = {
+                        ...servicesState[service], // Keep default structure
+                        ...serviceSelection
+                    };
+                });
+                
+                // Keep viewing the Packages tab
+                servicesState['Packages'].selected = true;
+                currentlyViewingService = 'Packages';
+
+                // Update UI based on new state
+                renderTabs(); // This will show the included services as selected
+                calculateEstimate(); // This will now work correctly and show the summary
+                updateImageDisplay();
+            }
+            
+            // This function modifies the pricingData object to support complex packages as addons
+            function augmentPricingData() {
+                 Object.keys(pricingData).forEach(vehicleType => {
+                    const tintData = pricingData[vehicleType].Tint;
+                    const coatingData = pricingData[vehicleType].Coating;
+
+                    // Add addons to Tint
+                    if (tintData['Full Car']) {
+                        if (!tintData['Full Car'].addons) tintData['Full Car'].addons = {};
+                        tintData['Full Car'].addons['Add Windshield'] = tintData['Windshield']?.price || 450;
+                        tintData['Full Car'].addons['Add Sunroof'] = 295; // Estimated price
+                    }
+
+                    // Add addons to Coating
+                    if (coatingData['Paint']) {
+                         if (!coatingData.Paint.addons) coatingData.Paint.addons = {};
+                         coatingData.Paint.addons['Add Wheels (Face & Barrels)'] = coatingData.Wheels?.options['Face & Barrels'] || 400;
+                         coatingData.Paint.addons['Add Windshield'] = coatingData.Windshield?.price || 155;
+                    }
+                });
             }
 
 
             // --- INITIALIZATION & EVENT LISTENERS ---
             function initializeApp() {
+                augmentPricingData();
                 initializeState();
+                
+                // Default to packages view
+                servicesState['Packages'].selected = true;
+                currentlyViewingService = 'Packages';
+
                 renderTabs();
+                estimateSummaryEl.classList.add('hidden-field');
+                renderPackagesView(dynamicServicesContainer);
                 calculateEstimate();
                 checkAndDisplayCookie();
                 
                 document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
                     radio.addEventListener('change', () => {
+                        const previousService = currentlyViewingService;
+                        const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
+
                         initializeState();
+                        
+                        if(wereServicesSelected) {
+                             // If user was customizing, keep them on the last viewed service tab
+                             servicesState[previousService].selected = true;
+                             currentlyViewingService = previousService;
+                        } else {
+                            // Otherwise default back to packages view
+                            servicesState['Packages'].selected = true;
+                            currentlyViewingService = 'Packages';
+                        }
+                        
                         renderTabs();
-                        renderServiceContent();
+
+                        if (currentlyViewingService === 'Packages') {
+                            estimateSummaryEl.classList.add('hidden-field');
+                            renderPackagesView(dynamicServicesContainer);
+                        } else {
+                            estimateSummaryEl.classList.remove('hidden-field');
+                            renderServiceContent();
+                        }
+                        
                         calculateEstimate();
                         updateImageDisplay();
                     });
@@ -1504,3 +2016,4 @@
     </script>
 </body>
 </html>
+
