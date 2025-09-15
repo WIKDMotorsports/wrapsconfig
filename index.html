@@ -939,10 +939,10 @@
             };
             
             const ppfImageMap = {
-                'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859',
-                'Full Front': 'https://wikdwraps.com/cdn/shop/files/Full_Front.webp?v=1738085245&width=535',
-                'Track Pack': 'https://wikdwraps.com/cdn/shop/files/Track_Pack.webp?v=1738085280&width=535',
-                'Full Car': 'https://wikdwraps.com/cdn/shop/files/Full_Wrap.webp?v=1738074454&width=535'
+                'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859', // Default/Partial Image
+                'Full Front': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Full_Front.png?v=1757627749',
+                'Track Pack': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Track_Pack.png?v=1757627748',
+                'Full Car': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Full_coverage.png?v=1757627748'
             };
 
             const allServices = ['Packages', 'PPF', 'Tint', 'Coating', 'Vinyl'];
@@ -1206,7 +1206,7 @@ Please get in touch with me to discuss this further.`;
                     let isValid = true;
                     if (currentStep === 1) {
                         const selectedServices = getSelectedServices();
-                        if (selectedServices.length === 0 && newStep > 1) {
+                        if (selectedServices.length === 0 && newStep > 1 && !selectedPackageId) {
                             isValid = false;
                         } else {
                              if (!servicesState['Packages'].selected) {
@@ -1970,7 +1970,7 @@ Please get in touch with me to discuss this further.`;
             function selectPackage(packageId) {
                 const selection = packageSelections[packageId];
                 if (!selection) return;
-
+                
                 initializeState();
                 selectedPackageId = packageId;
 
@@ -2031,14 +2031,17 @@ Please get in touch with me to discuss this further.`;
                 
                 document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
                     radio.addEventListener('change', () => {
-                        const previousService = currentlyViewingService;
-                        const wasPackageSelected = !!selectedPackageId;
                         
+                        const wasPackageSelected = !!selectedPackageId;
+                        const previousService = currentlyViewingService;
+
                         // Recalculate based on current state before resetting
                         if(wasPackageSelected) {
                             const tempState = JSON.parse(JSON.stringify(servicesState));
+                             const tempPkgId = selectedPackageId;
                             initializeState();
                             servicesState = tempState;
+                            selectedPackageId = tempPkgId;
                         } else {
                             const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
                             initializeState();
