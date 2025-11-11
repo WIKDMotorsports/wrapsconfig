@@ -66,19 +66,23 @@
             text-align: center;
             position: relative;
         }
-        #coverage-image-base, #coverage-image-overlay {
+        #coverage-image-base, #coverage-image-overlay, #coverage-image-tint-overlay {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
             transition: all 0.3s ease;
             object-fit: contain;
         }
-        #coverage-image-overlay {
+        #coverage-image-overlay, #coverage-image-tint-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             pointer-events: none;
+        }
+        #coverage-image-tint-overlay {
+            mix-blend-mode: overlay;
+            opacity: 0;
         }
 
         /* Added for video overlay */
@@ -89,14 +93,14 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            mix-blend-mode: screen; /* Changed from 'add' to 'screen' */
+            mix-blend-mode: screen; /* Correct blend mode for this effect */
             border-radius: 8px;
+            overflow: hidden; /* Ensure video respects border radius */
         }
         #coverage-video-overlay {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Ensures video aligns with image */
-            border-radius: 8px;
+            object-fit: cover; /* Cover the container */
         }
 
 
@@ -644,7 +648,7 @@
             cursor: pointer;
             border-radius: 50%;
             border: 3px solid var(--color-surface);
-            margin-top: -8px; /* Re-added for correct centering */
+            margin-top: -8px; 
             transition: box-shadow 0.3s ease;
         }
         .tint-slider.illegal-tint::-webkit-slider-thumb {
@@ -657,7 +661,8 @@
             background: var(--color-primary);
             cursor: pointer;
             border-radius: 50%;
-            border: 3px solid var(--color-surface);
+            border: 0; /* Use box-shadow for border */
+            box-shadow: 0 0 0 3px var(--color-surface);
             transition: box-shadow 0.3s ease;
         }
         .tint-slider.illegal-tint::-moz-range-thumb {
@@ -665,7 +670,11 @@
             box-shadow: 0 0 8px var(--color-danger);
         }
         .hue-slider::-webkit-slider-thumb { background: #EAEAEA; }
-        .hue-slider::-moz-range-thumb { background: #EAEAEA; }
+        .hue-slider::-moz-range-thumb {
+            background: #EAEAEA;
+            box-shadow: 0 0 0 3px var(--color-surface);
+            border: 0;
+        }
 
         .slider-labels {
             display: flex;
@@ -775,6 +784,7 @@
         <div id="image-display-container">
             <img id="coverage-image-base" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
             <img id="coverage-image-overlay" src="" alt="" style="display: none;">
+            <img id="coverage-image-tint-overlay" src="" alt="" style="display: none;">
             <!-- Wrapped video in a container for blend mode -->
             <div id="video-overlay-container" style="display: none;">
                 <video id="coverage-video-overlay" loop muted autoplay playsinline></video>
@@ -991,11 +1001,19 @@
                 }
             };
 
+            const tintImageMap = {
+                '2Door': null, // No image provided
+                '4Door': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/4doortint.png?v=1762889580',
+                'SUV': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/SUV_Tint.png?v=1762888396',
+                'Oversize': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Tintf450.png?v=1762889566'
+            };
+            
+            const tintOpacityMap = ['0.2', '0.65', '0.8', '0.95']; // 80%, 35%, 20%, 5%
+
             const coatingVideoMap = {
                 '4Door': 'https://cdn.shopify.com/videos/c/o/v/a20df85da0cf437bb7ab0d781db40acc.mp4',
                 'SUV': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4',
-                'Oversize': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4', // User provided same link for SUV and Oversize
-                '2Door': null // No video provided for 2Door
+                'Oversize': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4'
             };
 
             const allServices = ['Packages', 'PPF', 'Tint', 'Coating', 'Vinyl'];
@@ -1005,6 +1023,7 @@
             let currentStep = 1;
             let userFirstName = '';
             let selectedPackageId = null;
+            let lastActivePackageId = null; // Debounce slider image updates
 
             // --- PACKAGE SLIDER DATA ---
             const packages = [
@@ -1120,6 +1139,7 @@
             const thankYouContainer = document.getElementById('thank-you-container');
             const coverageImageBase = document.getElementById('coverage-image-base');
             const coverageImageOverlay = document.getElementById('coverage-image-overlay');
+            const coverageImageTintOverlay = document.getElementById('coverage-image-tint-overlay');
             const coverageVideoOverlay = document.getElementById('coverage-video-overlay'); // Added
             const coverageVideoContainer = document.getElementById('video-overlay-container'); // Added
             const submitFormBtn = document.getElementById('submit-form-btn');
@@ -1438,7 +1458,7 @@ Please get in touch with me to discuss this further.`;
                         const sliderId = `tint-slider-${service}-${state.coverage.replace(/\s/g, '-')}`;
                         const outputId = `tint-output-${service}-${state.coverage.replace(/\s/g, '-')}`;
                         
-                        let sliderValueIndex = state.option !== null ? state.option : 1;
+                        let sliderValueIndex = state.option !== null ? state.option : 1; // Default to 35%
 
                         let labelsHtml = tintOptions.map(([option, optionData], index) => {
                             const tooltipText = typeof optionData === 'object' ? optionData.tooltip : null;
@@ -1467,11 +1487,15 @@ Please get in touch with me to discuss this further.`;
                             slider.classList.toggle('illegal-tint', isIllegal);
                         }
                         
-                        slider.addEventListener('input', updateSliderView);
+                        slider.addEventListener('input', () => {
+                            updateSliderView();
+                            servicesState[service].option = slider.value; // Update state on input
+                            updateImageDisplay(); // Update image on input
+                        });
                         slider.addEventListener('change', () => {
                              selectedPackageId = null;
-                             servicesState[service].option = slider.value;
                              calculateEstimate();
+                             // No need for updateImageDisplay here, 'input' handles it
                         });
                         updateSliderView();
                     } else {
@@ -1786,8 +1810,9 @@ Please get in touch with me to discuss this further.`;
                     activePackage = allPackagesWithPrice.sort((a, b) => a.currentPrice - b.currentPrice)[0];
                 }
                 
-                if (activePackage) {
+                if (activePackage && activePackage.id !== lastActivePackageId) {
                     updateImageDisplay(activePackage);
+                    lastActivePackageId = activePackage.id;
                 }
 
                 const priceSortedPackages = [...allPackagesWithPrice].sort((a, b) => a.currentPrice - b.currentPrice);
@@ -1949,7 +1974,10 @@ Please get in touch with me to discuss this further.`;
                     }
                 } else {
                     if (currentlyViewingService === 'Packages' && service !== 'Packages') {
-                        selectedPackageId = null;
+                        // If switching from Packages, clear package selection unless a service was already selected
+                        if(!allServices.slice(1).some(s => servicesState[s].selected)) {
+                             selectedPackageId = null;
+                        }
                     }
 
                     if (service !== 'Packages' && !servicesState[service].selected) {
@@ -1971,7 +1999,8 @@ Please get in touch with me to discuss this further.`;
                 } else {
                      servicesState['Packages'].selected = false;
                 }
-
+                
+                lastActivePackageId = null; // Reset package debounce on any tab click
                 renderTabs();
 
                 if(currentlyViewingService === 'Packages') {
@@ -1989,99 +2018,104 @@ Please get in touch with me to discuss this further.`;
             }
 
             function updateImageDisplay(activePackage = null) {
+                // Get common variables
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const vehicleImageMap = ppfImageMap[vehicleType];
+                const tintImageSrc = tintImageMap[vehicleType];
+                const coatingVideoSrc = coatingVideoMap[vehicleType];
+                const packageToDisplay = activePackage || packages.find(p => p.id === selectedPackageId);
+
                 // Reset styles first
                 coverageImageBase.style.filter = 'none';
                 coverageImageOverlay.style.display = 'none';
                 coverageImageOverlay.style.filter = 'none';
                 coverageImageOverlay.style.mixBlendMode = 'normal';
                 coverageImageOverlay.style.opacity = '1';
+                coverageImageTintOverlay.style.display = 'none';
+                coverageImageTintOverlay.style.opacity = '0';
+                coverageImageTintOverlay.src = '';
+                
+                // --- Determine Base Image ---
+                let baseImageSrc = vehicleImageMap['Partial']; // Default
+                if (packageToDisplay) {
+                    if (packageToDisplay.isF1) {
+                        if (vehicleImageMap.F1) {
+                            baseImageSrc = vehicleImageMap.F1;
+                        } else {
+                            // Fallback to 2-door composite logic
+                            baseImageSrc = vehicleImageMap['Full Car'];
+                            coverageImageOverlay.src = vehicleImageMap['Track Pack'];
+                            coverageImageOverlay.style.display = 'block';
+                            coverageImageOverlay.style.opacity = '0.7';
+                            coverageImageOverlay.style.mixBlendMode = 'lighten';
+                            coverageImageOverlay.style.filter = 'hue-rotate(180deg) saturate(3)';
+                        }
+                    } else if (packageToDisplay.ppfCoverage) {
+                        baseImageSrc = vehicleImageMap[packageToDisplay.ppfCoverage];
+                    }
+                } else if (servicesState['PPF'].selected && servicesState['PPF'].coverage) {
+                    baseImageSrc = vehicleImageMap[servicesState['PPF'].coverage];
+                } else if (servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change') {
+                    baseImageSrc = vehicleImageMap['Full Car']; // Vinyl uses full car
+                    const hue = servicesState['Vinyl'].option || 0;
+                    coverageImageBase.style.filter = `hue-rotate(${hue}deg)`;
+                }
+                coverageImageBase.src = baseImageSrc || vehicleImageMap['Partial'];
 
-                // Reset video overlay
-                coverageVideoContainer.style.display = 'none';
-                coverageVideoOverlay.pause();
-                coverageVideoOverlay.src = '';
 
+                // --- Tint Logic ---
+                const hasTint = (packageToDisplay && (packageToDisplay.tag === 'Tint' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id] && packageSelections[packageToDisplay.id]['Tint']))) ||
+                               (servicesState['Tint'].selected && servicesState['Tint'].coverage);
 
-                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                const vehicleImageMap = ppfImageMap[vehicleType];
-                const packageToDisplay = activePackage || packages.find(p => p.id === selectedPackageId);
+                if (hasTint && tintImageSrc) {
+                    const tintIndex = servicesState['Tint'].option !== null ? servicesState['Tint'].option : '1'; // Default to 35%
+                    coverageImageTintOverlay.src = tintImageSrc;
+                    coverageImageTintOverlay.style.display = 'block';
+                    coverageImageTintOverlay.style.opacity = tintOpacityMap[tintIndex] || '0.65';
+                }
+                // --- End Tint Logic ---
 
                 // --- Video Logic ---
-                const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || packageToDisplay.tag === 'Bundle')) ||
-                                   (servicesState['Coating'].selected && servicesState['Coating'].coverage === 'Paint');
+                const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id] && packageSelections[packageToDisplay.id]['Coating']))) ||
+                                 (servicesState['Coating'].selected && servicesState['Coating'].coverage);
 
-                const newVideoSrc = (hasCoating && coatingVideoMap[vehicleType]) ? coatingVideoMap[vehicleType] : null;
-
-                if (newVideoSrc) {
-                    if (coverageVideoOverlay.src !== newVideoSrc) {
-                        coverageVideoOverlay.src = newVideoSrc;
-                    }
+                if (hasCoating && coatingVideoSrc) {
                     coverageVideoContainer.style.display = 'block';
-                    if (coverageVideoOverlay.paused) {
-                        coverageVideoOverlay.play().catch(error => {
-                            // Catch AbortError silently. This is expected if the user moves the slider quickly.
+                    // Only change src if it's different
+                    if (coverageVideoOverlay.src !== coatingVideoSrc) { 
+                        coverageVideoOverlay.src = coatingVideoSrc;
+                    }
+                    // play() returns a promise, we can catch errors
+                    const playPromise = coverageVideoOverlay.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            // Ignore AbortError which is expected
+                            if (error.name !== 'AbortError') {
+                                console.error("Video play error:", error);
+                            }
                         });
                     }
                 } else {
+                    // Stop video and hide container
+                    coverageVideoContainer.style.display = 'none';
                     if (!coverageVideoOverlay.paused) {
                         coverageVideoOverlay.pause();
                     }
-                    coverageVideoContainer.style.display = 'none';
-                    if (coverageVideoOverlay.src) {
+                    if (coverageVideoOverlay.src) { // Only clear src if it's not already empty
                         coverageVideoOverlay.src = '';
                     }
                 }
                 // --- End Video Logic ---
-
-
-                if (packageToDisplay?.isF1) {
-                    if (vehicleImageMap.F1) {
-                        // Use pre-baked F1 image if it exists
-                        coverageImageBase.src = vehicleImageMap.F1;
-                    } else {
-                        // Fallback to 2-door composite logic
-                        coverageImageBase.src = vehicleImageMap['Full Car'];
-                        coverageImageOverlay.src = vehicleImageMap['Track Pack'];
-                        coverageImageOverlay.style.display = 'block';
-                        coverageImageOverlay.style.opacity = '0.7';
-                        coverageImageOverlay.style.mixBlendMode = 'add'; // Changed to add
-                        coverageImageOverlay.style.filter = 'hue-rotate(180deg) saturate(3)';
-                    }
-                    return;
-                }
-
-                if (packageToDisplay?.ppfCoverage) {
-                    coverageImageBase.src = vehicleImageMap[packageToDisplay.ppfCoverage] || vehicleImageMap['Partial'];
-                    return;
-                }
-
-                // Fallback to service-based logic for manual customization
-                const hasPPF = servicesState['PPF'].selected && servicesState['PPF'].coverage;
-                const hasVinyl = servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change';
-
-                if (hasPPF) {
-                    coverageImageBase.src = vehicleImageMap[servicesState['PPF'].coverage] || vehicleImageMap['Partial'];
-                    return;
-                }
-
-                if (hasVinyl) {
-                    coverageImageBase.src = vehicleImageMap['Full Car']; // Vinyl uses the full car image for hue rotation
-                    const hue = servicesState['Vinyl'].option || 0;
-                    coverageImageBase.style.filter = `hue-rotate(${hue}deg)`;
-                    return;
-                }
-
-                // Default image
-                coverageImageBase.src = vehicleImageMap['Partial'];
             }
 
 
             function selectPackage(packageId) {
                 const selection = packageSelections[packageId];
                 if (!selection) return;
-
-                initializeState();
+                
                 selectedPackageId = packageId;
+                lastActivePackageId = packageId;
+                initializeState(); // Reset everything first
 
                 Object.keys(selection).forEach(service => {
                     const serviceSelection = selection[service];
@@ -2143,6 +2177,7 @@ Please get in touch with me to discuss this further.`;
                         
                         const wasPackageSelected = !!selectedPackageId;
                         const previousService = currentlyViewingService;
+                        lastActivePackageId = null; // Reset package debounce
 
                         // Recalculate based on current state before resetting
                         if(wasPackageSelected) {
@@ -2151,6 +2186,7 @@ Please get in touch with me to discuss this further.`;
                             initializeState();
                             servicesState = tempState;
                             selectedPackageId = tempPkgId;
+                            lastActivePackageId = tempPkgId;
                         } else {
                             const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
                             const oldState = JSON.parse(JSON.stringify(servicesState));
