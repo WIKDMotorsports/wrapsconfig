@@ -1023,7 +1023,6 @@
             let currentStep = 1;
             let userFirstName = '';
             let selectedPackageId = null;
-            let lastActivePackageId = null; // Debounce slider image updates
 
             // --- PACKAGE SLIDER DATA ---
             const packages = [
@@ -1487,15 +1486,14 @@ Please get in touch with me to discuss this further.`;
                             slider.classList.toggle('illegal-tint', isIllegal);
                         }
                         
-                        slider.addEventListener('input', () => {
+                        slider.addEventListener('input', () => { // Changed from 'change' to 'input'
                             updateSliderView();
                             servicesState[service].option = slider.value; // Update state on input
                             updateImageDisplay(); // Update image on input
                         });
-                        slider.addEventListener('change', () => {
+                        slider.addEventListener('change', () => { // Keep 'change' for final calc
                              selectedPackageId = null;
                              calculateEstimate();
-                             // No need for updateImageDisplay here, 'input' handles it
                         });
                         updateSliderView();
                     } else {
@@ -1810,9 +1808,8 @@ Please get in touch with me to discuss this further.`;
                     activePackage = allPackagesWithPrice.sort((a, b) => a.currentPrice - b.currentPrice)[0];
                 }
                 
-                if (activePackage && activePackage.id !== lastActivePackageId) {
+                if (activePackage) {
                     updateImageDisplay(activePackage);
-                    lastActivePackageId = activePackage.id;
                 }
 
                 const priceSortedPackages = [...allPackagesWithPrice].sort((a, b) => a.currentPrice - b.currentPrice);
@@ -1905,14 +1902,41 @@ Please get in touch with me to discuss this further.`;
                         partsContent.classList.toggle('hidden');
                         toggleIcon.classList.toggle('rotate-180');
                     });
-                });
 
-                // Add event listeners to the new select buttons
-                container.querySelectorAll('.select-package-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
+                    // Add event listener for the "Select Package" button
+                    const selectBtn = packageCard.querySelector('.select-package-btn');
+                    selectBtn.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent card click from firing
                         const packageId = e.currentTarget.dataset.packageId;
                         selectPackage(packageId);
+                        
+                        // If user clicks "Select Package" on the *inactive* card, we also update the slider
+                        if (!isActiveCard && typeof pkg.currentPrice === 'number') {
+                            const budgetSlider = container.querySelector('#budget-slider');
+                            if (budgetSlider) {
+                                const newSliderValue = convertBudgetToSliderValue(pkg.currentPrice + 5);
+                                budgetSlider.value = newSliderValue;
+                            }
+                            // Re-render to make this card active
+                            renderPackageCards(container);
+                        }
                     });
+
+                    // Add click listener to the *inactive card* itself
+                    if (!isActiveCard && typeof pkg.currentPrice === 'number') {
+                        packageCard.style.cursor = 'pointer';
+                        packageCard.addEventListener('click', () => {
+                            const budgetSlider = container.querySelector('#budget-slider');
+                            if (budgetSlider) {
+                                const newSliderValue = convertBudgetToSliderValue(pkg.currentPrice + 5);
+                                budgetSlider.value = newSliderValue;
+                            }
+                            // Select the package to update the price breakdown
+                            selectPackage(pkg.id);
+                            // Re-render the cards to show the new active state
+                            renderPackageCards(container);
+                        });
+                    }
                 });
             }
 
@@ -1999,8 +2023,7 @@ Please get in touch with me to discuss this further.`;
                 } else {
                      servicesState['Packages'].selected = false;
                 }
-                
-                lastActivePackageId = null; // Reset package debounce on any tab click
+
                 renderTabs();
 
                 if(currentlyViewingService === 'Packages') {
@@ -2018,13 +2041,6 @@ Please get in touch with me to discuss this further.`;
             }
 
             function updateImageDisplay(activePackage = null) {
-                // Get common variables
-                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                const vehicleImageMap = ppfImageMap[vehicleType];
-                const tintImageSrc = tintImageMap[vehicleType];
-                const coatingVideoSrc = coatingVideoMap[vehicleType];
-                const packageToDisplay = activePackage || packages.find(p => p.id === selectedPackageId);
-
                 // Reset styles first
                 coverageImageBase.style.filter = 'none';
                 coverageImageOverlay.style.display = 'none';
@@ -2034,6 +2050,18 @@ Please get in touch with me to discuss this further.`;
                 coverageImageTintOverlay.style.display = 'none';
                 coverageImageTintOverlay.style.opacity = '0';
                 coverageImageTintOverlay.src = '';
+                coverageVideoContainer.style.display = 'none';
+                // Don't reset video src here, just pause it
+                if (!coverageVideoOverlay.paused) {
+                    coverageVideoOverlay.pause();
+                }
+
+
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const vehicleImageMap = ppfImageMap[vehicleType];
+                const tintImageSrc = tintImageMap[vehicleType];
+                const coatingVideoSrc = coatingVideoMap[vehicleType];
+                const packageToDisplay = activePackage || packages.find(p => p.id === selectedPackageId);
                 
                 // --- Determine Base Image ---
                 let baseImageSrc = vehicleImageMap['Partial']; // Default
@@ -2064,7 +2092,7 @@ Please get in touch with me to discuss this further.`;
 
 
                 // --- Tint Logic ---
-                const hasTint = (packageToDisplay && (packageToDisplay.tag === 'Tint' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id] && packageSelections[packageToDisplay.id]['Tint']))) ||
+                const hasTint = (packageToDisplay && (packageToDisplay.tag === 'Tint' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id]['Tint']))) ||
                                (servicesState['Tint'].selected && servicesState['Tint'].coverage);
 
                 if (hasTint && tintImageSrc) {
@@ -2076,33 +2104,34 @@ Please get in touch with me to discuss this further.`;
                 // --- End Tint Logic ---
 
                 // --- Video Logic ---
-                const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id] && packageSelections[packageToDisplay.id]['Coating']))) ||
+                const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id]['Coating']))) ||
                                  (servicesState['Coating'].selected && servicesState['Coating'].coverage);
 
                 if (hasCoating && coatingVideoSrc) {
                     coverageVideoContainer.style.display = 'block';
-                    // Only change src if it's different
-                    if (coverageVideoOverlay.src !== coatingVideoSrc) { 
+                    
+                    // ONLY set the source if it's not already set to the correct video
+                    if (coverageVideoOverlay.src.endsWith(coatingVideoSrc) === false) { 
+                        // Use endsWith because the browser might absolutize the URL
                         coverageVideoOverlay.src = coatingVideoSrc;
                     }
-                    // play() returns a promise, we can catch errors
-                    const playPromise = coverageVideoOverlay.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            // Ignore AbortError which is expected
-                            if (error.name !== 'AbortError') {
-                                console.error("Video play error:", error);
-                            }
-                        });
-                    }
-                } else {
-                    // Stop video and hide container
-                    coverageVideoContainer.style.display = 'none';
-                    if (!coverageVideoOverlay.paused) {
-                        coverageVideoOverlay.pause();
-                    }
-                    if (coverageVideoOverlay.src) { // Only clear src if it's not already empty
-                        coverageVideoOverlay.src = '';
+                    
+                    // Attempt to play only if it's paused.
+                    if (coverageVideoOverlay.paused) {
+                        // .play() returns a promise, which can be rejected if interrupted.
+                        // We catch it to prevent the console spam.
+                        const playPromise = coverageVideoOverlay.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                if (error.name === 'AbortError') {
+                                    // This is expected if the user moves the slider quickly.
+                                    // We can safely ignore it.
+                                } else {
+                                    // Log other unexpected errors.
+                                    console.error("Video play failed:", error);
+                                }
+                            });
+                        }
                     }
                 }
                 // --- End Video Logic ---
@@ -2114,7 +2143,6 @@ Please get in touch with me to discuss this further.`;
                 if (!selection) return;
                 
                 selectedPackageId = packageId;
-                lastActivePackageId = packageId;
                 initializeState(); // Reset everything first
 
                 Object.keys(selection).forEach(service => {
@@ -2177,7 +2205,6 @@ Please get in touch with me to discuss this further.`;
                         
                         const wasPackageSelected = !!selectedPackageId;
                         const previousService = currentlyViewingService;
-                        lastActivePackageId = null; // Reset package debounce
 
                         // Recalculate based on current state before resetting
                         if(wasPackageSelected) {
@@ -2186,7 +2213,6 @@ Please get in touch with me to discuss this further.`;
                             initializeState();
                             servicesState = tempState;
                             selectedPackageId = tempPkgId;
-                            lastActivePackageId = tempPkgId;
                         } else {
                             const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
                             const oldState = JSON.parse(JSON.stringify(servicesState));
