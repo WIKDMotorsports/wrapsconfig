@@ -81,6 +81,24 @@
             pointer-events: none;
         }
 
+        /* Added for video overlay */
+        #video-overlay-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            mix-blend-mode: screen; /* Changed from 'add' to 'screen' */
+            border-radius: 8px;
+        }
+        #coverage-video-overlay {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensures video aligns with image */
+            border-radius: 8px;
+        }
+
 
         #configurator-wrapper {
             flex: 1 1 60%;
@@ -626,7 +644,7 @@
             cursor: pointer;
             border-radius: 50%;
             border: 3px solid var(--color-surface);
-            margin-top: -8px; 
+            margin-top: -8px; /* Re-added for correct centering */
             transition: box-shadow 0.3s ease;
         }
         .tint-slider.illegal-tint::-webkit-slider-thumb {
@@ -757,6 +775,10 @@
         <div id="image-display-container">
             <img id="coverage-image-base" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
             <img id="coverage-image-overlay" src="" alt="" style="display: none;">
+            <!-- Wrapped video in a container for blend mode -->
+            <div id="video-overlay-container" style="display: none;">
+                <video id="coverage-video-overlay" loop muted autoplay playsinline></video>
+            </div>
         </div>
 
         <div id="configurator-wrapper">
@@ -939,10 +961,41 @@
             };
             
             const ppfImageMap = {
-                'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859', // Default/Partial Image
-                'Full Front': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Full_Front.png?v=1757627749',
-                'Track Pack': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Track_Pack.png?v=1757627748',
-                'Full Car': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Full_coverage.png?v=1757627748'
+                '2Door': {
+                    'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859',
+                    'Full Front': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Full_Front.png?v=1757627749',
+                    'Track Pack': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Track_Pack.png?v=1757627748',
+                    'Full Car': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Full_coverage.png?v=1757627748',
+                    'F1': null // 2Door will use composite logic
+                },
+                '4Door': {
+                    'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/4DoorBase.png?v=1762880085',
+                    'Full Front': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/4DoorFront.png?v=1762880085',
+                    'Track Pack': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/4DoorTrackPack.png?v=1762880085',
+                    'Full Car': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/4DoorFull.png?v=1762880085',
+                    'F1': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/4DoorF1.png?v=1762880870'
+                },
+                'SUV': {
+                    'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/CadillacSUVBase.png?v=1762880048',
+                    'Full Front': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/CadillacSUVFront.png?v=1762880048',
+                    'Track Pack': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/CadillacSUVTrack.png?v=1762880048',
+                    'Full Car': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/CadillacSUVFull.png?v=1762880048',
+                    'F1': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/CadillacSUVF1.png?v=1762880882'
+                },
+                'Oversize': {
+                    'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/F450Base.png?v=1762880020',
+                    'Full Front': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/F450Front.png?v=1762880020',
+                    'Track Pack': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/F450Track.png?v=1762880020',
+                    'Full Car': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/F450Full.png?v=1762880020',
+                    'F1': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/F450F1.png?v=1762880935'
+                }
+            };
+
+            const coatingVideoMap = {
+                '4Door': 'https://cdn.shopify.com/videos/c/o/v/a20df85da0cf437bb7ab0d781db40acc.mp4',
+                'SUV': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4',
+                'Oversize': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4', // User provided same link for SUV and Oversize
+                '2Door': null // No video provided for 2Door
             };
 
             const allServices = ['Packages', 'PPF', 'Tint', 'Coating', 'Vinyl'];
@@ -1021,7 +1074,7 @@
                         { name: 'Full Glass Coating', price: 255 },
                         { name: 'Interior Coating', price: 415 },
                         { name: 'Trim Coating', price: 'Included' },
-                        { name: 'PPF, Tint, & Coating Bundle', price: -395 },
+                        { name: 'Tint & Coating Bundle', price: -395 },
                         { name: 'Coating Bundle', price: -150 }
                     ]
                     // Add breakdowns for 4Door, SUV etc. if they differ in components
@@ -1067,6 +1120,8 @@
             const thankYouContainer = document.getElementById('thank-you-container');
             const coverageImageBase = document.getElementById('coverage-image-base');
             const coverageImageOverlay = document.getElementById('coverage-image-overlay');
+            const coverageVideoOverlay = document.getElementById('coverage-video-overlay'); // Added
+            const coverageVideoContainer = document.getElementById('video-overlay-container'); // Added
             const submitFormBtn = document.getElementById('submit-form-btn');
             const callLinks = document.querySelectorAll('.call-link');
             const summaryBreakdown = document.getElementById('summary-breakdown');
@@ -1332,9 +1387,12 @@ Please get in touch with me to discuss this further.`;
                 if(selectEl){
                     selectEl.addEventListener('change', (e) => {
                         selectedPackageId = null;
+                        servicesState[service].selected = true;
+                        servicesState['Packages'].selected = false;
                         servicesState[service].coverage = e.target.value;
                         servicesState[service].addons = [];
                         servicesState[service].option = null;
+                        renderTabs();
                         renderAddons();
                         updateImageDisplay();
                         calculateEstimate();
@@ -1522,8 +1580,7 @@ Please get in touch with me to discuss this further.`;
             }
 
             function calculateEstimate() {
-                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                const nonPackageServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
+                 const nonPackageServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
 
                 if (currentlyViewingService === 'Packages' && !nonPackageServicesSelected && !selectedPackageId) {
                     priceDisplay.textContent = '$0.00';
@@ -1532,11 +1589,13 @@ Please get in touch with me to discuss this further.`;
                     toggleSummaryBtn.classList.add('hidden-field');
                     summaryBreakdown.classList.remove('expanded');
                     estimateSummaryEl.classList.add('hidden-field');
+                    selectionsNextBtn.disabled = true;
                     return;
                 }
                 
                 estimateSummaryEl.classList.remove('hidden-field');
                 
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
                 let total = 0;
                 let isConsultationNeeded = false;
                 userSelections.selectedItems = [];
@@ -1554,6 +1613,14 @@ Please get in touch with me to discuss this further.`;
                              } else {
                                 // Fallback for simple packages without detailed breakdown
                                  userSelections.selectedItems.push({ name: pkg.name, price: price });
+                                 // Add discounts from package data if they exist
+                                 pkg.discounts?.forEach(discountName => {
+                                    const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
+                                    userSelections.selectedItems.push({ 
+                                        name: discountName, 
+                                        price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
+                                    });
+                                 });
                              }
                         } else {
                             isConsultationNeeded = true;
@@ -1644,10 +1711,10 @@ Please get in touch with me to discuss this further.`;
                     userSelections.selectedItems.forEach(item => {
                         const li = document.createElement('li');
                         const isDiscount = typeof item.price === 'number' && item.price < 0;
-                        const isFreebie = typeof item.price === 'number' && item.price === 0;
+                        const isFreebie = (typeof item.price === 'number' && item.price === 0) || item.price === 'Included';
 
                         let priceText = 'Included';
-                        if (typeof item.price === 'string') {
+                        if (typeof item.price === 'string' && item.price !== 'Included') {
                            priceText = item.price;
                         } else if (isDiscount) {
                             priceText = `-$${Math.abs(item.price).toFixed(2)}`;
@@ -1886,7 +1953,7 @@ Please get in touch with me to discuss this further.`;
                     }
 
                     if (service !== 'Packages' && !servicesState[service].selected) {
-                        servicesState[service].selected = true;
+                         // Don't auto-select. Selection happens on coverage choice.
                     } else if (service === 'Packages') {
                         // Deselect other services when going back to packages
                         initializeState();
@@ -1929,20 +1996,62 @@ Please get in touch with me to discuss this further.`;
                 coverageImageOverlay.style.mixBlendMode = 'normal';
                 coverageImageOverlay.style.opacity = '1';
 
+                // Reset video overlay
+                coverageVideoContainer.style.display = 'none';
+                coverageVideoOverlay.pause();
+                coverageVideoOverlay.src = '';
+
+
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const vehicleImageMap = ppfImageMap[vehicleType];
                 const packageToDisplay = activePackage || packages.find(p => p.id === selectedPackageId);
 
+                // --- Video Logic ---
+                const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || packageToDisplay.tag === 'Bundle')) ||
+                                   (servicesState['Coating'].selected && servicesState['Coating'].coverage === 'Paint');
+
+                const newVideoSrc = (hasCoating && coatingVideoMap[vehicleType]) ? coatingVideoMap[vehicleType] : null;
+
+                if (newVideoSrc) {
+                    if (coverageVideoOverlay.src !== newVideoSrc) {
+                        coverageVideoOverlay.src = newVideoSrc;
+                    }
+                    coverageVideoContainer.style.display = 'block';
+                    if (coverageVideoOverlay.paused) {
+                        coverageVideoOverlay.play().catch(error => {
+                            // Catch AbortError silently. This is expected if the user moves the slider quickly.
+                        });
+                    }
+                } else {
+                    if (!coverageVideoOverlay.paused) {
+                        coverageVideoOverlay.pause();
+                    }
+                    coverageVideoContainer.style.display = 'none';
+                    if (coverageVideoOverlay.src) {
+                        coverageVideoOverlay.src = '';
+                    }
+                }
+                // --- End Video Logic ---
+
+
                 if (packageToDisplay?.isF1) {
-                    coverageImageBase.src = ppfImageMap['Full Car'];
-                    coverageImageOverlay.src = ppfImageMap['Track Pack'];
-                    coverageImageOverlay.style.display = 'block';
-                    coverageImageOverlay.style.opacity = '0.7';
-                    coverageImageOverlay.style.mixBlendMode = 'lighten';
-                    coverageImageOverlay.style.filter = 'hue-rotate(180deg) saturate(3)';
+                    if (vehicleImageMap.F1) {
+                        // Use pre-baked F1 image if it exists
+                        coverageImageBase.src = vehicleImageMap.F1;
+                    } else {
+                        // Fallback to 2-door composite logic
+                        coverageImageBase.src = vehicleImageMap['Full Car'];
+                        coverageImageOverlay.src = vehicleImageMap['Track Pack'];
+                        coverageImageOverlay.style.display = 'block';
+                        coverageImageOverlay.style.opacity = '0.7';
+                        coverageImageOverlay.style.mixBlendMode = 'add'; // Changed to add
+                        coverageImageOverlay.style.filter = 'hue-rotate(180deg) saturate(3)';
+                    }
                     return;
                 }
 
                 if (packageToDisplay?.ppfCoverage) {
-                    coverageImageBase.src = ppfImageMap[packageToDisplay.ppfCoverage] || ppfImageMap['Partial'];
+                    coverageImageBase.src = vehicleImageMap[packageToDisplay.ppfCoverage] || vehicleImageMap['Partial'];
                     return;
                 }
 
@@ -1951,26 +2060,26 @@ Please get in touch with me to discuss this further.`;
                 const hasVinyl = servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change';
 
                 if (hasPPF) {
-                    coverageImageBase.src = ppfImageMap[servicesState['PPF'].coverage] || ppfImageMap['Partial'];
+                    coverageImageBase.src = vehicleImageMap[servicesState['PPF'].coverage] || vehicleImageMap['Partial'];
                     return;
                 }
 
                 if (hasVinyl) {
-                    coverageImageBase.src = ppfImageMap['Full Car']; // Vinyl uses the full car image for hue rotation
+                    coverageImageBase.src = vehicleImageMap['Full Car']; // Vinyl uses the full car image for hue rotation
                     const hue = servicesState['Vinyl'].option || 0;
                     coverageImageBase.style.filter = `hue-rotate(${hue}deg)`;
                     return;
                 }
 
                 // Default image
-                coverageImageBase.src = 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859';
+                coverageImageBase.src = vehicleImageMap['Partial'];
             }
 
 
             function selectPackage(packageId) {
                 const selection = packageSelections[packageId];
                 if (!selection) return;
-                
+
                 initializeState();
                 selectedPackageId = packageId;
 
@@ -2044,9 +2153,10 @@ Please get in touch with me to discuss this further.`;
                             selectedPackageId = tempPkgId;
                         } else {
                             const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
+                            const oldState = JSON.parse(JSON.stringify(servicesState));
                             initializeState();
                              if(wereServicesSelected) {
-                                servicesState[previousService].selected = true;
+                                servicesState = oldState;
                                 currentlyViewingService = previousService;
                             } else {
                                 servicesState['Packages'].selected = true;
@@ -2134,4 +2244,3 @@ Please get in touch with me to discuss this further.`;
     </script>
 </body>
 </html>
-
