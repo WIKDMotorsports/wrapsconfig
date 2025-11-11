@@ -108,6 +108,55 @@
             flex: 1 1 60%;
             min-width: 0;
         }
+        
+        /* --- Ticker Styles --- */
+        #ticker-container {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+            pointer-events: none;
+        }
+        .ticker-item {
+            font-family: var(--font-heading);
+            font-size: 0.8rem; /* Use a small font size */
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+            animation: ticker-fade-in-up 0.5s ease forwards, ticker-fade-out 0.5s ease 3.5s forwards;
+        }
+        .ticker-item.add {
+            color: var(--color-success);
+        }
+        .ticker-item.remove {
+            color: var(--color-danger);
+        }
+
+        @keyframes ticker-fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes ticker-fade-out {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        /* --- End Ticker Styles --- */
+
 
         .panel {
             background-color: var(--color-surface);
@@ -789,6 +838,8 @@
             <div id="video-overlay-container" style="display: none;">
                 <video id="coverage-video-overlay" loop muted autoplay playsinline></video>
             </div>
+            <!-- Ticker Container -->
+            <div id="ticker-container"></div>
         </div>
 
         <div id="configurator-wrapper">
@@ -1023,6 +1074,8 @@
             let currentStep = 1;
             let userFirstName = '';
             let selectedPackageId = null;
+            let currentActivePackageId = null; // For ticker
+            let lastBudget = 0; // For ticker
 
             // --- PACKAGE SLIDER DATA ---
             const packages = [
@@ -1758,6 +1811,43 @@ Please get in touch with me to discuss this further.`;
                     toggleSummaryBtn.classList.remove('expanded');
                 }
             }
+
+            // --- Ticker Functions ---
+            function getServicesFromPackage(packageId) {
+                const services = new Set();
+                const selection = packageSelections[packageId];
+                if (!selection) return services;
+
+                if (selection.PPF) services.add(selection.PPF.coverage + " PPF");
+                if (selection.Tint) {
+                    services.add(selection.Tint.coverage + " Tint");
+                    selection.Tint.addons?.forEach(addon => services.add(addon));
+                }
+                if (selection.Coating) {
+                    services.add(selection.Coating.option + " Coating");
+                    selection.Coating.addons?.forEach(addon => services.add(addon));
+                }
+                return services;
+            }
+
+            function displayTickerItems(serviceSet, type) {
+                const tickerContainer = document.getElementById('ticker-container');
+                let delay = 0;
+                serviceSet.forEach(serviceName => {
+                    setTimeout(() => {
+                        const item = document.createElement('div');
+                        item.className = 'ticker-item ' + type;
+                        item.textContent = (type === 'add' ? '+ ' : '- ') + serviceName;
+                        tickerContainer.appendChild(item);
+                        setTimeout(() => { 
+                            // item.style.animation = 'ticker-fade-out 0.5s ease forwards';
+                            item.addEventListener('animationend', () => item.remove());
+                        }, 3500); // 3.5-second display time + 0.5s fade out
+                    }, delay);
+                    delay += 200; // Stagger each item by 200ms
+                });
+            }
+            // --- End Ticker Functions ---
             
             // --- PACKAGE SLIDER RENDER FUNCTIONS ---
              function renderPackageSliderLabels(container) {
@@ -1786,7 +1876,12 @@ Please get in touch with me to discuss this further.`;
                 
                 if(!budgetSlider || !packageContainer) return;
 
+                const oldPackageId = currentActivePackageId; // Get old package ID for ticker
+
                 const budget = convertSliderValueToBudget(parseInt(budgetSlider.value));
+                const isBudgetIncreasing = budget > lastBudget;
+                lastBudget = budget;
+
                 const selectedVehicleType = document.querySelector('input[name="vehicle"]:checked').value;
                 
                 packageContainer.innerHTML = '';
@@ -1808,6 +1903,21 @@ Please get in touch with me to discuss this further.`;
                     activePackage = allPackagesWithPrice.sort((a, b) => a.currentPrice - b.currentPrice)[0];
                 }
                 
+                // --- Ticker Logic ---
+                const newPackageId = activePackage.id;
+                if (oldPackageId && oldPackageId !== newPackageId) {
+                    const oldServices = getServicesFromPackage(oldPackageId);
+                    const newServices = getServicesFromPackage(newPackageId);
+                    const added = new Set([...newServices].filter(x => !oldServices.has(x)));
+                    const removed = new Set([...oldServices].filter(x => !newServices.has(x)));
+                    displayTickerItems(added, 'add');
+                    if (!isBudgetIncreasing) {
+                        displayTickerItems(removed, 'remove');
+                    }
+                }
+                currentActivePackageId = newPackageId; // Update global state for next run
+                // --- End Ticker Logic ---
+
                 if (activePackage) {
                     updateImageDisplay(activePackage);
                 }
@@ -2194,6 +2304,7 @@ Please get in touch with me to discuss this further.`;
                 // Default to packages view
                 servicesState['Packages'].selected = true;
                 currentlyViewingService = 'Packages';
+                lastBudget = convertSliderValueToBudget(200); // Init lastBudget
 
                 renderTabs();
                 renderPackagesView(dynamicServicesContainer);
