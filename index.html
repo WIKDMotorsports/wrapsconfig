@@ -126,7 +126,7 @@
             font-size: 0.8rem; /* Use a small font size */
             font-weight: 600;
             text-shadow: 0 1px 3px rgba(0,0,0,0.7);
-            animation: ticker-fade-in-up 0.5s ease forwards, ticker-fade-out 0.5s ease 3.5s forwards;
+            animation: ticker-fade-in-up 0.5s ease forwards;
         }
         .ticker-item.add {
             color: var(--color-success);
@@ -1832,17 +1832,27 @@ Please get in touch with me to discuss this further.`;
 
             function displayTickerItems(serviceSet, type) {
                 const tickerContainer = document.getElementById('ticker-container');
+                const maxTickerItems = 12;
                 let delay = 0;
+
                 serviceSet.forEach(serviceName => {
                     setTimeout(() => {
+                        // Check if ticker is full
+                        if (tickerContainer.children.length >= maxTickerItems) {
+                            // Remove the oldest item (the first child)
+                            tickerContainer.removeChild(tickerContainer.children[0]);
+                        }
+
                         const item = document.createElement('div');
                         item.className = 'ticker-item ' + type;
                         item.textContent = (type === 'add' ? '+ ' : '- ') + serviceName;
                         tickerContainer.appendChild(item);
+                        
+                        // Set a timeout to remove the item after its animation
                         setTimeout(() => { 
-                            // item.style.animation = 'ticker-fade-out 0.5s ease forwards';
+                            item.style.animation = 'ticker-fade-out 0.5s ease forwards';
                             item.addEventListener('animationend', () => item.remove());
-                        }, 3500); // 3.5-second display time + 0.5s fade out
+                        }, 3500); // 3.5-second display time
                     }, delay);
                     delay += 200; // Stagger each item by 200ms
                 });
