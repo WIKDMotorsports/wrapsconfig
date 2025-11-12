@@ -1874,7 +1874,7 @@ Please get in touch with me to discuss this further.`;
 
             function displayTickerItems(serviceSet, type) {
                 const tickerContainer = document.getElementById('ticker-container');
-                const maxTickerItems = 12;
+                const maxTickerItems = 5; // Changed from 12 to 5
                 let delay = 0;
 
                 serviceSet.forEach(serviceName => {
@@ -1962,8 +1962,10 @@ Please get in touch with me to discuss this further.`;
                     const newServices = getServicesFromPackage(newPackageId);
                     const added = new Set([...newServices].filter(x => !oldServices.has(x)));
                     const removed = new Set([...oldServices].filter(x => !newServices.has(x)));
-                    displayTickerItems(added, 'add');
-                    if (!isBudgetIncreasing) {
+                    
+                    if (isBudgetIncreasing) {
+                        displayTickerItems(added, 'add');
+                    } else {
                         displayTickerItems(removed, 'remove');
                     }
                 }
@@ -2343,35 +2345,35 @@ Please get in touch with me to discuss this further.`;
             function selectPackage(packageId) {
                 const selection = packageSelections[packageId];
                 if (!selection) return;
-
+                
                 // --- Ticker Logic on Select ---
                 const oldServices = getServicesFromPackage(currentActivePackageId);
                 const newServices = getServicesFromPackage(packageId);
                 const added = new Set([...newServices].filter(x => !oldServices.has(x)));
                 const removed = new Set([...oldServices].filter(x => !newServices.has(x)));
-                displayTickerItems(added, 'add');
-                // Only show removed if the new package price is lower
+
                 const oldPkg = packages.find(p => p.id === currentActivePackageId);
                 const newPkg = packages.find(p => p.id === packageId);
                 const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                if(oldPkg && newPkg && newPkg.prices[vehicleType] < oldPkg.prices[vehicleType]) {
+
+                let isPriceIncreasing = true; // Assume price is increasing if there's no old package
+                if(oldPkg && newPkg && typeof newPkg.prices[vehicleType] === 'number' && typeof oldPkg.prices[vehicleType] === 'number') {
+                    if (newPkg.prices[vehicleType] < oldPkg.prices[vehicleType]) {
+                        isPriceIncreasing = false;
+                    }
+                }
+                
+                if (isPriceIncreasing) {
+                    displayTickerItems(added, 'add');
+                } else {
                     displayTickerItems(removed, 'remove');
                 }
+                
                 currentActivePackageId = packageId; // Update active package for ticker
                 // --- End Ticker Logic ---
 
-                // Clear previous selections *without* clearing selectedPackageId
-                initializeState();
-                selectedPackageId = packageId; // Restore it
-
-                Object.keys(selection).forEach(service => {
-                    const serviceSelection = selection[service];
-                    servicesState[service] = {
-                        ...servicesState[service], // Keep default structure
-                        ...serviceSelection
-                    };
-                });
-                
+                selectedPackageId = packageId;
+                initializeState(); // Reset everything first
                 // Keep viewing the Packages tab
                 servicesState['Packages'].selected = true;
                 currentlyViewingService = 'Packages';
