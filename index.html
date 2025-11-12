@@ -103,6 +103,14 @@
             pointer-events: none;
             border-radius: 8px;
             overflow: hidden; /* Ensure video respects border radius */
+            
+            /* Mask properties */
+            -webkit-mask-size: contain;
+            mask-size: contain;
+            -webkit-mask-position: center;
+            mask-position: center;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
         }
 
         #video-overlay-container {
@@ -1580,6 +1588,7 @@ Please get in touch with me to discuss this further.`;
                         }
                         
                         slider.addEventListener('input', () => { // Changed from 'change' to 'input'
+                            selectedPackageId = null;
                             updateSliderView();
                             servicesState[service].option = slider.value; // Update state on input
                             updateImageDisplay(); // Update image on input
@@ -2265,6 +2274,13 @@ Please get in touch with me to discuss this further.`;
                 }
                 coverageImageBase.src = baseImageSrc || vehicleImageMap['Partial'];
 
+                // --- Set Mask ---
+                const maskUrl = `url("${coverageImageBase.src}")`;
+                coveragePolishVideoContainer.style.webkitMaskImage = maskUrl;
+                coveragePolishVideoContainer.style.maskImage = maskUrl;
+                coverageVideoContainer.style.webkitMaskImage = maskUrl;
+                coverageVideoContainer.style.maskImage = maskUrl;
+
 
                 // --- Tint Logic ---
                 const hasTint = (packageToDisplay && (packageToDisplay.tag === 'Tint' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id]['Tint']))) ||
@@ -2372,8 +2388,36 @@ Please get in touch with me to discuss this further.`;
                 currentActivePackageId = packageId; // Update active package for ticker
                 // --- End Ticker Logic ---
 
-                selectedPackageId = packageId;
-                initializeState(); // Reset everything first
+                // selectedPackageId = packageId; // This was the bug. It needs to be set *after* clearing.
+                
+                // Clear old *service* selections first, but keep 'Packages' tab selected
+                initializeState(); // This clears selectedPackageId, which is bad.
+                
+                // --- BUG FIX ---
+                // Manually clear all individual service states.
+                allServices.forEach(service => {
+                    if (service === 'Packages') return; // Don't clear the 'Packages' tab state
+                    servicesState[service] = {
+                        selected: false,
+                        coverage: '',
+                        addons: [],
+                        option: null
+                    };
+                });
+                
+                // Set the new selectedPackageId
+                selectedPackageId = packageId; // This must be set *before* calculateEstimate()
+                // --- END BUG FIX ---
+
+
+                Object.keys(selection).forEach(service => {
+                    const serviceSelection = selection[service];
+                    servicesState[service] = {
+                        ...servicesState[service], // Keep default structure
+                        ...serviceSelection
+                    };
+                });
+                
                 // Keep viewing the Packages tab
                 servicesState['Packages'].selected = true;
                 currentlyViewingService = 'Packages';
