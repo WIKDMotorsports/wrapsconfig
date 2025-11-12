@@ -730,7 +730,9 @@
             height: 20px;
             background: var(--color-primary);
             cursor: pointer;
-            border-radius: 50%;
+            /* border-radius: 50%; */ /* REMOVED */
+            border-radius: 0; /* ADDED to override */
+            clip-path: polygon(50% 100%, 0 0, 100% 0); /* ADDED for triangle shape */
             border: 3px solid var(--color-surface);
             margin-top: -8px; 
             transition: box-shadow 0.3s ease;
@@ -744,7 +746,9 @@
             height: 20px;
             background: var(--color-primary);
             cursor: pointer;
-            border-radius: 50%;
+            /* border-radius: 50%; */ /* REMOVED */
+            border-radius: 0; /* ADDED to override */
+            clip-path: polygon(50% 100%, 0 0, 100% 0); /* ADDED for triangle shape */
             border: 0; /* Use box-shadow for border */
             box-shadow: 0 0 0 3px var(--color-surface);
             transition: box-shadow 0.3s ease;
