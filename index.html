@@ -72,6 +72,10 @@
             border-radius: 8px;
             transition: all 0.3s ease;
             object-fit: contain;
+            position: relative; /* Establish stacking context */
+        }
+        #coverage-image-base {
+            z-index: 10; /* Image base is on top of ticker */
         }
         #coverage-image-overlay, #coverage-image-tint-overlay {
             position: absolute;
@@ -80,24 +84,40 @@
             width: 100%;
             pointer-events: none;
         }
+        #coverage-image-overlay {
+            z-index: 15;
+        }
         #coverage-image-tint-overlay {
             mix-blend-mode: overlay;
             opacity: 0;
+            z-index: 20;
         }
 
-        /* Added for video overlay */
-        #video-overlay-container {
+        /* Added for video overlays */
+        #video-overlay-container, #polish-video-overlay-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            mix-blend-mode: screen; /* Correct blend mode for this effect */
             border-radius: 8px;
             overflow: hidden; /* Ensure video respects border radius */
         }
-        #coverage-video-overlay {
+
+        #video-overlay-container {
+            mix-blend-mode: screen; /* Correct blend mode for this effect */
+            z-index: 25;
+        }
+
+        #polish-video-overlay-container {
+            mix-blend-mode: screen; /* Changed from 'add' to 'screen' */
+            z-index: 22; /* Between tint and coating */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #coverage-video-overlay, #coverage-polish-video-overlay {
             width: 100%;
             height: 100%;
             object-fit: cover; /* Cover the container */
@@ -114,7 +134,7 @@
             position: absolute;
             top: 1rem;
             left: 1rem;
-            z-index: 100;
+            z-index: 5; /* Behind the base image (z-index: 10) */
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -831,15 +851,19 @@
     <div class="widget-container">
         <!-- Image Display Area -->
         <div id="image-display-container">
+            <!-- Ticker Container -->
+            <div id="ticker-container"></div>
             <img id="coverage-image-base" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
             <img id="coverage-image-overlay" src="" alt="" style="display: none;">
             <img id="coverage-image-tint-overlay" src="" alt="" style="display: none;">
+            <!-- NEW Polish Video Layer -->
+            <div id="polish-video-overlay-container" style="display: none;">
+                <video id="coverage-polish-video-overlay" loop muted autoplay playsinline></video>
+            </div>
             <!-- Wrapped video in a container for blend mode -->
             <div id="video-overlay-container" style="display: none;">
                 <video id="coverage-video-overlay" loop muted autoplay playsinline></video>
             </div>
-            <!-- Ticker Container -->
-            <div id="ticker-container"></div>
         </div>
 
         <div id="configurator-wrapper">
@@ -1066,6 +1090,20 @@
                 'SUV': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4',
                 'Oversize': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4'
             };
+            
+            const polishVideoMap = {
+                '4Door': 'https://cdn.shopify.com/videos/c/o/v/ed67ef672dfd4c178ab388dd4fff75b1.mp4',
+                'SUV': 'https://cdn.shopify.com/videos/c/o/v/0e09468d513a4949916b2d6b0f5f62cf.mp4',
+                'Oversize': 'https://cdn.shopify.com/videos/c/o/v/4bb677215ca345519f14a50e8b3c8742.mp4',
+                '2Door': null // No video for 2-door yet
+            };
+
+            const polishOpacityMap = {
+                '1 Step Polish': '0.5',  // 50%
+                '2 Step Polish/PC': '0.75', // 75%
+                '3+ Step Polish/PC': '1'    // 100%
+            };
+
 
             const allServices = ['Packages', 'PPF', 'Tint', 'Coating', 'Vinyl'];
             let servicesState = {};
@@ -1192,8 +1230,10 @@
             const coverageImageBase = document.getElementById('coverage-image-base');
             const coverageImageOverlay = document.getElementById('coverage-image-overlay');
             const coverageImageTintOverlay = document.getElementById('coverage-image-tint-overlay');
-            const coverageVideoOverlay = document.getElementById('coverage-video-overlay'); // Added
-            const coverageVideoContainer = document.getElementById('video-overlay-container'); // Added
+            const coverageVideoOverlay = document.getElementById('coverage-video-overlay');
+            const coverageVideoContainer = document.getElementById('video-overlay-container');
+            const coveragePolishVideoOverlay = document.getElementById('coverage-polish-video-overlay');
+            const coveragePolishVideoContainer = document.getElementById('polish-video-overlay-container');
             const submitFormBtn = document.getElementById('submit-form-btn');
             const callLinks = document.querySelectorAll('.call-link');
             const summaryBreakdown = document.getElementById('summary-breakdown');
@@ -1565,6 +1605,7 @@ Please get in touch with me to discuss this further.`;
                             input.addEventListener('change', (e) => {
                                 selectedPackageId = null;
                                 servicesState[service].option = e.target.value;
+                                updateImageDisplay(); // Update for polish video
                                 calculateEstimate();
                             });
                         });
@@ -1595,6 +1636,7 @@ Please get in touch with me to discuss this further.`;
                             } else {
                                 servicesState[service].addons = servicesState[service].addons.filter(a => a !== addonName);
                             }
+                            updateImageDisplay(); // Update for polish/coating video
                             calculateEstimate();
                         });
                     });
@@ -2171,9 +2213,15 @@ Please get in touch with me to discuss this further.`;
                 coverageImageTintOverlay.style.opacity = '0';
                 coverageImageTintOverlay.src = '';
                 coverageVideoContainer.style.display = 'none';
+                coveragePolishVideoContainer.style.display = 'none';
+                coveragePolishVideoContainer.style.opacity = '0';
+
                 // Don't reset video src here, just pause it
                 if (!coverageVideoOverlay.paused) {
                     coverageVideoOverlay.pause();
+                }
+                if (!coveragePolishVideoOverlay.paused) {
+                    coveragePolishVideoOverlay.pause();
                 }
 
 
@@ -2181,6 +2229,7 @@ Please get in touch with me to discuss this further.`;
                 const vehicleImageMap = ppfImageMap[vehicleType];
                 const tintImageSrc = tintImageMap[vehicleType];
                 const coatingVideoSrc = coatingVideoMap[vehicleType];
+                const polishVideoSrc = polishVideoMap[vehicleType];
                 const packageToDisplay = activePackage || packages.find(p => p.id === selectedPackageId);
                 
                 // --- Determine Base Image ---
@@ -2223,7 +2272,36 @@ Please get in touch with me to discuss this further.`;
                 }
                 // --- End Tint Logic ---
 
-                // --- Video Logic ---
+                // --- Polish Video Logic ---
+                let polishOption = null;
+                if (packageToDisplay && packageSelections[packageToDisplay.id]['Coating']) {
+                    polishOption = packageSelections[packageToDisplay.id]['Coating'].option;
+                } else if (servicesState['Coating'].selected && servicesState['Coating'].coverage === 'Paint') {
+                    polishOption = servicesState['Coating'].option;
+                }
+
+                if (polishOption && polishVideoSrc && polishOpacityMap[polishOption]) {
+                    coveragePolishVideoContainer.style.display = 'block';
+                    coveragePolishVideoContainer.style.opacity = polishOpacityMap[polishOption];
+
+                    if (coveragePolishVideoOverlay.src.endsWith(polishVideoSrc) === false) {
+                        coveragePolishVideoOverlay.src = polishVideoSrc;
+                    }
+                    if (coveragePolishVideoOverlay.paused) {
+                        const playPromise = coveragePolishVideoOverlay.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                if (error.name !== 'AbortError') {
+                                    console.error("Polish video play failed:", error);
+                                }
+                            });
+                        }
+                    }
+                }
+                // --- End Polish Video Logic ---
+
+
+                // --- Coating Video Logic ---
                 const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id]['Coating']))) ||
                                  (servicesState['Coating'].selected && servicesState['Coating'].coverage);
 
