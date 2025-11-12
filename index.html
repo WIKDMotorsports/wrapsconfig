@@ -111,7 +111,7 @@
         }
 
         #polish-video-overlay-container {
-            mix-blend-mode: screen; /* Changed from 'add' to 'screen' */
+            mix-blend-mode: screen; 
             z-index: 22; /* Between tint and coating */
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -1026,13 +1026,13 @@
                     'Vinyl': { 'Color Change': { price: 3495.00 }, 'Custom Graphic': { price: 'Call For Free Consultation' } }
                 },
                 '4Door': {
-                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 7095.00 } },
+                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 7295.00 } }, // Price corrected
                     'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 595.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
                     'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1195.00, '2 Step Polish/PC': 1545.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00 } },
                     'Vinyl': { 'Color Change': { price: 3995.00 }, 'Custom Graphic': { price: 'Call For Free Consultation' } }
                 },
                 'SUV': {
-                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 7895.00 } },
+                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 7995.00 } }, // Price corrected
                     'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 645.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
                     'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 1395.00, '2 Step Polish/PC': 1795.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 115.00 } },
                     'Vinyl': { 'Color Change': { price: 4295.00 }, 'Custom Graphic': { price: 'Call For Free Consultation' } }
@@ -1101,7 +1101,7 @@
             const polishOpacityMap = {
                 '1 Step Polish': '0.5',  // 50%
                 '2 Step Polish/PC': '0.75', // 75%
-                '3+ Step Polish/PC': '1'    // 100%
+                '3+ Step Polish/PC': '1.0'    // 100%
             };
 
 
@@ -1441,7 +1441,7 @@ Please get in touch with me to discuss this further.`;
             // --- STATE MANAGEMENT ---
             function initializeState() {
                 servicesState = {};
-                selectedPackageId = null;
+                // selectedPackageId = null; // Do not reset this here, it's handled by selectPackage
                 allServices.forEach(service => {
                     servicesState[service] = {
                         selected: false,
@@ -2070,7 +2070,6 @@ Please get in touch with me to discuss this further.`;
                     selectBtn.addEventListener('click', (e) => {
                         e.stopPropagation(); // Prevent card click from firing
                         const packageId = e.currentTarget.dataset.packageId;
-                        selectPackage(packageId);
                         
                         // If user clicks "Select Package" on the *inactive* card, we also update the slider
                         if (!isActiveCard && typeof pkg.currentPrice === 'number') {
@@ -2079,8 +2078,13 @@ Please get in touch with me to discuss this further.`;
                                 const newSliderValue = convertBudgetToSliderValue(pkg.currentPrice + 5);
                                 budgetSlider.value = newSliderValue;
                             }
+                             // Select the package to update the price breakdown
+                            selectPackage(packageId);
                             // Re-render to make this card active
                             renderPackageCards(container);
+                        } else {
+                            // Otherwise, just select the package (for price breakdown)
+                            selectPackage(packageId);
                         }
                     });
 
@@ -2339,9 +2343,26 @@ Please get in touch with me to discuss this further.`;
             function selectPackage(packageId) {
                 const selection = packageSelections[packageId];
                 if (!selection) return;
-                
-                selectedPackageId = packageId;
-                initializeState(); // Reset everything first
+
+                // --- Ticker Logic on Select ---
+                const oldServices = getServicesFromPackage(currentActivePackageId);
+                const newServices = getServicesFromPackage(packageId);
+                const added = new Set([...newServices].filter(x => !oldServices.has(x)));
+                const removed = new Set([...oldServices].filter(x => !newServices.has(x)));
+                displayTickerItems(added, 'add');
+                // Only show removed if the new package price is lower
+                const oldPkg = packages.find(p => p.id === currentActivePackageId);
+                const newPkg = packages.find(p => p.id === packageId);
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                if(oldPkg && newPkg && newPkg.prices[vehicleType] < oldPkg.prices[vehicleType]) {
+                    displayTickerItems(removed, 'remove');
+                }
+                currentActivePackageId = packageId; // Update active package for ticker
+                // --- End Ticker Logic ---
+
+                // Clear previous selections *without* clearing selectedPackageId
+                initializeState();
+                selectedPackageId = packageId; // Restore it
 
                 Object.keys(selection).forEach(service => {
                     const serviceSelection = selection[service];
