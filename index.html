@@ -140,7 +140,9 @@
         /* --- Ticker Styles --- */
         #ticker-container {
             position: absolute;
+            /* ALIGNMENT CHANGE: Set base top and add transition */
             top: 1rem;
+            transition: top 0.3s ease;
             left: 1rem;
             z-index: 5; /* Behind the base image (z-index: 10) */
             display: flex;
@@ -155,7 +157,12 @@
             font-weight: 600;
             text-shadow: 0 1px 3px rgba(0,0,0,0.7);
             animation: ticker-fade-in-up 0.5s ease forwards;
+            position: relative; /* ALIGNMENT CHANGE: Added for positioning */
+            line-height: 1.2; /* Explicitly set line height for alignment */
         }
+        
+        /* ALIGNMENT CHANGE: REMOVE all nth-last-child top overrides */
+        
         .ticker-item.add {
             color: var(--color-success);
         }
@@ -370,7 +377,7 @@
          .service-tab.selected.viewing {
             background-color: transparent;
             color: var(--color-primary);
-        }
+         }
 
         .service-tab .close-btn {
             display: none;
@@ -1216,7 +1223,7 @@
 
 
             const sliderMap = [
-                { slider: 0,    budget: 0 },
+                { slider: 0,   budget: 0 },
                 { slider: 100,  budget: 1500 },
                 { slider: 300,  budget: 4000 },
                 { slider: 700,  budget: 10000 },
@@ -1727,31 +1734,31 @@ Please get in touch with me to discuss this further.`;
                 userSelections.selectedItems = [];
 
                 if(selectedPackageId) {
-                     const pkg = packages.find(p => p.id === selectedPackageId);
-                     const breakdown = packageBreakdowns[selectedPackageId] ? packageBreakdowns[selectedPackageId][vehicleType] : null;
-                     
-                     if (pkg) {
-                        const price = pkg.prices[vehicleType];
-                        if (typeof price === 'number') {
-                             total = price;
-                             if(breakdown) {
-                                userSelections.selectedItems = [...breakdown];
-                             } else {
-                                // Fallback for simple packages without detailed breakdown
-                                 userSelections.selectedItems.push({ name: pkg.name, price: price });
-                                 // Add discounts from package data if they exist
-                                 pkg.discounts?.forEach(discountName => {
-                                    const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
-                                    userSelections.selectedItems.push({ 
-                                        name: discountName, 
-                                        price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
-                                    });
-                                 });
-                             }
-                        } else {
-                            isConsultationNeeded = true;
-                        }
-                     }
+                       const pkg = packages.find(p => p.id === selectedPackageId);
+                       const breakdown = packageBreakdowns[selectedPackageId] ? packageBreakdowns[selectedPackageId][vehicleType] : null;
+                       
+                       if (pkg) {
+                            const price = pkg.prices[vehicleType];
+                            if (typeof price === 'number') {
+                                 total = price;
+                                 if(breakdown) {
+                                    userSelections.selectedItems = [...breakdown];
+                                 } else {
+                                     // Fallback for simple packages without detailed breakdown
+                                      userSelections.selectedItems.push({ name: pkg.name, price: price });
+                                      // Add discounts from package data if they exist
+                                      pkg.discounts?.forEach(discountName => {
+                                        const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
+                                        userSelections.selectedItems.push({ 
+                                            name: discountName, 
+                                            price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
+                                        });
+                                      });
+                                 }
+                            } else {
+                                isConsultationNeeded = true;
+                            }
+                       }
                 } else {
                     for (const service of allServices) {
                         if (service === 'Packages') continue;
@@ -1785,9 +1792,9 @@ Please get in touch with me to discuss this further.`;
                                 if(optionName) serviceItemName += ` - ${optionName}`;
                             }
                              if(service === 'Vinyl' && state.coverage === 'Color Change' && state.option !== null) {
-                                const colorName = getQuantizedColor(state.option);
-                                serviceItemName += ` - ${colorName}`;
-                            }
+                                 const colorName = getQuantizedColor(state.option);
+                                 serviceItemName += ` - ${colorName}`;
+                             }
                             
                             if (!isConsultationNeeded) total += basePrice;
                             userSelections.selectedItems.push({ name: serviceItemName, price: basePrice });
@@ -1886,6 +1893,25 @@ Please get in touch with me to discuss this further.`;
                 const maxTickerItems = 5; // Changed from 12 to 5
                 let delay = 0;
 
+                // --- NEW HELPER FUNCTION ---
+                function updateTickerPosition() {
+                    const numItems = tickerContainer.children.length;
+                    let itemsAboveAnchor = 0;
+                    if (numItems > 1) {
+                        // (numItems - 1) is the last item. (numItems - 2) is the 2nd-to-last (anchor).
+                        itemsAboveAnchor = numItems - 2; 
+                    }
+                    
+                    // (font-size * line-height) + gap
+                    const itemHeightRem = (0.8 * 1.2) + 0.25; 
+                    
+                    const shiftRem = itemsAboveAnchor * itemHeightRem;
+                    const topRem = 1 - shiftRem; // 1rem is the base alignment point
+                    
+                    tickerContainer.style.top = `${topRem}rem`;
+                }
+                // --- END NEW HELPER FUNCTION ---
+
                 serviceSet.forEach(serviceName => {
                     setTimeout(() => {
                         // Check if ticker is full
@@ -1899,10 +1925,17 @@ Please get in touch with me to discuss this further.`;
                         item.textContent = (type === 'add' ? '+ ' : '- ') + serviceName;
                         tickerContainer.appendChild(item);
                         
+                        // ALIGNMENT CHANGE: Update position after adding
+                        updateTickerPosition();
+                        
                         // Set a timeout to remove the item after its animation
                         setTimeout(() => { 
                             item.style.animation = 'ticker-fade-out 0.5s ease forwards';
-                            item.addEventListener('animationend', () => item.remove());
+                            item.addEventListener('animationend', () => {
+                                item.remove();
+                                // ALIGNMENT CHANGE: Update position after removing
+                                updateTickerPosition();
+                            });
                         }, 3500); // 3.5-second display time
                     }, delay);
                     delay += 200; // Stagger each item by 200ms
@@ -2284,7 +2317,7 @@ Please get in touch with me to discuss this further.`;
 
                 // --- Tint Logic ---
                 const hasTint = (packageToDisplay && (packageToDisplay.tag === 'Tint' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id]['Tint']))) ||
-                               (servicesState['Tint'].selected && servicesState['Tint'].coverage);
+                                (servicesState['Tint'].selected && servicesState['Tint'].coverage);
 
                 if (hasTint && tintImageSrc) {
                     const tintIndex = servicesState['Tint'].option !== null ? servicesState['Tint'].option : '1'; // Default to 35%
@@ -2484,12 +2517,12 @@ Please get in touch with me to discuss this further.`;
                             const oldState = JSON.parse(JSON.stringify(servicesState));
                             initializeState();
                              if(wereServicesSelected) {
-                                servicesState = oldState;
-                                currentlyViewingService = previousService;
-                            } else {
-                                servicesState['Packages'].selected = true;
-                                currentlyViewingService = 'Packages';
-                            }
+                                 servicesState = oldState;
+                                 currentlyViewingService = previousService;
+                             } else {
+                                 servicesState['Packages'].selected = true;
+                                 currentlyViewingService = 'Packages';
+                             }
                         }
                         
                         renderTabs();
