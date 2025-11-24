@@ -148,7 +148,7 @@
             align-items: flex-start;
             gap: 0.25rem;
             pointer-events: none;
-            transition: top 0.4s ease-out; /* Smooth slide for container */
+            transition: top 0.4s ease-out; /* Smooth slide for container to fix "teleporting up" */
         }
         .ticker-item {
             font-family: var(--font-heading);
@@ -174,14 +174,13 @@
                 transform: translateY(0);
             }
         }
+        /* MODIFIED: Simple fade out for natural expiry. */
         @keyframes ticker-fade-out {
             from {
                 opacity: 1;
-                transform: translateY(0);
             }
             to {
                 opacity: 0;
-                transform: translateY(-20px);
             }
         }
         /* --- End Ticker Styles --- */
@@ -368,10 +367,10 @@
             border-bottom: 2px solid var(--color-primary);
             border-radius: 6px 6px 0 0;
         }
-         .service-tab.selected.viewing {
+          .service-tab.selected.viewing {
             background-color: transparent;
             color: var(--color-primary);
-         }
+          }
 
         .service-tab .close-btn {
             display: none;
@@ -854,10 +853,10 @@
              background-color: var(--color-surface);
              border: 1px solid var(--color-border);
              color: var(--color-text);
-         }
-         .parts-toggle-btn:hover {
+          }
+          .parts-toggle-btn:hover {
              background-color: var(--color-border);
-         }
+          }
 
         /* Package Plus Badge Animation */
         .plus-badge {
@@ -933,7 +932,7 @@
         @media (max-width: 992px) {
              .widget-container {
                  flex-direction: column;
-            }
+             }
             #image-display-container {
                 position: static;
                 transform: none;
@@ -985,7 +984,7 @@
                     <div id="step-1" class="form-step active">
                         <div class="panel">
                             <div class="step-header">
-                                <h2>VEHICLE PROTECTION CONFIGURATOR</h2>
+                                <h2>VEHICLE PROTECTION CONFIGURATOR </h2>
                                 <div class="header-subtext-container">
                                     <p id="welcome-message">Tell us what you drive and what you'd like to protect.</p>
                                     <div class="call-link-container" id="call-link-welcome">
@@ -1084,7 +1083,7 @@
                             width="200">
                         </animated-icons>
                     </div>
-                    <div class="step-header" style="margin-bottom: 1rem;">
+                    <div class="step-header" style="margin-bottom: 0.5rem;">
                         <h2 id="thank-you-title" style="margin-bottom: 0.5rem;">Thanks, <span class="user-name"></span>!</h2>
                         <p id="thank-you-subtitle">We're excited to help you protect your ride.</p>
                     </div>
@@ -1147,7 +1146,7 @@
                     'Full Front': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Full_Front.png?v=1757627749',
                     'Track Pack': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Track_Pack.png?v=1757627748',
                     'Full Car': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Full_coverage.png?v=1757627748',
-                    'F1': null // 2Door will use composite logic
+                    'F1': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image_21.png?v=1763057528' // FIXED
                 },
                 '4Door': {
                     'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/4DoorBase.png?v=1762880085',
@@ -1173,7 +1172,7 @@
             };
 
             const tintImageMap = {
-                '2Door': null, // No image provided
+                '2Door': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/2Dtint.png?v=1763057092', // FIXED
                 '4Door': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/4doortint.png?v=1762889580',
                 'SUV': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/SUV_Tint.png?v=1762888396',
                 'Oversize': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Tintf450.png?v=1762889566'
@@ -1182,22 +1181,23 @@
             const tintOpacityMap = ['0.2', '0.65', '0.8', '0.95']; // 80%, 35%, 20%, 5%
 
             const coatingVideoMap = {
+                '2Door': 'https://cdn.shopify.com/videos/c/o/v/fa85c90cb3b948b2979fbbbc32f75d8a.mp4', // FIXED
                 '4Door': 'https://cdn.shopify.com/videos/c/o/v/a20df85da0cf437bb7ab0d781db40acc.mp4',
                 'SUV': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4',
                 'Oversize': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4'
             };
             
             const polishVideoMap = {
+                '2Door': 'https://cdn.shopify.com/videos/c/o/v/903a4795909c4064b3672c6dfe148552.mp4', // FIXED
                 '4Door': 'https://cdn.shopify.com/videos/c/o/v/ed67ef672dfd4c178ab388dd4fff75b1.mp4',
                 'SUV': 'https://cdn.shopify.com/videos/c/o/v/0e09468d513a4949916b2d6b0f5f62cf.mp4',
-                'Oversize': 'https://cdn.shopify.com/videos/c/o/v/4bb677215ca345519f14a50e8b3c8742.mp4',
-                '2Door': null // No video for 2-door yet
+                'Oversize': 'https://cdn.shopify.com/videos/c/o/v/4bb677215ca345519f14a50e8b3c8742.mp4'
             };
 
             const polishOpacityMap = {
-                '1 Step Polish': '0.5',  // 50%
+                '1 Step Polish': '0.5',  // 50%
                 '2 Step Polish/PC': '0.75', // 75%
-                '3+ Step Polish/PC': '1.0'    // 100%
+                '3+ Step Polish/PC': '1.0'    // 100%
             };
 
 
@@ -1307,12 +1307,11 @@
                 }
             };
 
-
             const sliderMap = [
-                { slider: 0,    budget: 0 },
-                { slider: 100,  budget: 1500 },
-                { slider: 300,  budget: 4000 },
-                { slider: 700,  budget: 10000 },
+                { slider: 0,    budget: 0 },
+                { slider: 100,  budget: 1500 },
+                { slider: 300,  budget: 4000 },
+                { slider: 700,  budget: 10000 },
                 { slider: 1000, budget: 18000 }
             ];
             
@@ -1578,10 +1577,8 @@ Please get in touch with me to discuss this further.`;
                 const summaryHtml = `
                     <div class="estimate-summary">
                         <div class="summary-main">
-                            <div class="summary-total">
-                                <h3>Starting At:</h3>
-                                <div id="price-display" class="total-price">$0.00</div>
-                            </div>
+                            <h3>Starting At:</h3>
+                            <div id="price-display" class="total-price">$0.00</div>
                             <button type="button" id="toggle-summary-btn" class="hidden-field" title="View Details">
                                 <i class="fas fa-chevron-down"></i>
                             </button>
@@ -1629,7 +1626,7 @@ Please get in touch with me to discuss this further.`;
                         <div class="addons-container" id="addons-${service}" style="margin-top: 1rem;"></div>
                     </div>`;
                 dynamicServicesContainer.innerHTML = serviceHtml;
-                
+
                 const selectEl = document.getElementById(`coverage-${service}`);
                 if(selectEl){
                     selectEl.addEventListener('change', (e) => {
@@ -1820,8 +1817,8 @@ Please get in touch with me to discuss this further.`;
                 }
                 
                 const isAdvancedCoating = hasCoating &&
-                                          state['Coating'].addons.includes('Add Wheels (Face & Barrels)') &&
-                                          state['Coating'].addons.includes('Add Windshield');
+                                            state['Coating'].addons.includes('Add Wheels (Face & Barrels)') &&
+                                            state['Coating'].addons.includes('Add Windshield');
 
                 if (isAdvancedCoating) {
                     appliedDiscounts.push({ name: 'Coating Bundle', value: -150 });
@@ -1940,31 +1937,31 @@ Please get in touch with me to discuss this further.`;
                 userSelections.selectedItems = [];
 
                 if(selectedPackageId) {
-                        const pkg = packages.find(p => p.id === selectedPackageId);
-                        const breakdown = packageBreakdowns[selectedPackageId] ? packageBreakdowns[selectedPackageId][vehicleType] : null;
-                        
-                        if (pkg) {
-                            const price = pkg.prices[vehicleType];
-                            if (typeof price === 'number') {
-                                total = price;
-                                if(breakdown) {
-                                     userSelections.selectedItems = [...breakdown];
-                                } else {
-                                    // Fallback for simple packages without detailed breakdown
-                                     userSelections.selectedItems.push({ name: pkg.name, price: price });
-                                     // Add discounts from package data if they exist
-                                     pkg.discounts?.forEach(discountName => {
-                                         const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
-                                         userSelections.selectedItems.push({ 
-                                             name: discountName, 
-                                             price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
-                                         });
-                                     });
-                                }
+                    const pkg = packages.find(p => p.id === selectedPackageId);
+                    const breakdown = packageBreakdowns[selectedPackageId] ? packageBreakdowns[selectedPackageId][vehicleType] : null;
+                    
+                    if (pkg) {
+                        const price = pkg.prices[vehicleType];
+                        if (typeof price === 'number') {
+                            total = price;
+                            if(breakdown) {
+                                userSelections.selectedItems = [...breakdown];
                             } else {
-                                isConsultationNeeded = true;
+                                // Fallback for simple packages without detailed breakdown
+                                userSelections.selectedItems.push({ name: pkg.name, price: price });
+                                // Add discounts from package data if they exist
+                                pkg.discounts?.forEach(discountName => {
+                                     const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
+                                     userSelections.selectedItems.push({ 
+                                         name: discountName, 
+                                         price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
+                                     });
+                                });
                             }
+                        } else {
+                            isConsultationNeeded = true;
                         }
+                    }
                 } else {
                     for (const service of allServices) {
                         if (service === 'Packages') continue;
@@ -1998,14 +1995,14 @@ Please get in touch with me to discuss this further.`;
                                 if(optionName) serviceItemName += ` - ${optionName}`;
                             }
                              if(service === 'Vinyl' && state.coverage === 'Color Change' && state.option !== null) {
-                                const colorName = getQuantizedColor(state.option);
-                                serviceItemName += ` - ${colorName}`;
-                            }
+                                 const colorName = getQuantizedColor(state.option);
+                                 serviceItemName += ` - ${colorName}`;
+                             }
                             
                             if (!isConsultationNeeded) total += basePrice;
                             userSelections.selectedItems.push({ name: serviceItemName, price: basePrice });
                         }
-                         
+                        
                         if (coverageData.addons) {
                             state.addons.forEach(addon => {
                                 const addonPrice = coverageData.addons[addon];
@@ -2019,7 +2016,7 @@ Please get in touch with me to discuss this further.`;
                             });
                         }
                     }
-                
+                    
                     const discounts = getApplicableDiscounts(servicesState);
                     discounts.forEach(discount => {
                         total += discount.value;
@@ -2083,12 +2080,14 @@ Please get in touch with me to discuss this further.`;
 
                 const itemHeight = items[0].offsetHeight; // Assumes all items are same height
                 const gap = 4; // 0.25rem
-                const anchorIndex = Math.max(0, items.length - 2); // Second to last item
+                const anchorIndex = Math.max(0, items.length - 1); // Anchor position is always the last item
                 const anchorPosition = 16; // 1rem from top
                 
-                // Calculate the offset needed to align the anchor item
-                const totalHeightOfItemsAboveAnchor = anchorIndex * (itemHeight + gap);
-                const newTop = anchorPosition - totalHeightOfItemsAboveAnchor;
+                // Calculate the offset needed to ensure the *last* item is at 1rem from the top.
+                // New Top = Anchor Position - (Total height of all items - height of one item)
+                const totalHeightOfAllItems = items.length * (itemHeight + gap);
+                const heightToScrollUp = totalHeightOfAllItems - (itemHeight + gap);
+                const newTop = anchorPosition - heightToScrollUp;
                 
                 tickerContainer.style.top = `${newTop}px`;
             }
@@ -2096,17 +2095,18 @@ Please get in touch with me to discuss this further.`;
 
             function displayTickerItems(serviceSet, type) {
                 const tickerContainer = document.getElementById('ticker-container');
-                const maxTickerItems = 5;
+                const maxTickerItems = 5; // Enforce maximum of 5 items visible
                 let delay = 0;
 
                 serviceSet.forEach(serviceName => {
                     setTimeout(() => {
-                        // Check if ticker is full
+                        
+                        // Strict Limit Enforcement: If we are at capacity, remove the oldest item *before* adding the new one.
                         if (tickerContainer.children.length >= maxTickerItems) {
-                            // Remove the oldest item (the first child)
                             const oldItem = tickerContainer.children[0];
-                            oldItem.style.animation = 'ticker-fade-out 0.5s ease forwards';
-                            oldItem.addEventListener('animationend', () => oldItem.remove());
+                            
+                            // Remove instantly to maintain the strict count of visible items.
+                            oldItem.remove(); 
                         }
 
                         const item = document.createElement('div');
@@ -2114,17 +2114,20 @@ Please get in touch with me to discuss this further.`;
                         item.textContent = (type === 'add' ? '+ ' : '- ') + serviceName;
                         tickerContainer.appendChild(item);
                         
-                        // Update container position *after* item is added
+                        // Update container position *after* item is added/removed. This triggers the smooth vertical transition.
                         updateTickerPosition();
                         
-                        // Set a timeout to remove the item after its animation
+                        // Set a natural expiry timeout for the newly added item (3.5s).
                         setTimeout(() => { 
-                            if (item.parentElement) { // Check if not already removed
+                            if (item.parentElement) {
+                                // Start the fade-out animation
                                 item.style.animation = 'ticker-fade-out 0.5s ease forwards';
-                                item.addEventListener('animationend', () => {
+                                item.addEventListener('animationend', function handler() {
+                                    item.removeEventListener('animationend', handler);
                                     item.remove();
-                                    updateTickerPosition(); // Update position after removal
-                                });
+                                    // Update container position after natural expiry removal (smooth transition up).
+                                    updateTickerPosition(); 
+                                }, { once: true });
                             }
                         }, 3500); // 3.5-second display time
                     }, delay);
@@ -2182,7 +2185,7 @@ Please get in touch with me to discuss this further.`;
 
                 // --- Check for Tint Addons ---
                 const tintState = packageServices['Tint'] || {};
-                const tintAddons = pricingData[vehicleType]['Tint']['Full Car']?.addons || {};
+                const tintAddons = pricingData[vehicleType]['Full Car']?.addons || {};
                 if (tintAddons['Add Windshield'] && !tintState.addons?.includes('Add Windshield')) {
                     availableAddons.push({ name: 'Add Windshield', price: tintAddons['Add Windshield'], type: 'Tint' });
                 }
@@ -2516,13 +2519,13 @@ Please get in touch with me to discuss this further.`;
                     const basePrice = basePkg.prices[selectedVehicleType];
                     userSelections.selectedItems = [{ name: basePkg.name, price: basePrice }];
                     basePkg.discounts?.forEach(discountName => {
-                         const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
-                         userSelections.selectedItems.push({ 
-                             name: discountName, 
-                             price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
-                         });
-                     });
-                     
+                           const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
+                           userSelections.selectedItems.push({ 
+                               name: discountName, 
+                               price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
+                           });
+                    });
+                    
                     const allItems = [...userSelections.selectedItems, ...userSelections.maximizedItems.map(a => ({ name: `+ ${a.name}`, price: a.price }))];
                     updateSummaryList(allItems, summaryContainer);
                 }
@@ -2601,7 +2604,7 @@ Please get in touch with me to discuss this further.`;
                     }
 
                     if (service !== 'Packages' && !servicesState[service].selected) {
-                         // Don't auto-select. Selection happens on coverage choice.
+                           // Don't auto-select. Selection happens on coverage choice.
                     } else if (service === 'Packages') {
                         // Deselect other services when going back to packages
                         initializeState();
@@ -2670,26 +2673,23 @@ Please get in touch with me to discuss this further.`;
                 let baseImageSrc = vehicleImageMap['Partial']; // Default
                 if (packageToDisplay) {
                     if (packageToDisplay.isF1) {
-                        if (vehicleImageMap.F1) {
-                            baseImageSrc = vehicleImageMap.F1;
-                        } else {
-                            // Fallback to 2-door composite logic
-                            baseImageSrc = vehicleImageMap['Full Car'];
-                            coverageImageOverlay.src = vehicleImageMap['Track Pack'];
-                            coverageImageOverlay.style.display = 'block';
-                            coverageImageOverlay.style.opacity = '0.7';
-                            coverageImageOverlay.style.mixBlendMode = 'lighten';
-                            coverageImageOverlay.style.filter = 'hue-rotate(180deg) saturate(3)';
-                        }
+                        // Use unified F1 image, which is now correctly mapped for all types.
+                        baseImageSrc = vehicleImageMap.F1;
+                        coverageImageOverlay.style.display = 'none'; 
                     } else if (packageToDisplay.ppfCoverage) {
                         baseImageSrc = vehicleImageMap[packageToDisplay.ppfCoverage];
+                        coverageImageOverlay.style.display = 'none'; 
                     }
                 } else if (servicesState['PPF'].selected && servicesState['PPF'].coverage) {
                     baseImageSrc = vehicleImageMap[servicesState['PPF'].coverage];
+                    coverageImageOverlay.style.display = 'none';
                 } else if (servicesState['Vinyl'].selected && servicesState['Vinyl'].coverage === 'Color Change') {
                     baseImageSrc = vehicleImageMap['Full Car']; // Vinyl uses full car
                     const hue = servicesState['Vinyl'].option || 0;
                     coverageImageBase.style.filter = `hue-rotate(${hue}deg)`;
+                    coverageImageOverlay.style.display = 'none';
+                } else {
+                    coverageImageOverlay.style.display = 'none';
                 }
                 coverageImageBase.src = baseImageSrc || vehicleImageMap['Partial'];
 
@@ -2744,7 +2744,7 @@ Please get in touch with me to discuss this further.`;
 
                 // --- Coating Video Logic ---
                 const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id] && packageSelections[packageToDisplay.id]['Coating']))) ||
-                                     (servicesState['Coating'].selected && servicesState['Coating'].coverage);
+                                           (servicesState['Coating'].selected && servicesState['Coating'].coverage);
 
                 if (hasCoating && coatingVideoSrc) {
                     coverageVideoContainer.style.display = 'block';
@@ -2842,23 +2842,23 @@ Please get in touch with me to discuss this further.`;
             // This function modifies the pricingData object to support complex packages as addons
             function augmentPricingData() {
                  Object.keys(pricingData).forEach(vehicleType => {
-                    const tintData = pricingData[vehicleType].Tint;
-                    const coatingData = pricingData[vehicleType].Coating;
+                     const tintData = pricingData[vehicleType].Tint;
+                     const coatingData = pricingData[vehicleType].Coating;
 
-                    // Add addons to Tint
-                    if (tintData['Full Car']) {
-                        if (!tintData['Full Car'].addons) tintData['Full Car'].addons = {};
-                        tintData['Full Car'].addons['Add Windshield'] = tintData['Windshield']?.price || 450;
-                        tintData['Full Car'].addons['Add Sunroof'] = 295; // Estimated price
-                    }
+                     // Add addons to Tint
+                     if (tintData['Full Car']) {
+                         if (!tintData['Full Car'].addons) tintData['Full Car'].addons = {};
+                         tintData['Full Car'].addons['Add Windshield'] = tintData['Windshield']?.price || 450;
+                         tintData['Full Car'].addons['Add Sunroof'] = 295; // Estimated price
+                     }
 
-                    // Add addons to Coating
-                    if (coatingData['Paint']) {
-                         if (!coatingData.Paint.addons) coatingData.Paint.addons = {};
-                         coatingData.Paint.addons['Add Wheels (Face & Barrels)'] = coatingData.Wheels?.options['Face & Barrels'] || 400;
-                         coatingData.Paint.addons['Add Windshield'] = coatingData.Windshield?.price || 155;
-                    }
-                });
+                     // Add addons to Coating
+                     if (coatingData['Paint']) {
+                          if (!coatingData.Paint.addons) coatingData.Paint.addons = {};
+                          coatingData.Paint.addons['Add Wheels (Face & Barrels)'] = coatingData.Wheels?.options['Face & Barrels'] || 400;
+                          coatingData.Paint.addons['Add Windshield'] = coatingData.Windshield?.price || 155;
+                     }
+                 });
             }
 
 
