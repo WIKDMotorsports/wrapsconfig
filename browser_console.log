@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+Browser console: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+Test failed.
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehicle Protection Configurator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://animatedicons.co/scripts/embed-animated-icons.js"></script>
@@ -48,7 +48,7 @@
             color: white;
             line-height: 1.2;
         }
-        
+
         .widget-container {
             width: 100%;
             max-width: 1280px;
@@ -103,7 +103,7 @@
             pointer-events: none;
             border-radius: 8px;
             overflow: hidden; /* Ensure video respects border radius */
-            
+
             /* Mask properties */
             -webkit-mask-size: contain;
             mask-size: contain;
@@ -119,7 +119,7 @@
         }
 
         #polish-video-overlay-container {
-            mix-blend-mode: screen; 
+            mix-blend-mode: screen;
             z-index: 22; /* Between tint and coating */
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -136,7 +136,7 @@
             flex: 1 1 60%;
             min-width: 0;
         }
-        
+
         /* --- Ticker Styles --- */
         #ticker-container {
             position: absolute;
@@ -193,7 +193,7 @@
             margin: 0 0 1.5rem 0;
             border: 1px solid var(--color-border);
         }
-        
+
         .form-step, #welcome-container, #thank-you-container {
             display: none;
         }
@@ -201,12 +201,12 @@
             display: block;
             animation: fadeIn 0.5s ease-in-out;
         }
-        
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .step-header {
             text-align: center;
             margin-bottom: 1.5rem;
@@ -230,7 +230,7 @@
             justify-content: center;
             gap: 0.5rem 1rem;
         }
-        
+
         .progress-bar {
             position: relative;
             display: flex;
@@ -251,7 +251,7 @@
             height: 2px;
             background-color: var(--color-border);
         }
-        
+
         .progress-bar::after {
             content: '';
             position: absolute;
@@ -275,7 +275,7 @@
             cursor: default;
             padding-top: 20px;
         }
-        
+
         .step-node {
             position: absolute;
             top: 0;
@@ -289,7 +289,7 @@
             transition: all 0.3s ease;
             z-index: 1;
         }
-        
+
         .progress-step.completed { color: var(--color-text); }
         .progress-step.completed .step-node { background-color: var(--color-primary); border-color: var(--color-primary); }
         .progress-step.active { color: var(--color-primary); }
@@ -318,7 +318,7 @@
             flex-grow: 1;
         }
         .form-control:focus { outline: none; border-color: var(--color-primary); }
-        
+
         .choice-group {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -392,7 +392,7 @@
         .service-tab .close-btn:hover {
             background-color: rgba(0,0,0,0.2);
         }
-        
+
         .service-tab.selected .close-btn {
             display: block;
         }
@@ -429,7 +429,7 @@
             color: var(--color-background);
             font-weight: 700;
         }
-        
+
         .btn-group {
             display: flex;
             justify-content: space-between;
@@ -466,7 +466,7 @@
         .btn span {
             top: 1px;
         }
-        
+
         .btn::before {
             content: '';
             position: absolute;
@@ -478,7 +478,7 @@
             transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: -1;
         }
-        
+
         .btn-primary {
             border-color: var(--color-primary);
             color: var(--color-primary);
@@ -498,10 +498,10 @@
             cursor: not-allowed;
             background-color: var(--color-surface);
         }
-        
+
         .hidden-field { display: none !important; }
 
-        .estimate-summary { 
+        .estimate-summary {
             text-align: center;
             margin-bottom: 1.5rem;
             padding: 0.75rem;
@@ -536,7 +536,7 @@
             display: inline-block;
         }
         .estimate-summary .total-price.consultation { color: #888888; font-size: 1.25rem; }
-        
+
         #toggle-summary-btn {
             background: none;
             border: none;
@@ -587,7 +587,7 @@
             color: var(--color-text);
             padding-right: 1rem;
         }
-        
+
         #summary-items-list .item-name.discount {
             color: var(--color-success);
         }
@@ -628,7 +628,7 @@
             display: inline-flex;
             justify-content: center;
         }
-        
+
         .call-link {
             display: inline-flex;
             align-items: center;
@@ -687,7 +687,7 @@
             border-style: solid;
             border-color: var(--color-surface) transparent transparent transparent;
         }
-        
+
         .info-tooltip-container {
             position: relative;
         }
@@ -753,7 +753,7 @@
             background: var(--color-primary);
             cursor: pointer;
             border: 0;
-            margin-top: -8px; 
+            margin-top: -8px;
             transition: background-color 0.3s ease;
             clip-path: polygon(50% 100%, 0 0, 100% 0); /* Upside-down triangle */
         }
@@ -799,7 +799,7 @@
 
         /* --- Integrated Package Slider Styles --- */
         .package-slider-container { color: var(--color-text); }
-        
+
         .package-card {
             background-color: var(--color-background) !important;
             border: 1px solid var(--color-border);
@@ -820,7 +820,7 @@
         .protection-meter-bg {
             background-color: var(--color-border);
         }
-        
+
         .protection-meter-fill {
             height: 100%;
             background: var(--color-primary);
@@ -950,7 +950,7 @@
             .btn-group { flex-direction: column; }
         }
     </style>
-</head>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}</style><script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script></head>
 <body>
 
     <div class="widget-container">
@@ -963,11 +963,11 @@
             <img id="coverage-image-tint-overlay" src="" alt="" style="display: none;">
             <!-- NEW Polish Video Layer -->
             <div id="polish-video-overlay-container" style="display: none;">
-                <video id="coverage-polish-video-overlay" loop muted autoplay playsinline></video>
+                <video id="coverage-polish-video-overlay" loop="" muted="" autoplay="" playsinline=""></video>
             </div>
             <!-- Wrapped video in a container for blend mode -->
             <div id="video-overlay-container" style="display: none;">
-                <video id="coverage-video-overlay" loop muted autoplay playsinline></video>
+                <video id="coverage-video-overlay" loop="" muted="" autoplay="" playsinline=""></video>
             </div>
         </div>
 
@@ -978,18 +978,18 @@
                     <div class="progress-step active" data-step="1"><div class="step-node"></div>Selections</div>
                     <div class="progress-step" data-step="2"><div class="step-node"></div>Contact</div>
                 </div>
-                
+
                 <form id="configurator-form">
                     <!-- Step 1: Vehicle Type and Services -->
                     <div id="step-1" class="form-step active">
                         <div class="panel">
                             <div class="step-header">
-                                <h2>VEHICLE PROTECTION CONFIGURATOR </h2>
+                                <h2>VEHICLE PROTECTION CONFIGURATOR&nbsp;</h2>
                                 <div class="header-subtext-container">
                                     <p id="welcome-message">Tell us what you drive and what you'd like to protect.</p>
                                     <div class="call-link-container" id="call-link-welcome">
                                         <a href="tel:4696251127" class="call-link">
-                                            <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                            <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&amp;style=minimalistic&amp;token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes="{&quot;variationThumbColour&quot;:&quot;#FFB700&quot;,&quot;variationName&quot;:&quot;Dark&quot;,&quot;variationNumber&quot;:4,&quot;numberOfGroups&quot;:2,&quot;strokeWidth&quot;:1.5,&quot;backgroundIsGroup&quot;:true,&quot;defaultColours&quot;:{&quot;group-1&quot;:&quot;#FFB700&quot;,&quot;group-2&quot;:&quot;#FFB700&quot;,&quot;background&quot;:&quot;#0A0A0A&quot;}}" height="22" width="22"></animated-icons>
                                             <span>or give us a ring, we're open!</span>
                                         </a>
                                         <div class="qr-tooltip">
@@ -999,14 +999,14 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Price Summary will be dynamically added here -->
                             <div id="dynamic-summary-container"></div>
-                            
+
                             <div class="form-group">
                                 <label>Vehicle Type</label>
                                 <div class="choice-group">
-                                    <div><input type="radio" id="vehicle-2door" name="vehicle" value="2Door" class="choice-input" checked><label for="vehicle-2door" class="choice-label"><span>2 Door</span></label></div>
+                                    <div><input type="radio" id="vehicle-2door" name="vehicle" value="2Door" class="choice-input" checked=""><label for="vehicle-2door" class="choice-label"><span>2 Door</span></label></div>
                                     <div><input type="radio" id="vehicle-4door" name="vehicle" value="4Door" class="choice-input"><label for="vehicle-4door" class="choice-label"><span>4 Door</span></label></div>
                                     <div><input type="radio" id="vehicle-suv" name="vehicle" value="SUV" class="choice-input"><label for="vehicle-suv" class="choice-label"><span>SUV</span></label></div>
                                     <div><input type="radio" id="vehicle-oversize" name="vehicle" value="Oversize" class="choice-input"><label for="vehicle-oversize" class="choice-label"><span>Oversize</span></label></div>
@@ -1020,9 +1020,9 @@
                             </div>
                             <div id="dynamic-services-container"></div>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-primary next-btn btn-right" id="selections-next-btn" disabled>
+                                <button type="button" class="btn btn-primary next-btn btn-right" id="selections-next-btn" disabled="">
                                     <span>Continue to Contact</span>
-                                    <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                    <animated-icons src="https://animatedicons.co/get-icon?name=Forward&amp;style=minimalistic&amp;token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes="{&quot;variationThumbColour&quot;:&quot;#FFB700&quot;,&quot;variationName&quot;:&quot;Dark&quot;,&quot;variationNumber&quot;:4,&quot;numberOfGroups&quot;:2,&quot;strokeWidth&quot;:1.5,&quot;backgroundIsGroup&quot;:true,&quot;defaultColours&quot;:{&quot;group-1&quot;:&quot;#FFB700&quot;,&quot;group-2&quot;:&quot;#FFB700&quot;,&quot;background&quot;:&quot;#0A0A0A&quot;}}" height="22" width="22"></animated-icons>
                                 </button>
                             </div>
                         </div>
@@ -1036,21 +1036,21 @@
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                     <div>
                                         <label for="customer-first-name">First Name</label>
-                                        <input type="text" id="customer-first-name" name="customer_first_name" class="form-control" required placeholder="e.g., John">
+                                        <input type="text" id="customer-first-name" name="customer_first_name" class="form-control" required="" placeholder="e.g., John">
                                     </div>
                                     <div>
                                         <label for="customer-last-name">Last Name</label>
-                                        <input type="text" id="customer-last-name" name="customer_last_name" class="form-control" required placeholder="e.g., Doe">
+                                        <input type="text" id="customer-last-name" name="customer_last_name" class="form-control" required="" placeholder="e.g., Doe">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="customer-phone">Phone Number</label>
-                                <input type="tel" id="customer-phone" name="customer_phone" class="form-control" required placeholder="e.g., (469) 625-1127">
+                                <input type="tel" id="customer-phone" name="customer_phone" class="form-control" required="" placeholder="e.g., (469) 625-1127">
                             </div>
                             <div class="form-group">
                                 <label for="customer-email">Email</label>
-                                <input type="email" id="customer-email" name="customer_email" class="form-control" required placeholder="e.g., john.doe@example.com">
+                                <input type="email" id="customer-email" name="customer_email" class="form-control" required="" placeholder="e.g., john.doe@example.com">
                             </div>
                             <div class="form-group">
                                 <label for="customer-comments">Questions or Comments (Optional)</label>
@@ -1058,7 +1058,7 @@
                             </div>
                             <div class="btn-group">
                                 <button type="button" class="btn prev-btn btn-left" id="contact-back-btn">
-                                    <animated-icons src="https://animatedicons.co/get-icon?name=Back&style=minimalistic&token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes='{"variationThumbColour":"#EAEAEA","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#EAEAEA","group-2":"#EAEAEA","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                    <animated-icons src="https://animatedicons.co/get-icon?name=Back&amp;style=minimalistic&amp;token=7a22709d-7dc4-4654-b0d6-df0167ffeb74" trigger="click" attributes="{&quot;variationThumbColour&quot;:&quot;#EAEAEA&quot;,&quot;variationName&quot;:&quot;Dark&quot;,&quot;variationNumber&quot;:4,&quot;numberOfGroups&quot;:2,&quot;strokeWidth&quot;:1.5,&quot;backgroundIsGroup&quot;:true,&quot;defaultColours&quot;:{&quot;group-1&quot;:&quot;#EAEAEA&quot;,&quot;group-2&quot;:&quot;#EAEAEA&quot;,&quot;background&quot;:&quot;#0A0A0A&quot;}}" height="22" width="22"></animated-icons>
                                     <span>Back to Selections</span>
                                 </button>
                                 <button type="button" class="btn btn-primary btn-right" id="submit-form-btn">
@@ -1075,12 +1075,7 @@
             <div id="thank-you-container" class="hidden-field">
                 <div class="panel" style="text-align: center;">
                     <div style="display: flex; justify-content: center;">
-                        <animated-icons
-                            src="https://animatedicons.co/get-icon?name=High%20Five&style=minimalistic&token=dfda27f9-e133-49e0-bf9e-4d952d0ab596"
-                            trigger="loop"
-                            attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#EAEAEA","background":"#141414"}}'
-                            height="200"
-                            width="200">
+                        <animated-icons src="https://animatedicons.co/get-icon?name=High%20Five&amp;style=minimalistic&amp;token=dfda27f9-e133-49e0-bf9e-4d952d0ab596" trigger="loop" attributes="{&quot;variationThumbColour&quot;:&quot;#FFB700&quot;,&quot;variationName&quot;:&quot;Dark&quot;,&quot;variationNumber&quot;:4,&quot;numberOfGroups&quot;:2,&quot;strokeWidth&quot;:1.5,&quot;backgroundIsGroup&quot;:true,&quot;defaultColours&quot;:{&quot;group-1&quot;:&quot;#FFB700&quot;,&quot;group-2&quot;:&quot;#EAEAEA&quot;,&quot;background&quot;:&quot;#141414&quot;}}" height="200" width="200">
                         </animated-icons>
                     </div>
                     <div class="step-header" style="margin-bottom: 0.5rem;">
@@ -1089,12 +1084,7 @@
                     </div>
                     <div class="call-link-container" id="call-link-thank-you" style="justify-content: center;">
                            <a href="tel:4696251127" class="call-link">
-                                <animated-icons
-                                    src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c"
-                                    trigger="loop"
-                                    attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}'
-                                    height="22"
-                                    width="22">
+                                <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&amp;style=minimalistic&amp;token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes="{&quot;variationThumbColour&quot;:&quot;#FFB700&quot;,&quot;variationName&quot;:&quot;Dark&quot;,&quot;variationNumber&quot;:4,&quot;numberOfGroups&quot;:2,&quot;strokeWidth&quot;:1.5,&quot;backgroundIsGroup&quot;:true,&quot;defaultColours&quot;:{&quot;group-1&quot;:&quot;#FFB700&quot;,&quot;group-2&quot;:&quot;#FFB700&quot;,&quot;background&quot;:&quot;#0A0A0A&quot;}}" height="22" width="22">
                                 </animated-icons>
                                 <span>Want to discuss your build now? Give us a ring, we’re open!</span>
                             </a>
@@ -1107,9 +1097,10 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded, initializing app...');
             // --- CONFIGURATOR DATA ---
             const phoneNumber = '4696251127';
             let pricingData = {}; // This will be populated by the fetch
@@ -1234,7 +1225,7 @@
                     return null;
                 }
             }
-            
+
             const ppfImageMap = {
                 '2Door': {
                     'Partial': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859',
@@ -1272,7 +1263,7 @@
                 'SUV': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/SUV_Tint.png?v=1762888396',
                 'Oversize': 'https://cdn.shopify.com/s/files/1/0671/4635/0805/files/Tintf450.png?v=1762889566'
             };
-            
+
             const tintOpacityMap = ['0.2', '0.65', '0.8', '0.95']; // 80%, 35%, 20%, 5%
 
             const coatingVideoMap = {
@@ -1281,7 +1272,7 @@
                 'SUV': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4',
                 'Oversize': 'https://cdn.shopify.com/videos/c/o/v/1de593a438f4430fa82c341cd5da5903.mp4'
             };
-            
+
             const polishVideoMap = {
                 '2Door': 'https://cdn.shopify.com/videos/c/o/v/903a4795909c4064b3672c6dfe148552.mp4', // FIXED
                 '4Door': 'https://cdn.shopify.com/videos/c/o/v/ed67ef672dfd4c178ab388dd4fff75b1.mp4',
@@ -1314,7 +1305,7 @@
             // --- PACKAGE SLIDER DATA (WILL BE OVERWRITTEN BY FETCH) ---
             let packages = [];
             let packageSelections = {};
-            
+
             const packageBreakdowns = {
                 'presidential-package': {
                     '2Door': [
@@ -1346,7 +1337,7 @@
                         { name: 'Trim Coating', price: 'Included' },
                         { name: 'PPF, Tint, & Coating Bundle', price: -395 },
                         { name: 'Coating Bundle', price: -150 }
-                    ],
+                    ]
                 }
             };
 
@@ -1357,7 +1348,7 @@
                 { slider: 700,  budget: 10000 },
                 { slider: 1000, budget: 18000 }
             ];
-            
+
             // --- UI & FORM ELEMENTS ---
             const form = document.getElementById('configurator-form');
             const welcomeMessageEl = document.getElementById('welcome-message');
@@ -1408,8 +1399,8 @@
                 });
                 const nextPoint = sliderMap[sliderMap.indexOf(segment) + 1];
                 if (!nextPoint) {
-                    return budget >= sliderMap[sliderMap.length - 1].budget 
-                        ? sliderMap[sliderMap.length - 1].slider 
+                    return budget >= sliderMap[sliderMap.length - 1].budget
+                        ? sliderMap[sliderMap.length - 1].slider
                         : segment.slider;
                 }
                 const sliderRange = nextPoint.slider - segment.slider;
@@ -1419,7 +1410,7 @@
                 // Use Math.ceil to prevent rounding down below the base package price
                 return Math.ceil(segment.slider + (budgetProgress * sliderRange));
             }
-            
+
             // --- HELPER FUNCTIONS ---
             function isMobileDevice() { return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0); }
 
@@ -1443,7 +1434,7 @@
                 }
                 return null;
             }
-            
+
             function checkAndDisplayCookie() {
                 const savedName = getCookie('userFirstName');
                 if (savedName) {
@@ -1456,7 +1447,7 @@
                 userFirstName = name;
                 return name;
             }
-            
+
             function generateEmail() {
                 const firstName = document.getElementById('customer-first-name').value;
                 const lastName = document.getElementById('customer-last-name').value;
@@ -1474,7 +1465,7 @@
                     const budgetSlider = document.getElementById('budget-slider');
                     const budget = convertSliderValueToBudget(parseInt(budgetSlider.value));
                     const activePackage = getActivePackage(budget);
-                    
+
                     if (activePackage) {
                         itemsText = `Selected Package: ${activePackage.name}\n`;
                         userSelections.selectedItems.forEach(item => {
@@ -1604,6 +1595,7 @@ Please get in touch with me to discuss this further.`;
 
             // --- CORE LOGIC ---
             function renderTabs() {
+                console.log("renderTabs: Starting...");
                 serviceTabsContainer.innerHTML = '';
                 allServices.forEach(service => {
                     const state = servicesState[service];
@@ -1611,11 +1603,11 @@ Please get in touch with me to discuss this further.`;
                     tab.className = 'service-tab';
                     tab.dataset.service = service;
                     tab.innerHTML = `${service} <span class="close-btn">&times;</span>`;
-                    
+
                     if(state.selected) tab.classList.add('selected');
                     else tab.classList.add('available');
                     if(service === currentlyViewingService) tab.classList.add('viewing');
-                    
+
                     serviceTabsContainer.appendChild(tab);
                 });
             }
@@ -1689,10 +1681,10 @@ Please get in touch with me to discuss this further.`;
                         calculateEstimate();
                     });
                 }
-                
+
                 renderAddons();
             }
-            
+
             function getQuantizedColor(hue) {
                 const baseHue = 240; // Royal Blue
                 const finalHue = (baseHue + parseInt(hue, 10)) % 360;
@@ -1710,7 +1702,7 @@ Please get in touch with me to discuss this further.`;
 
             function renderAddons() {
                 if (!currentlyViewingService || currentlyViewingService === 'Packages') return;
-                
+
                 const service = currentlyViewingService;
                 const state = servicesState[service];
 
@@ -1720,7 +1712,7 @@ Please get in touch with me to discuss this further.`;
                 const coverageData = pricingData[vehicleType][service][state.coverage];
                 const addonsContainer = document.getElementById(`addons-${service}`);
                 if(!addonsContainer) return;
-                
+
                 addonsContainer.innerHTML = '';
 
                 if (coverageData.options) {
@@ -1728,7 +1720,7 @@ Please get in touch with me to discuss this further.`;
                         const tintOptions = Object.entries(coverageData.options);
                         const sliderId = `tint-slider-${service}-${state.coverage.replace(/\s/g, '-')}`;
                         const outputId = `tint-output-${service}-${state.coverage.replace(/\s/g, '-')}`;
-                        
+
                         let sliderValueIndex = state.option !== null ? state.option : 1; // Default to 35%
 
                         let labelsHtml = tintOptions.map(([option, optionData], index) => {
@@ -1736,7 +1728,7 @@ Please get in touch with me to discuss this further.`;
                             const tooltipHtml = tooltipText ? `<div class="info-tooltip">${tooltipText}</div>` : '';
                             return `<div class="slider-label info-tooltip-container" data-index="${index}">${option}${tooltipHtml}</div>`;
                         }).join('');
-                        
+
                         const sliderHtml = `
                             <div class="form-group">
                                 <label>Select Tint Percentage: <span id="${outputId}" style="color: var(--color-primary); font-weight: bold;"></span></label>
@@ -1749,7 +1741,7 @@ Please get in touch with me to discuss this further.`;
 
                         const slider = document.getElementById(sliderId);
                         const output = document.getElementById(outputId);
-                        
+
                         function updateSliderView() {
                             const options = JSON.parse(slider.dataset.options);
                             const selectedValue = options[slider.value];
@@ -1757,7 +1749,7 @@ Please get in touch with me to discuss this further.`;
                             output.textContent = selectedValue;
                             slider.classList.toggle('illegal-tint', isIllegal);
                         }
-                        
+
                         slider.addEventListener('input', () => { // Changed from 'change' to 'input'
                             selectedPackageId = null;
                             updateSliderView();
@@ -1780,7 +1772,7 @@ Please get in touch with me to discuss this further.`;
                         }).join('');
                         let baseText = coverageData.base || 'Select Option';
                         addonsContainer.innerHTML = `<div class="form-group"><label>${baseText}:</label><div class="choice-group">${optionsHtml}</div></div>`;
-                        
+
                         addonsContainer.querySelectorAll('.choice-input').forEach(input => {
                             input.addEventListener('change', (e) => {
                                 selectedPackageId = null;
@@ -1791,7 +1783,7 @@ Please get in touch with me to discuss this further.`;
                         });
                     }
                 }
-                
+
                 if (coverageData.addons) {
                     const addonsHtml = Object.keys(coverageData.addons).map(addon => {
                         const price = coverageData.addons[addon];
@@ -1804,7 +1796,7 @@ Please get in touch with me to discuss this further.`;
                     }).join('');
                     const existingContent = addonsContainer.innerHTML;
                     addonsContainer.innerHTML = existingContent + `<div class="form-group" style="margin-top: 1rem;"><label>Available Add-ons:</label><div class="choice-group">${addonsHtml}</div></div>`;
-                    
+
                     addonsContainer.querySelectorAll('.addon').forEach(checkbox => {
                         checkbox.addEventListener('change', (e) => {
                             selectedPackageId = null;
@@ -1844,7 +1836,7 @@ Please get in touch with me to discuss this further.`;
                         });
                 }
             }
-            
+
             function getApplicableDiscounts(state) {
                 const appliedDiscounts = [];
                 const appliedDiscountIds = new Set();
@@ -1862,14 +1854,14 @@ Please get in touch with me to discuss this further.`;
                     appliedDiscounts.push({ name: 'PPF & Coating Bundle', value: -295 });
                     appliedDiscountIds.add('ppf-coating');
                 }
-                
+
                 const isAdvancedCoating = hasCoating &&
                                             state['Coating'].addons.includes('Add Wheels (Face & Barrels)') &&
                                             state['Coating'].addons.includes('Add Windshield');
 
                 if (isAdvancedCoating) {
                     appliedDiscounts.push({ name: 'Coating Bundle', value: -150 });
-                    appliedDiscounts.push({ name: 'FREE Trim Coating', value: 0 }); 
+                    appliedDiscounts.push({ name: 'FREE Trim Coating', value: 0 });
                     appliedDiscountIds.add('coating-bundle');
                 }
 
@@ -1912,7 +1904,7 @@ Please get in touch with me to discuss this further.`;
                 const summaryItemsList = container.querySelector('#summary-items-list');
                 const toggleSummaryBtn = container.querySelector('#toggle-summary-btn');
                 const summaryBreakdown = container.querySelector('#summary-breakdown');
-                
+
                 if (!summaryItemsList || !toggleSummaryBtn || !summaryBreakdown) return;
 
                 summaryItemsList.innerHTML = ''; // Clear previous items
@@ -1932,9 +1924,9 @@ Please get in touch with me to discuss this further.`;
                         } else if (!isFreebie) {
                             priceText = `$${item.price.toFixed(2)}`;
                         }
-                        
+
                         li.innerHTML = `<span class="item-name">${item.name}</span> <span class="item-price">${priceText}</span>`;
-                        
+
                         if (isDiscount || isFreebie) {
                             li.querySelector('.item-price').classList.add('discount');
                             li.querySelector('.item-name').classList.add('discount');
@@ -1966,7 +1958,7 @@ Please get in touch with me to discuss this further.`;
                 if (!priceDisplay || !summaryContainer) {
                     return;
                 }
-                
+
                 const nonPackageServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
 
                 if (currentlyViewingService === 'Packages' && !nonPackageServicesSelected && !selectedPackageId) {
@@ -1976,7 +1968,7 @@ Please get in touch with me to discuss this further.`;
                     selectionsNextBtn.disabled = true;
                     return;
                 }
-                
+
                 const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
                 let total = 0;
                 let isConsultationNeeded = false;
@@ -1985,7 +1977,7 @@ Please get in touch with me to discuss this further.`;
                 if(selectedPackageId) {
                     const pkg = packages.find(p => p.id === selectedPackageId);
                     const breakdown = packageBreakdowns[selectedPackageId] ? packageBreakdowns[selectedPackageId][vehicleType] : null;
-                    
+
                     if (pkg) {
                         const price = pkg.prices[vehicleType];
                         if (typeof price === 'number') {
@@ -1998,9 +1990,9 @@ Please get in touch with me to discuss this further.`;
                                 // Add discounts from package data if they exist
                                 pkg.discounts?.forEach(discountName => {
                                      const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
-                                     userSelections.selectedItems.push({ 
-                                         name: discountName, 
-                                         price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
+                                     userSelections.selectedItems.push({
+                                         name: discountName,
+                                         price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0
                                      });
                                 });
                             }
@@ -2013,17 +2005,17 @@ Please get in touch with me to discuss this further.`;
                         if (service === 'Packages') continue;
                         const state = servicesState[service];
                         if (!state.selected || !state.coverage) continue;
-                        
+
                         const serviceData = pricingData[vehicleType][service];
                         const coverageData = serviceData[state.coverage];
                         let serviceItemName = `${service} - ${state.coverage}`;
-                        
+
                         if (typeof coverageData.price === 'string') {
                             isConsultationNeeded = true;
                             userSelections.selectedItems.push({ name: serviceItemName, price: 'Call For Free Consultation' });
                         } else {
                             let basePrice = coverageData.price || 0;
-                            
+
                             if(coverageData.options) {
                                 let optionName = '';
                                 if(service === 'Tint') {
@@ -2044,11 +2036,11 @@ Please get in touch with me to discuss this further.`;
                                  const colorName = getQuantizedColor(state.option);
                                  serviceItemName += ` - ${colorName}`;
                              }
-                            
+
                             if (!isConsultationNeeded) total += basePrice;
                             userSelections.selectedItems.push({ name: serviceItemName, price: basePrice });
                         }
-                        
+
                         if (coverageData.addons) {
                             state.addons.forEach(addon => {
                                 const addonPrice = coverageData.addons[addon];
@@ -2062,14 +2054,14 @@ Please get in touch with me to discuss this further.`;
                             });
                         }
                     }
-                    
+
                     const discounts = getApplicableDiscounts(servicesState);
                     discounts.forEach(discount => {
                         total += discount.value;
                         userSelections.selectedItems.push({ name: discount.name, price: discount.value });
                     });
                 }
-                
+
                 // This is for Package Maximizer, which is handled in renderPackageCards
                 if (currentlyViewingService === 'Packages') {
                     // Price calculation is handled by renderPackageCards
@@ -2128,13 +2120,13 @@ Please get in touch with me to discuss this further.`;
                 const gap = 4; // 0.25rem
                 const anchorIndex = Math.max(0, items.length - 1); // Anchor position is always the last item
                 const anchorPosition = 16; // 1rem from top
-                
+
                 // Calculate the offset needed to ensure the *last* item is at 1rem from the top.
                 // New Top = Anchor Position - (Total height of all items - height of one item)
                 const totalHeightOfAllItems = items.length * (itemHeight + gap);
                 const heightToScrollUp = totalHeightOfAllItems - (itemHeight + gap);
                 const newTop = anchorPosition - heightToScrollUp;
-                
+
                 tickerContainer.style.top = `${newTop}px`;
             }
 
@@ -2146,25 +2138,25 @@ Please get in touch with me to discuss this further.`;
 
                 serviceSet.forEach(serviceName => {
                     setTimeout(() => {
-                        
+
                         // Strict Limit Enforcement: If we are at capacity, remove the oldest item *before* adding the new one.
                         if (tickerContainer.children.length >= maxTickerItems) {
                             const oldItem = tickerContainer.children[0];
-                            
+
                             // Remove instantly to maintain the strict count of visible items.
-                            oldItem.remove(); 
+                            oldItem.remove();
                         }
 
                         const item = document.createElement('div');
                         item.className = 'ticker-item ' + type;
                         item.textContent = (type === 'add' ? '+ ' : '- ') + serviceName;
                         tickerContainer.appendChild(item);
-                        
+
                         // Update container position *after* item is added/removed. This triggers the smooth vertical transition.
                         updateTickerPosition();
-                        
+
                         // Set a natural expiry timeout for the newly added item (3.5s).
-                        setTimeout(() => { 
+                        setTimeout(() => {
                             if (item.parentElement) {
                                 // Start the fade-out animation
                                 item.style.animation = 'ticker-fade-out 0.5s ease forwards';
@@ -2172,7 +2164,7 @@ Please get in touch with me to discuss this further.`;
                                     item.removeEventListener('animationend', handler);
                                     item.remove();
                                     // Update container position after natural expiry removal (smooth transition up).
-                                    updateTickerPosition(); 
+                                    updateTickerPosition();
                                 }, { once: true });
                             }
                         }, 3500); // 3.5-second display time
@@ -2186,7 +2178,7 @@ Please get in touch with me to discuss this further.`;
                 }
             }
             // --- End Ticker Functions ---
-            
+
             // --- PACKAGE SLIDER RENDER FUNCTIONS ---
              function renderPackageSliderLabels(container) {
                 const labelsContainer = container.querySelector('#package-slider-labels');
@@ -2266,7 +2258,7 @@ Please get in touch with me to discuss this further.`;
                         }
                     }
                 }
-                
+
                 // Sort by price, ascending
                 return availableAddons.sort((a, b) => a.price - b.price);
             }
@@ -2276,10 +2268,10 @@ Please get in touch with me to discuss this further.`;
                 const basePrice = pkg.prices[vehicleType];
                 let surplus = budget - basePrice;
                 let newTotalPrice = basePrice;
-                
+
                 const maximizedAddons = [];
                 const availableAddons = getAvailableAddons(pkg);
-                
+
                 for (const addon of availableAddons) {
                     if (surplus >= addon.price) {
                         surplus -= addon.price;
@@ -2287,7 +2279,7 @@ Please get in touch with me to discuss this further.`;
                         maximizedAddons.push(addon);
                     }
                 }
-                
+
                 return { newTotalPrice, maximizedAddons };
             }
 
@@ -2310,21 +2302,44 @@ Please get in touch with me to discuss this further.`;
             }
 
             function renderPackageCards(container) {
+                console.log("--- renderPackageCards START ---");
+                // ... existing variable declarations ...
+
+                // ADD THESE LOGS
+                const selectedVehicleTypeLog = document.querySelector('input[name="vehicle"]:checked').value;
+                console.log("Selected Vehicle:", selectedVehicleTypeLog);
+
+                const getPriceLog = (pkg) => pkg.prices[selectedVehicleTypeLog];
+
+                // Check what prices are being calculated
+                packages.forEach(p => {
+                    console.log(`Package: ${p.name}, Calculated Price:`, getPriceLog(p));
+                });
+
+                const allPackagesWithPrice = packages
+                    .map(pkg => ({ ...pkg, currentPrice: getPriceLog(pkg) }))
+                    .filter(pkg => pkg.currentPrice !== 'call');
+
+                console.log("Valid Packages (Numeric Price):", allPackagesWithPrice);
+
+                console.log("Rendering package cards, packages array:", packages);
                 if (!packages || packages.length === 0) return; // Don't render if no packages
                 const budgetSlider = container.querySelector('#budget-slider');
                 const budgetValue = container.querySelector('#budget-value');
                 const packageContainer = container.querySelector('#package-container');
                 const protectionMeterFill = container.querySelector('#protection-meter-fill');
                 const protectionLevelTag = container.querySelector('#protection-level-tag');
-                
+
                 if(!budgetSlider || !packageContainer) return;
 
                 const oldPackageId = currentActivePackageId; // Get old package ID for ticker
 
+                console.log("Calling getActivePackage...");
                 const budget = convertSliderValueToBudget(parseInt(budgetSlider.value));
                 const activePackage = getActivePackage(budget);
 
                 if (!activePackage) {
+                    console.error("No active package found for the current budget. Cannot render package cards.");
                     packageContainer.innerHTML = '<p style="color: var(--color-text-muted); text-align: center;">No packages available for this vehicle and budget.</p>';
                     return;
                 }
@@ -2333,17 +2348,17 @@ Please get in touch with me to discuss this further.`;
                 lastBudget = budget;
 
                 const selectedVehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                
+
                 packageContainer.innerHTML = '';
-                
+
                 const getPrice = (pkg) => pkg.prices[selectedVehicleType];
 
                 const allPackagesWithPrice = packages
                     .map(pkg => ({ ...pkg, currentPrice: getPrice(pkg) }))
                     .filter(pkg => pkg.currentPrice !== 'call');
-                    
+
                 const callForEstimatePackages = packages.filter(pkg => getPrice(pkg) === 'call');
-                
+
                 // --- Maximization Logic ---
                 let newTotalPrice = activePackage.currentPrice;
                 let maximizedAddons = [];
@@ -2355,11 +2370,11 @@ Please get in touch with me to discuss this further.`;
                     newTotalPrice = result.newTotalPrice;
                     maximizedAddons = result.maximizedAddons;
                 }
-                
+
                 isMaximized = maximizedAddons.length > 0;
                 userSelections.maximizedItems = maximizedAddons; // Store for summary
                 selectedPackageId = activePackage.id; // Store for logic
-                
+
                 // --- Ticker Logic ---
                 const newPackageId = activePackage.id;
                 if (oldPackageId && oldPackageId !== newPackageId) {
@@ -2367,7 +2382,7 @@ Please get in touch with me to discuss this further.`;
                     const newServices = getServicesFromPackage(newPackageId);
                     const added = new Set([...newServices].filter(x => !oldServices.has(x)));
                     const removed = new Set([...oldServices].filter(x => !newServices.has(x)));
-                    
+
                     if (isBudgetIncreasing) {
                         displayTickerItems(added, 'add');
                     } else {
@@ -2375,15 +2390,15 @@ Please get in touch with me to discuss this further.`;
                     }
                     lastMaximizationAddons = new Set(); // Reset addons on package change
                 }
-                
+
                 // Ticker for Maximized Addons
                 const currentMaximizationAddons = new Set(maximizedAddons.map(a => a.name));
                 const addedAddons = new Set([...currentMaximizationAddons].filter(x => !lastMaximizationAddons.has(x)));
                 const removedAddons = new Set([...lastMaximizationAddons].filter(x => !currentMaximizationAddons.has(x)));
-                
+
                 if (addedAddons.size > 0) displayTickerItems(addedAddons, 'add');
                 if (removedAddons.size > 0) displayTickerItems(removedAddons, 'remove');
-                
+
                 lastMaximizationAddons = currentMaximizationAddons;
                 currentActivePackageId = newPackageId; // Update global state for next run
                 // --- End Ticker Logic ---
@@ -2409,7 +2424,7 @@ Please get in touch with me to discuss this further.`;
                 if (nextPackage) {
                     packagesToRender.push(nextPackage);
                 }
-                
+
                 budgetValue.textContent = `$${Math.round(budget).toLocaleString('en-US')}`;
                 if (activePackage) {
                     protectionMeterFill.style.width = `${activePackage.protectionLevel}%`;
@@ -2427,7 +2442,7 @@ Please get in touch with me to discuss this further.`;
 
                 packagesToRender.forEach((pkg, index) => {
                     const isActiveCard = index === 0;
-                    
+
                     // Use the maximized price for the active card display
                     const displayPrice = isActiveCard
                         ? `$${newTotalPrice.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`
@@ -2441,7 +2456,7 @@ Please get in touch with me to discuss this further.`;
                         'PPF': 'bg-yellow-900 text-yellow-300',
                         'Bundle': 'bg-purple-900 text-purple-300'
                     };
-                    
+
                     const [tagBg, tagText] = (tagBgClasses[pkg.tag] || 'bg-gray-700 text-gray-200').split(' ');
 
                     const packageCard = document.createElement('div');
@@ -2459,7 +2474,7 @@ Please get in touch with me to discuss this further.`;
                                 <p class="text-3xl font-bold" style="color: var(--color-primary);">${displayPrice}</p>
                                 <p class="text-sm" style="color: var(--color-text-muted);">${pkg.tagline}</p>
                             </div>
-                            
+
                             <div class="mb-4">
                                 <button class="parts-toggle-btn w-full flex justify-between items-center py-2 px-4 rounded-lg transition">
                                     <span class="font-medium">Package Details</span>
@@ -2478,7 +2493,7 @@ Please get in touch with me to discuss this further.`;
                                  <i class="fas fa-check-circle mr-2"></i> Select Package
                              </button>
                         </div>
-                        
+
                         <!-- Maximized Tooltip (only for active card) -->
                         ${isActiveCard && isMaximized ? `
                         <div class="maximized-tooltip">
@@ -2506,7 +2521,7 @@ Please get in touch with me to discuss this further.`;
                     selectBtn.addEventListener('click', (e) => {
                         e.stopPropagation(); // Prevent card click from firing
                         const packageId = e.currentTarget.dataset.packageId;
-                        
+
                         // If user clicks "Select Package" on the *inactive* card, we also update the slider
                         if (!isActiveCard && typeof pkg.currentPrice === 'number') {
                             const budgetSlider = container.querySelector('#budget-slider');
@@ -2564,6 +2579,8 @@ Please get in touch with me to discuss this further.`;
 
                 });
 
+                });
+
                 // --- Final Price & Summary Update for Packages ---
                 const priceDisplay = document.getElementById('price-display');
                 const summaryContainer = document.querySelector('.estimate-summary');
@@ -2573,19 +2590,19 @@ Please get in touch with me to discuss this further.`;
                     // "Call" packages are handled as the "next" inactive card.
                     priceDisplay.classList.remove('consultation');
                     animatePrice(newTotalPrice);
-                    
+
                     // Create summary list from base package + maximized addons
                     const basePkg = packages.find(p => p.id === activePackage.id);
                     const basePrice = basePkg.prices[selectedVehicleType];
                     userSelections.selectedItems = [{ name: basePkg.name, price: basePrice }];
                     basePkg.discounts?.forEach(discountName => {
                            const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
-                           userSelections.selectedItems.push({ 
-                               name: discountName, 
-                               price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
+                           userSelections.selectedItems.push({
+                               name: discountName,
+                               price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0
                            });
                     });
-                    
+
                     const allItems = [...userSelections.selectedItems, ...userSelections.maximizedItems.map(a => ({ name: `+ ${a.name}`, price: a.price }))];
                     updateSummaryList(allItems, summaryContainer);
                 }
@@ -2625,10 +2642,10 @@ Please get in touch with me to discuss this further.`;
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="package-container"></div>
                     </div>
                 `;
-                
+
                 const budgetSlider = container.querySelector('#budget-slider');
                 budgetSlider.addEventListener('input', () => renderPackageCards(container));
-                
+
                 renderPackageSliderLabels(container);
                 renderPackageCards(container);
             }
@@ -2637,7 +2654,7 @@ Please get in touch with me to discuss this further.`;
                 const target = e.target;
                 const tab = target.closest('.service-tab');
                 if (!tab) return;
-                
+
                 const service = tab.dataset.service;
 
                 // Stop any price animations
@@ -2672,7 +2689,7 @@ Please get in touch with me to discuss this further.`;
                     }
                     currentlyViewingService = service;
                 }
-                
+
                 // If all individual services are deselected, go back to packages
                 if (!allServices.slice(1).some(s => servicesState[s].selected)) {
                     servicesState['Packages'].selected = true;
@@ -2690,7 +2707,7 @@ Please get in touch with me to discuss this further.`;
                 } else {
                     renderServiceContent();
                 }
-                
+
                 calculateEstimate();
                 updateImageDisplay();
             }
@@ -2728,17 +2745,17 @@ Please get in touch with me to discuss this further.`;
                 const coatingVideoSrc = coatingVideoMap[vehicleType];
                 const polishVideoSrc = polishVideoMap[vehicleType];
                 const packageToDisplay = activePackage || packages.find(p => p.id === selectedPackageId);
-                
+
                 // --- Determine Base Image ---
                 let baseImageSrc = vehicleImageMap['Partial']; // Default
                 if (packageToDisplay) {
                     if (packageToDisplay.isF1) {
                         // Use unified F1 image, which is now correctly mapped for all types.
                         baseImageSrc = vehicleImageMap.F1;
-                        coverageImageOverlay.style.display = 'none'; 
+                        coverageImageOverlay.style.display = 'none';
                     } else if (packageToDisplay.ppfCoverage) {
                         baseImageSrc = vehicleImageMap[packageToDisplay.ppfCoverage];
-                        coverageImageOverlay.style.display = 'none'; 
+                        coverageImageOverlay.style.display = 'none';
                     }
                 } else if (servicesState['PPF'].selected && servicesState['PPF'].coverage) {
                     baseImageSrc = vehicleImageMap[servicesState['PPF'].coverage];
@@ -2808,13 +2825,13 @@ Please get in touch with me to discuss this further.`;
 
                 if (hasCoating && coatingVideoSrc) {
                     coverageVideoContainer.style.display = 'block';
-                    
+
                     // ONLY set the source if it's not already set to the correct video
-                    if (coverageVideoOverlay.src.endsWith(coatingVideoSrc) === false) { 
+                    if (coverageVideoOverlay.src.endsWith(coatingVideoSrc) === false) {
                         // Use endsWith because the browser might absolutize the URL
                         coverageVideoOverlay.src = coatingVideoSrc;
                     }
-                    
+
                     // Attempt to play only if it's paused.
                     if (coverageVideoOverlay.paused) {
                         // .play() returns a promise, which can be rejected if interrupted.
@@ -2840,7 +2857,7 @@ Please get in touch with me to discuss this further.`;
             function selectPackage(packageId) {
                 const selection = packageSelections[packageId];
                 if (!selection) return;
-                
+
                 // --- Ticker Logic on Select ---
                 const oldServices = getServicesFromPackage(currentActivePackageId);
                 const newServices = getServicesFromPackage(packageId);
@@ -2857,13 +2874,13 @@ Please get in touch with me to discuss this further.`;
                         isPriceIncreasing = false;
                     }
                 }
-                
+
                 if (isPriceIncreasing) {
                     displayTickerItems(added, 'add');
                 } else {
                     displayTickerItems(removed, 'remove');
                 }
-                
+
                 currentActivePackageId = packageId; // Update active package for ticker
                 // --- End Ticker Logic ---
 
@@ -2877,10 +2894,10 @@ Please get in touch with me to discuss this further.`;
                         option: null
                     };
                 });
-                
+
                 // Set the new selectedPackageId
                 selectedPackageId = packageId;
-                
+
                 Object.keys(selection).forEach(service => {
                     const serviceSelection = selection[service];
                     servicesState[service] = {
@@ -2888,17 +2905,17 @@ Please get in touch with me to discuss this further.`;
                         ...serviceSelection
                     };
                 });
-                
+
                 // Keep viewing the Packages tab
                 servicesState['Packages'].selected = true;
                 currentlyViewingService = 'Packages';
 
                 // Update UI based on new state
                 renderTabs(); // This will show the included services as selected
-                calculateEstimate(); 
+                calculateEstimate();
                 updateImageDisplay();
             }
-            
+
             // This function modifies the pricingData object to support complex packages as addons
             function augmentPricingData() {
                  Object.keys(pricingData).forEach(vehicleType => {
@@ -3096,7 +3113,7 @@ Please get in touch with me to discuss this further.`;
 
                 augmentPricingData();
                 initializeState();
-                
+
                 // Default to packages view
                 servicesState['Packages'].selected = true;
                 currentlyViewingService = 'Packages';
@@ -3106,10 +3123,10 @@ Please get in touch with me to discuss this further.`;
                 renderPackagesView(dynamicServicesContainer);
                 calculateEstimate();
                 checkAndDisplayCookie();
-                
+
                 document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
                     radio.addEventListener('change', () => {
-                        
+
                         const wasPackageSelected = !!selectedPackageId;
                         const previousService = currentlyViewingService;
 
@@ -3132,7 +3149,7 @@ Please get in touch with me to discuss this further.`;
                                  currentlyViewingService = 'Packages';
                              }
                         }
-                        
+
                         renderTabs();
 
                         if (currentlyViewingService === 'Packages') {
@@ -3140,7 +3157,7 @@ Please get in touch with me to discuss this further.`;
                         } else {
                             renderServiceContent();
                         }
-                        
+
                         calculateEstimate();
                         updateImageDisplay();
                     });
@@ -3158,7 +3175,7 @@ Please get in touch with me to discuss this further.`;
                         }, 500);
                     }
                 });
-                
+
                 callLinks.forEach(link => {
                     link.addEventListener('click', function(e) {
                         if (!isMobileDevice()) {
@@ -3168,7 +3185,7 @@ Please get in touch with me to discuss this further.`;
                             if (!tooltip) return;
                             const canvas = tooltip.querySelector('.qr-code-canvas');
                             const isActive = tooltip.classList.contains('active');
-                            
+
                             document.querySelectorAll('.qr-tooltip.active').forEach(activeTooltip => {
                                 activeTooltip.classList.remove('active');
                             });
@@ -3206,5 +3223,33 @@ Please get in touch with me to discuss this further.`;
 
         });
     </script>
-</body>
-</html>
+
+
+</body></html>
+Traceback (most recent call last):
+  File "/app/verify_configurator_packages_with_logs.py", line 37, in <module>
+    asyncio.run(main())
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/app/verify_configurator_packages_with_logs.py", line 31, in main
+    raise e
+  File "/app/verify_configurator_packages_with_logs.py", line 18, in main
+    await expect(packages_tab).to_be_visible(timeout=10000)
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/playwright/async_api/_generated.py", line 20255, in to_be_visible
+    await self._impl_obj.to_be_visible(visible=visible, timeout=timeout)
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/playwright/_impl/_assertions.py", line 763, in to_be_visible
+    await self._expect_impl(
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/playwright/_impl/_assertions.py", line 83, in _expect_impl
+    raise AssertionError(
+AssertionError: Locator expected to be visible
+Actual value: <element(s) not found>
+Call log:
+  - Expect "to_be_visible" with timeout 10000ms
+  - waiting for locator("div[data-service=\"Packages\"].service-tab")
