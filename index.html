@@ -63,25 +63,33 @@
             position: sticky;
             top: 50vh;
             transform: translateY(-50%);
-            text-align: center;
             position: relative;
         }
-        #coverage-image-base, #coverage-image-overlay, #coverage-image-tint-overlay {
-            max-width: 100%;
-            height: auto;
+
+        #rigid-preview-frame {
+            width: 100%;
+            position: relative;
+            background-color: var(--color-background);
             border-radius: 8px;
+            overflow: hidden;
+            /* aspect-ratio set by JS */
+        }
+
+        #coverage-image-base, #coverage-image-overlay, #coverage-image-tint-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            border-radius: 0;
             transition: all 0.3s ease;
             object-fit: contain;
-            position: relative; /* Establish stacking context */
         }
         #coverage-image-base {
             z-index: 10; /* Image base is on top of ticker */
         }
         #coverage-image-overlay, #coverage-image-tint-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
             pointer-events: none;
         }
         #coverage-image-overlay {
@@ -101,8 +109,8 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            border-radius: 8px;
-            overflow: hidden; /* Ensure video respects border radius */
+            border-radius: 0;
+            overflow: hidden;
             
             /* Mask properties */
             -webkit-mask-size: contain;
@@ -960,18 +968,20 @@
     <div class="widget-container">
         <!-- Image Display Area -->
         <div id="image-display-container">
-            <!-- Ticker Container -->
-            <div id="ticker-container"></div>
-            <img id="coverage-image-base" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
-            <img id="coverage-image-overlay" src="" alt="" style="display: none;">
-            <img id="coverage-image-tint-overlay" src="" alt="" style="display: none;">
-            <!-- NEW Polish Video Layer -->
-            <div id="polish-video-overlay-container" style="display: none;">
-                <video id="coverage-polish-video-overlay" loop muted autoplay playsinline></video>
-            </div>
-            <!-- Wrapped video in a container for blend mode -->
-            <div id="video-overlay-container" style="display: none;">
-                <video id="coverage-video-overlay" loop muted autoplay playsinline></video>
+            <div id="rigid-preview-frame">
+                <!-- Ticker Container -->
+                <div id="ticker-container"></div>
+                <img id="coverage-image-base" src="https://cdn.shopify.com/s/files/1/0671/4635/0805/files/image.png?v=1757352859" alt="Vehicle Protection Coverage Example">
+                <img id="coverage-image-overlay" src="" alt="" style="display: none;">
+                <img id="coverage-image-tint-overlay" src="" alt="" style="display: none;">
+                <!-- NEW Polish Video Layer -->
+                <div id="polish-video-overlay-container" style="display: none;">
+                    <video id="coverage-polish-video-overlay" loop muted autoplay playsinline></video>
+                </div>
+                <!-- Wrapped video in a container for blend mode -->
+                <div id="video-overlay-container" style="display: none;">
+                    <video id="coverage-video-overlay" loop muted autoplay playsinline></video>
+                </div>
             </div>
         </div>
 
@@ -1183,6 +1193,21 @@
             };
             
             const tintOpacityMap = ['0.2', '0.65', '0.8', '0.95']; // 80%, 35%, 20%, 5%
+
+            const vehicleAspectRatios = {
+                '2Door': '1550 / 685',
+                '4Door': '1550 / 730',
+                'SUV': '1445 / 696',
+                'Oversize': '1570 / 742'
+            };
+
+            function updateAspectRatio() {
+                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                const frame = document.getElementById('rigid-preview-frame');
+                if(frame && vehicleAspectRatios[vehicleType]) {
+                    frame.style.aspectRatio = vehicleAspectRatios[vehicleType];
+                }
+            }
 
             const coatingVideoMap = {
                 '2Door': 'https://cdn.shopify.com/videos/c/o/v/fa85c90cb3b948b2979fbbbc32f75d8a.mp4', // FIXED
@@ -2802,10 +2827,11 @@ Please get in touch with me to discuss this further.`;
                 renderPackagesView(dynamicServicesContainer);
                 calculateEstimate();
                 checkAndDisplayCookie();
+                updateAspectRatio();
                 
                 document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
                     radio.addEventListener('change', () => {
-                        
+                        updateAspectRatio();
                         const wasPackageSelected = !!selectedPackageId;
                         const previousService = currentlyViewingService;
 
