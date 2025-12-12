@@ -866,14 +866,18 @@
         .plus-badge-plus {
             display: inline-block;
             opacity: 0;
-            transform: translateX(-50%);
+            max-width: 0;
+            overflow: hidden;
+            transform: translateX(-5px);
             transition: all 0.3s ease;
             color: var(--color-success);
             font-weight: 700;
         }
         .plus-badge.maximized .plus-badge-plus {
             opacity: 1;
+            max-width: 15px;
             transform: translateX(0);
+            margin-left: 3px;
         }
 
         /* Maximized Tooltip */
@@ -2314,7 +2318,7 @@ Please get in touch with me to discuss this further.`;
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-xl font-bold text-white">${pkg.name}</h3>
                                 <span class="plus-badge ${tagBg} ${tagText} text-xs font-semibold px-2.5 py-0.5 rounded-full ${isMaximized && isActiveCard ? 'maximized' : ''}">
-                                    ${pkg.tag} <span class="plus-badge-plus">+</span>
+                                    ${pkg.tag}<span class="plus-badge-plus">+</span>
                                 </span>
                             </div>
                             <div class="mb-4">
