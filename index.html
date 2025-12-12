@@ -2178,76 +2178,6 @@ Please get in touch with me to discuss this further.`;
                 return activePackage;
             }
 
-            function getAvailableAddons(pkg) {
-                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                const packageServices = packageSelections[pkg.id] || {};
-                const availableAddons = [];
-
-                // --- Check for Tint Addons ---
-                const tintState = packageServices['Tint'] || {};
-                const tintAddons = pricingData[vehicleType]['Full Car']?.addons || {};
-                if (tintAddons['Add Windshield'] && !tintState.addons?.includes('Add Windshield')) {
-                    availableAddons.push({ name: 'Add Windshield', price: tintAddons['Add Windshield'], type: 'Tint' });
-                }
-                if (tintAddons['Add Sunroof'] && !tintState.addons?.includes('Add Sunroof')) {
-                    availableAddons.push({ name: 'Add Sunroof', price: tintAddons['Add Sunroof'], type: 'Tint' });
-                }
-
-                // --- Check for Coating Addons ---
-                const coatingState = packageServices['Coating'] || {};
-                const coatingAddons = pricingData[vehicleType]['Coating']['Paint']?.addons || {};
-                if (coatingAddons['Add Wheels (Face & Barrels)'] && !coatingState.addons?.includes('Add Wheels (Face & Barrels)')) {
-                    availableAddons.push({ name: 'Add Wheels (Face & Barrels)', price: coatingAddons['Add Wheels (Face & Barrels)'], type: 'Coating' });
-                }
-                if (coatingAddons['Add Windshield'] && !coatingState.addons?.includes('Add Windshield')) {
-                    // Only add if not already added by tint
-                    if (!availableAddons.some(a => a.name === 'Add Windshield')) {
-                         availableAddons.push({ name: 'Add Windshield', price: coatingAddons['Add Windshield'], type: 'Coating' });
-                    }
-                }
-                
-                // Sort by price, ascending
-                return availableAddons.sort((a, b) => a.price - b.price);
-            }
-
-            function maximizePackage(pkg, budget) {
-                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                const basePrice = pkg.prices[vehicleType];
-                let surplus = budget - basePrice;
-                let newTotalPrice = basePrice;
-                
-                const maximizedAddons = [];
-                const availableAddons = getAvailableAddons(pkg);
-                
-                for (const addon of availableAddons) {
-                    if (surplus >= addon.price) {
-                        surplus -= addon.price;
-                        newTotalPrice += addon.price;
-                        maximizedAddons.push(addon);
-                    }
-                }
-                
-                return { newTotalPrice, maximizedAddons };
-            }
-
-            function removeMaximization() {
-                const budgetSlider = document.getElementById('budget-slider');
-                const summaryContainer = document.querySelector('.estimate-summary');
-                if (!budgetSlider || !selectedPackageId) return;
-
-                const pkg = packages.find(p => p.id === selectedPackageId);
-                const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                const basePrice = pkg.prices[vehicleType];
-
-                // Set slider to just above the base price
-                const newSliderValue = convertBudgetToSliderValue(basePrice + 1); // +1 to ensure it's selected
-                budgetSlider.value = newSliderValue;
-
-                // Manually trigger render and calculation
-                renderPackageCards(dynamicServicesContainer);
-                calculateEstimate(); // This will be redundant, renderPackageCards handles it
-            }
-
             function renderPackageCards(container) {
                 const budgetSlider = container.querySelector('#budget-slider');
                 const budgetValue = container.querySelector('#budget-value');
@@ -2284,20 +2214,12 @@ Please get in touch with me to discuss this further.`;
                     activePackage = allPackagesWithPrice.sort((a, b) => a.currentPrice - b.currentPrice)[0];
                 }
                 
-                // --- Maximization Logic ---
+                // --- Maximization Logic Removed ---
                 let newTotalPrice = activePackage.currentPrice;
                 let maximizedAddons = [];
-                const surplus = budget - activePackage.currentPrice;
-                const maximizationThreshold = 50; // Only maximize if surplus is > $50
-
-                if (surplus > maximizationThreshold) {
-                    const result = maximizePackage(activePackage, budget);
-                    newTotalPrice = result.newTotalPrice;
-                    maximizedAddons = result.maximizedAddons;
-                }
                 
-                isMaximized = maximizedAddons.length > 0;
-                userSelections.maximizedItems = maximizedAddons; // Store for summary
+                isMaximized = false;
+                userSelections.maximizedItems = []; // Store for summary
                 selectedPackageId = activePackage.id; // Store for logic
                 
                 // --- Ticker Logic ---
