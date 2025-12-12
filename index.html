@@ -2812,6 +2812,7 @@ Please get in touch with me to discuss this further.`;
                             initializeState();
                             servicesState = tempState;
                             selectedPackageId = tempPkgId;
+                            currentlyViewingService = previousService;
                         } else {
                             const wereServicesSelected = allServices.some(s => s !== 'Packages' && servicesState[s].selected);
                             const oldState = JSON.parse(JSON.stringify(servicesState));
