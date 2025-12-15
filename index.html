@@ -863,7 +863,7 @@
             height: 100%;
             background: var(--color-primary);
             border-radius: 4px;
-            box-shadow: 0 0 10px rgba(255, 183, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
             transition: width 0.4s ease-out;
         }
         .package-btn {
@@ -885,7 +885,7 @@
             border: 2px solid transparent;
         }
         .package-btn:hover {
-            background-color: #ffc733; /* Lighter yellow */
+            background-color: #ff645c; /* Lighter red */
         }
         .parts-toggle-btn {
              background-color: var(--color-surface);
@@ -1156,7 +1156,7 @@
                                     <p id="welcome-message">Tell us what you drive and what you'd like to protect.</p>
                                     <div class="call-link-container" id="call-link-welcome">
                                         <a href="tel:4696251127" class="call-link">
-                                            <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                            <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
                                             <span>or give us a ring, we're open!</span>
                                         </a>
                                         <div class="qr-tooltip">
@@ -1189,7 +1189,7 @@
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary next-btn btn-right" id="selections-next-btn" disabled>
                                     <span>Continue to Contact</span>
-                                    <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                    <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
                                 </button>
                             </div>
                         </div>
@@ -1245,7 +1245,7 @@
                         <animated-icons
                             src="https://animatedicons.co/get-icon?name=High%20Five&style=minimalistic&token=dfda27f9-e133-49e0-bf9e-4d952d0ab596"
                             trigger="loop"
-                            attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#EAEAEA","background":"#141414"}}'
+                            attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#EAEAEA","background":"#141414"}}'
                             height="200"
                             width="200">
                         </animated-icons>
@@ -1259,7 +1259,7 @@
                                 <animated-icons
                                     src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c"
                                     trigger="loop"
-                                    attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}'
+                                    attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}'
                                     height="22"
                                     width="22">
                                 </animated-icons>
@@ -3056,7 +3056,7 @@ Please get in touch with me to discuss this further.`;
                                         width: 150,
                                         margin: 0,
                                         color: {
-                                            dark: '#FFB700',
+                                            dark: '#FF3B30',
                                             light: '#141414'
                                         }
                                     }, function (error) {
@@ -3114,10 +3114,13 @@ Please get in touch with me to discuss this further.`;
                 // Safety timeout: 5 seconds
                 const timeoutPromise = new Promise(resolve => setTimeout(resolve, 5000));
 
-                // Wait for all videos or timeout
-                Promise.race([
-                    Promise.all(uniqueUrls.map(loadVideo)),
-                    timeoutPromise
+                // Minimum display time: 2.5 seconds (prevents flashing)
+                const minTimePromise = new Promise(resolve => setTimeout(resolve, 2500));
+
+                // Wait for (Videos loaded OR Timeout) AND Minimum Time
+                Promise.all([
+                    Promise.race([Promise.all(uniqueUrls.map(loadVideo)), timeoutPromise]),
+                    minTimePromise
                 ]).then(() => {
                     // Start fade out
                     preloader.classList.add('loaded');
