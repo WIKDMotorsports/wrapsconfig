@@ -793,8 +793,24 @@
             height: 100%;
             background: linear-gradient(90deg, #FFD700, #f39c12, var(--color-primary));
             border-radius: 0;
-            box-shadow: 0 0 15px rgba(255, 59, 48, 0.3);
-            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, opacity 0.3s ease;
+            opacity: 0.6; /* Dim by default */
+            filter: brightness(0.8);
+            box-shadow: none;
+        }
+
+        /* Glowing state for the meter when a package is active */
+        .protection-meter-fill.pulse-glow {
+            opacity: 1;
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px var(--color-primary), 0 0 30px var(--color-primary);
+            animation: barPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes barPulse {
+            0% { box-shadow: 0 0 15px var(--color-primary), 0 0 30px var(--color-primary); }
+            50% { box-shadow: 0 0 25px var(--color-primary), 0 0 50px var(--color-primary); filter: brightness(1.4); }
+            100% { box-shadow: 0 0 15px var(--color-primary), 0 0 30px var(--color-primary); }
         }
         
         .package-btn {
@@ -811,14 +827,18 @@
             transition: all 0.3s ease;
             text-decoration: none;
             width: 100%;
-            background-color: var(--color-primary);
-            color: #000 !important;
-            border: 2px solid transparent;
+            /* Ghost Button Style Default */
+            background-color: transparent;
+            color: var(--color-primary) !important;
+            border: 1px solid var(--color-primary);
             clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 85%);
         }
         .package-btn:hover {
-            background-color: #ffc733; 
-            color: #000;
+            /* Filled Style on Hover */
+            background-color: var(--color-primary);
+            color: #000 !important;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 20px rgba(255, 59, 48, 0.4);
         }
         
         .parts-toggle-btn {
@@ -2039,12 +2059,12 @@ Please get in touch with me to discuss this further.`;
                           if (serviceKey === 'Coating') {
                              const optPrice = serviceData.options[serviceSel.option];
                              if (typeof optPrice === 'number') {
-                                 itemPrice = optPrice; // Override base price
+                                itemPrice = optPrice; // Override base price
                              }
                              itemName = `${serviceKey} - ${serviceSel.coverage} (${serviceSel.option})`;
-                           } else if (serviceKey === 'Tint') {
+                            } else if (serviceKey === 'Tint') {
                              itemName = `${serviceKey} - ${serviceSel.coverage}`;
-                           }
+                            }
                     }
                     
                     if (typeof itemPrice === 'number') {
@@ -2461,6 +2481,11 @@ Please get in touch with me to discuss this further.`;
                         'Ultimate': 'text-purple-400'
                     };
                     protectionLevelTag.className = `ml-2 font-bold ${tierColorClasses[tierName] || 'text-gray-400'}`;
+
+                    // NEW: Add glowing class to meter fill when package is active
+                    protectionMeterFill.classList.add('pulse-glow');
+                } else {
+                     protectionMeterFill.classList.remove('pulse-glow');
                 }
 
 
