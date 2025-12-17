@@ -838,7 +838,7 @@
          }
           .parts-toggle-btn:hover {
              color: var(--color-text);
-         }
+          }
 
         /* Package Plus Badge */
         .plus-badge {
@@ -1403,7 +1403,7 @@
             };
 
             const sliderMap = [
-                { slider: 0,    budget: 0 },
+                { slider: 0,   budget: 0 },
                 { slider: 100,  budget: 1500 },
                 { slider: 300,  budget: 4000 },
                 { slider: 700,  budget: 10000 },
@@ -2035,16 +2035,16 @@ Please get in touch with me to discuss this further.`;
 
                     // Handle Options (Coating/Tint)
                     if (serviceData.options && serviceSel.option) {
-                         // For Tint, options usually 0. For Coating, option is the price.
-                         if (serviceKey === 'Coating') {
+                          // For Tint, options usually 0. For Coating, option is the price.
+                          if (serviceKey === 'Coating') {
                              const optPrice = serviceData.options[serviceSel.option];
                              if (typeof optPrice === 'number') {
                                  itemPrice = optPrice; // Override base price
                              }
                              itemName = `${serviceKey} - ${serviceSel.coverage} (${serviceSel.option})`;
-                          } else if (serviceKey === 'Tint') {
+                           } else if (serviceKey === 'Tint') {
                              itemName = `${serviceKey} - ${serviceSel.coverage}`;
-                          }
+                           }
                     }
                     
                     if (typeof itemPrice === 'number') {
@@ -2067,14 +2067,14 @@ Please get in touch with me to discuss this further.`;
                 // 3. Add explicit discounts defined in the package
                 if (pkg.discounts) {
                     pkg.discounts.forEach(d => {
-                         const val = (d.match(/-?\$([\d,]+)/) || [])[1];
-                         if (val) {
+                          const val = (d.match(/-?\$([\d,]+)/) || [])[1];
+                          if (val) {
                              const discountAmount = parseFloat(val.replace(/,/g, ''));
                              items.push({ name: d, price: -discountAmount });
                              calculatedSum -= discountAmount;
-                         } else if (d.includes("FREE")) {
+                          } else if (d.includes("FREE")) {
                              items.push({ name: d, price: 0 }); // Free item
-                         }
+                          }
                     });
                 }
 
@@ -2487,9 +2487,9 @@ Please get in touch with me to discuss this further.`;
                     packageCard.className = `package-card border shadow-sm overflow-hidden ${isActiveCard ? 'active' : ''}`;
 
                     packageCard.innerHTML = `
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-bold text-white">${pkg.name}</h3>
+                        <div class="p-5">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-bold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">${pkg.name}</h3>
                                 <span class="plus-badge ${tagBg} ${tagText} text-xs font-semibold px-2.5 py-0.5 ${isMaximized && isActiveCard ? 'maximized' : ''}">
                                     ${pkg.tag}<span class="plus-badge-plus">+</span>
                                 </span>
@@ -2647,15 +2647,15 @@ Please get in touch with me to discuss this further.`;
                 // If a package is currently selected, set slider to that package's price range.
                 // Otherwise use the lastBudget.
                 if (selectedPackageId) {
-                     const pkg = packages.find(p => p.id === selectedPackageId);
-                     const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
-                     if(pkg && typeof pkg.prices[vehicleType] === 'number') {
-                         const targetSliderVal = convertBudgetToSliderValue(pkg.prices[vehicleType] + 5); // +5 to ensure it passes the threshold
-                         budgetSlider.value = targetSliderVal;
-                         lastBudget = pkg.prices[vehicleType] + 5; 
-                     } else {
-                         budgetSlider.value = convertBudgetToSliderValue(lastBudget);
-                     }
+                      const pkg = packages.find(p => p.id === selectedPackageId);
+                      const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                      if(pkg && typeof pkg.prices[vehicleType] === 'number') {
+                          const targetSliderVal = convertBudgetToSliderValue(pkg.prices[vehicleType] + 5); // +5 to ensure it passes the threshold
+                          budgetSlider.value = targetSliderVal;
+                          lastBudget = pkg.prices[vehicleType] + 5; 
+                      } else {
+                          budgetSlider.value = convertBudgetToSliderValue(lastBudget);
+                      }
                 } else {
                     budgetSlider.value = convertBudgetToSliderValue(lastBudget);
                 }
@@ -2723,8 +2723,8 @@ Please get in touch with me to discuss this further.`;
                 
                 // Logic to ensure at least one tab is selected/active for view
                 if (!allServices.some(s => servicesState[s].selected)) {
-                     servicesState['Packages'].selected = true;
-                     currentlyViewingService = 'Packages';
+                      servicesState['Packages'].selected = true;
+                      currentlyViewingService = 'Packages';
                 }
 
                 renderTabs();
