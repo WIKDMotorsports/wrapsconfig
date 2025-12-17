@@ -839,7 +839,7 @@
             height: 100%;
             background: var(--color-primary);
             border-radius: 4px;
-            box-shadow: 0 0 10px rgba(255, 183, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
             transition: width 0.4s ease-out;
         }
         .package-btn {
@@ -876,6 +876,13 @@
         .plus-badge {
             position: relative;
             cursor: help;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            padding: 4px 10px !important; /* Equal vertical padding for true centering */
+            height: auto;
+            min-height: 24px;
         }
         .plus-badge-plus {
             display: inline-block;
@@ -1132,7 +1139,7 @@
                                     <p id="welcome-message">Tell us what you drive and what you'd like to protect.</p>
                                     <div class="call-link-container" id="call-link-welcome">
                                         <a href="tel:4696251127" class="call-link">
-                                            <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                            <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
                                             <span>or give us a ring, we're open!</span>
                                         </a>
                                         <div class="qr-tooltip">
@@ -1165,7 +1172,7 @@
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary next-btn btn-right" id="selections-next-btn" disabled>
                                     <span>Continue to Contact</span>
-                                    <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
+                                    <animated-icons src="https://animatedicons.co/get-icon?name=Forward&style=minimalistic&token=61ef98d6-f61b-49ac-a0f3-46fec965e300" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
                                 </button>
                             </div>
                         </div>
@@ -1221,7 +1228,7 @@
                         <animated-icons
                             src="https://animatedicons.co/get-icon?name=High%20Five&style=minimalistic&token=dfda27f9-e133-49e0-bf9e-4d952d0ab596"
                             trigger="loop"
-                            attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#EAEAEA","background":"#141414"}}'
+                            attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#EAEAEA","background":"#141414"}}'
                             height="200"
                             width="200">
                         </animated-icons>
@@ -1235,7 +1242,7 @@
                                 <animated-icons
                                     src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c"
                                     trigger="loop"
-                                    attributes='{"variationThumbColour":"#FFB700","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FFB700","group-2":"#FFB700","background":"#0A0A0A"}}'
+                                    attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}'
                                     height="22"
                                     width="22">
                                 </animated-icons>
@@ -2159,6 +2166,10 @@ Please get in touch with me to discuss this further.`;
                     priceDisplay.textContent = '$0.00';
                     priceDisplay.classList.remove('consultation');
                     summaryHeader.textContent = "Starting At:"; // Reset header
+                    // Update currentPrice so next animation starts from 0
+                    currentPrice = 0;
+                    if (priceAnimationInterval) clearInterval(priceAnimationInterval);
+                    
                     updateSummaryList([], summaryContainer);
                     selectionsNextBtn.disabled = true;
                     return;
@@ -2257,19 +2268,23 @@ Please get in touch with me to discuss this further.`;
 
                 // --- Standard A-La-Carte Price Display ---
                 const selectedServicesCount = Object.values(servicesState).filter(s => s.selected && s.coverage).length;
+                
                 if (isConsultationNeeded) {
+                    // Handle consultation text without animation overwriting it
                     priceDisplay.textContent = 'Call For Free Consultation';
                     priceDisplay.classList.add('consultation');
                     if (total > 0) {
                         priceDisplay.textContent += ` + $${total.toFixed(2)}`;
                     }
-                    animatePrice(total); // Still animate the numeric part
+                    // Update currentPrice for future animations, but stop any running animation
+                    currentPrice = total;
+                    if (priceAnimationInterval) clearInterval(priceAnimationInterval);
                 } else if (selectedServicesCount === 0 && !selectedPackageId) {
-                    priceDisplay.textContent = '$0.00';
+                    // Zero state
                     priceDisplay.classList.remove('consultation');
                     animatePrice(0);
                 } else {
-                    priceDisplay.textContent = `$${total.toFixed(2)}`;
+                    // Standard numeric price
                     priceDisplay.classList.remove('consultation');
                     animatePrice(total);
                 }
@@ -2708,7 +2723,30 @@ Please get in touch with me to discuss this further.`;
                 `;
                 
                 const budgetSlider = container.querySelector('#budget-slider');
-                budgetSlider.addEventListener('input', () => renderPackageCards(container));
+                
+                // Smart Slider Positioning:
+                // If a package is currently selected, set slider to that package's price range.
+                // Otherwise use the lastBudget.
+                if (selectedPackageId) {
+                     const pkg = packages.find(p => p.id === selectedPackageId);
+                     const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+                     if(pkg && typeof pkg.prices[vehicleType] === 'number') {
+                         const targetSliderVal = convertBudgetToSliderValue(pkg.prices[vehicleType] + 5); // +5 to ensure it passes the threshold
+                         budgetSlider.value = targetSliderVal;
+                         lastBudget = pkg.prices[vehicleType] + 5; 
+                     } else {
+                         budgetSlider.value = convertBudgetToSliderValue(lastBudget);
+                     }
+                } else {
+                    budgetSlider.value = convertBudgetToSliderValue(lastBudget);
+                }
+
+                budgetSlider.addEventListener('input', () => {
+                    // If user touches slider, we might want to break the "selectedPackageId" lock 
+                    // so they can freely browse, OR just let them see other packages.
+                    // For now, we just re-render cards.
+                    renderPackageCards(container)
+                });
                 
                 renderPackageSliderLabels(container);
                 renderPackageCards(container);
@@ -2723,45 +2761,51 @@ Please get in touch with me to discuss this further.`;
 
                 // Stop any price animations
                 if (priceAnimationInterval) clearInterval(priceAnimationInterval);
-                currentPrice = 0; // Reset animation base
+                // Removed currentPrice = 0 to prevent scramble on tab switch
 
                 if (target.classList.contains('close-btn')) {
                     e.stopPropagation();
-                    selectedPackageId = null;
-                    servicesState[service].selected = false;
-                    servicesState[service].coverage = '';
-                    servicesState[service].addons = [];
-                    servicesState[service].option = null;
+                    
+                    if (service === 'Packages') {
+                        // User clicked X on Packages tab -> Full Reset
+                        initializeState();
+                        servicesState['Packages'].selected = true; // Reset to default state
+                        currentlyViewingService = 'Packages';
+                        lastBudget = convertSliderValueToBudget(200); 
+                        selectedPackageId = null;
+                    } else {
+                        // User clicked X on a service tab
+                        selectedPackageId = null; // Break package link implies custom build
+                        servicesState[service].selected = false;
+                        servicesState[service].coverage = '';
+                        servicesState[service].addons = [];
+                        servicesState[service].option = null;
 
-                    if(currentlyViewingService === service) {
-                        currentlyViewingService = Object.keys(servicesState).find(s => servicesState[s].selected) || 'Packages';
-                    }
-                } else {
-                    if (currentlyViewingService === 'Packages' && service !== 'Packages') {
-                        // If switching from Packages, clear package selection unless a service was already selected
-                        if(!allServices.slice(1).some(s => servicesState[s].selected)) {
-                             selectedPackageId = null;
+                        // If we are viewing this service, go somewhere else
+                        if(currentlyViewingService === service) {
+                            // Try to find another selected service, or default to Packages
+                            currentlyViewingService = Object.keys(servicesState).find(s => servicesState[s].selected) || 'Packages';
                         }
                     }
-
-                    if (service !== 'Packages' && !servicesState[service].selected) {
-                           // Don't auto-select. Selection happens on coverage choice.
-                    } else if (service === 'Packages') {
-                        // Deselect other services when going back to packages
-                        initializeState();
-                        servicesState['Packages'].selected = true;
+                } else {
+                    // User clicked the Tab body (Navigation)
+                    if (service === 'Packages') {
+                        // User is returning to Packages tab. 
+                        // Do NOT reset state. Just view it.
+                        currentlyViewingService = 'Packages';
+                    } else {
+                        // User clicked a service tab (e.g. Tint)
+                        currentlyViewingService = service;
+                        // We do NOT clear selectedPackageId here anymore.
+                        // We allow the user to view the tab with the package settings active.
+                        // selectedPackageId is only cleared if they interact with a form input (change event) in renderAddons.
                     }
-                    currentlyViewingService = service;
                 }
                 
-                // If all individual services are deselected, go back to packages
-                if (!allServices.slice(1).some(s => servicesState[s].selected)) {
-                    servicesState['Packages'].selected = true;
-                    if(document.activeElement.closest('.close-btn')) {
-                        currentlyViewingService = 'Packages';
-                    }
-                } else {
-                      servicesState['Packages'].selected = false;
+                // Logic to ensure at least one tab is selected/active for view
+                if (!allServices.some(s => servicesState[s].selected)) {
+                     servicesState['Packages'].selected = true;
+                     currentlyViewingService = 'Packages';
                 }
 
                 renderTabs();
@@ -3093,7 +3137,7 @@ Please get in touch with me to discuss this further.`;
                                         width: 150,
                                         margin: 0,
                                         color: {
-                                            dark: '#FFB700',
+                                            dark: '#FF3B30',
                                             light: '#141414'
                                         }
                                     }, function (error) {
