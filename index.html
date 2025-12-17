@@ -833,12 +833,22 @@
             border: 1px solid var(--color-primary);
             clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 85%);
         }
+        
+        /* Updated: Ensure .selected class behaves exactly like hover */
         .package-btn:hover {
             /* Filled Style on Hover */
             background-color: var(--color-primary);
             color: #000 !important;
             border-color: var(--color-primary);
             box-shadow: 0 0 20px rgba(255, 59, 48, 0.4);
+        }
+
+        .package-btn.selected {
+            background-color: var(--color-primary) !important;
+            color: #000000 !important; /* Force black text to ensure readability on red bg */
+            border-color: var(--color-primary) !important;
+            box-shadow: 0 0 20px rgba(255, 59, 48, 0.4);
+            transform: translateY(-2px); /* Maintain the 'lifted' look */
         }
         
         .parts-toggle-btn {
@@ -2485,7 +2495,7 @@ Please get in touch with me to discuss this further.`;
                     // NEW: Add glowing class to meter fill when package is active
                     protectionMeterFill.classList.add('pulse-glow');
                 } else {
-                     protectionMeterFill.classList.remove('pulse-glow');
+                      protectionMeterFill.classList.remove('pulse-glow');
                 }
 
 
@@ -2507,6 +2517,8 @@ Please get in touch with me to discuss this further.`;
                     };
                     
                     const [tagBg, tagText] = (tagBgClasses[pkg.tag] || 'bg-gray-700 text-gray-200').split(' ');
+
+                    const isSelected = pkg.id === selectedPackageId;
 
                     const packageCard = document.createElement('div');
                     packageCard.className = `package-card border shadow-sm overflow-hidden ${isActiveCard ? 'active' : ''}`;
@@ -2539,8 +2551,8 @@ Please get in touch with me to discuss this further.`;
                                     </ul>` : ''}
                                 </div>
                             </div>
-                             <button class="package-btn mt-4 select-package-btn" data-package-id="${pkg.id}">
-                                 <i class="fas fa-check-circle mr-2"></i> Select Package
+                             <button class="package-btn mt-4 select-package-btn ${isSelected ? 'selected' : ''}" data-package-id="${pkg.id}">
+                                 <i class="fas ${isSelected ? 'fa-check' : 'fa-check-circle'} mr-2"></i> ${isSelected ? 'Selected' : 'Select Package'}
                              </button>
                         </div>
                         
@@ -2586,6 +2598,8 @@ Please get in touch with me to discuss this further.`;
                         } else {
                             // Otherwise, just select the package (for price breakdown)
                             selectPackage(packageId);
+                            // Re-render to update the button state
+                            renderPackageCards(container);
                         }
                     });
 
@@ -2883,7 +2897,7 @@ Please get in touch with me to discuss this further.`;
 
                 // --- Coating Video Logic ---
                 const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id] && packageSelections[packageToDisplay.id]['Coating']))) ||
-                                               (servicesState['Coating'].selected && servicesState['Coating'].coverage);
+                                                 (servicesState['Coating'].selected && servicesState['Coating'].coverage);
 
                 if (hasCoating && coatingVideoSrc) {
                     coverageVideoContainer.style.display = 'block';
