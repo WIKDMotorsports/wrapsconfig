@@ -12,13 +12,16 @@
     <script src="https://animatedicons.co/scripts/embed-animated-icons.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <style>
-        /* --- THEME VARIABLES (MATCHING PACKAGES PAGE) --- */
+        /* --- THEME VARIABLES (REFINED HIERARCHY) --- */
         :root {
-            --color-background: #0A0A0A;
+            --color-background: #000000; /* Level 0: Pitch Black (Page BG) */
+            --color-surface: #0F0F0F;    /* Level 1: Very Dark Gray (Main Panel) */
+            --color-card: #18181B;       /* Level 2: Lighter Gray (Cards) */
+            --color-input: #000000;      /* Level 0: Hole Punched (Inputs/Sliders) */
+            
             --color-text: #EAEAEA;
             --color-text-muted: #888888;
             --color-primary: #FF3B30;
-            --color-surface: #141414;
             --color-border: #2A2A2A;
             --color-danger: #ff4d4d;
             --color-success: #4ade80;
@@ -51,7 +54,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 9999;
-            opacity: 0.08;
+            opacity: 0.06; /* Slightly reduced opacity for cleaner black look */
             background-size: 100px 100px;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
@@ -87,8 +90,10 @@
         #rigid-preview-frame {
             width: 100%;
             position: relative;
-            border: 1px solid var(--color-border);
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+            /* SEAMLESS INTEGRATION: No border, no shadow */
+            border: none;
+            filter: none;
+            box-shadow: none;
         }
 
         .media-wrapper {
@@ -98,8 +103,8 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            border-radius: 0; /* Removing radius for angular theme */
-            background-color: #000;
+            border-radius: 0; 
+            background-color: var(--color-background); /* Matches body */
         }
 
         #coverage-image-base, #coverage-image-overlay, #coverage-image-tint-overlay {
@@ -116,7 +121,7 @@
         #coverage-image-base { z-index: 10; }
         #coverage-image-overlay { z-index: 15; pointer-events: none; }
         #coverage-image-tint-overlay {
-            mix-blend-mode: overlay;
+            mix-blend-mode: multiply; /* Changed to multiply for better tint visibility */
             opacity: 0;
             z-index: 20;
             pointer-events: none;
@@ -148,16 +153,16 @@
             min-width: 0;
         }
         
-        /* --- PANEL STYLING (CLIPPED CORNERS) --- */
+        /* --- PANEL STYLING (Level 1 Gray) --- */
         .panel {
-            background-color: var(--color-surface); /* Darker surface */
+            background-color: var(--color-surface); /* Dark Gray */
             padding: 2rem;
             margin: 0 0 1.5rem 0;
             border: 1px solid var(--color-border);
-            border-radius: 0; /* Reset border radius */
-            /* Custom Geometry: Cut bottom right */
+            border-radius: 0;
+            /* Custom Geometry */
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
-            /* Use Filter Drop Shadow for clipped containers */
+            /* Shadow for depth against black bg */
             filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
         }
         
@@ -277,7 +282,7 @@
         .progress-step.active { color: var(--color-primary); }
         .progress-step.active .step-node { border-color: var(--color-primary); box-shadow: 0 0 10px var(--color-primary); }
 
-        /* Inputs */
+        /* Inputs (Hole Punched Look - Level 0 Black) */
         .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
@@ -292,9 +297,9 @@
         .form-control {
             width: 100%;
             padding: 14px;
-            background-color: #000;
+            background-color: var(--color-input); /* #000 */
             border: 1px solid var(--color-border);
-            border-radius: 0; /* Squared off */
+            border-radius: 0;
             color: var(--color-text);
             font-size: 1rem;
             transition: border-color 0.3s ease;
@@ -330,7 +335,7 @@
             background-color: transparent;
             border: 1px solid transparent;
             border-bottom: none;
-            border-radius: 0; /* Squared tabs */
+            border-radius: 0;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -342,7 +347,7 @@
         }
         .service-tab.selected {
             background-color: var(--color-primary);
-            color: #000; /* Contrast text on red */
+            color: #000;
             font-weight: 800;
             padding-right: 34px; 
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); 
@@ -350,9 +355,9 @@
         .service-tab.viewing {
             color: var(--color-primary);
             border: 1px solid var(--color-border);
-            border-bottom: 1px solid var(--color-surface); /* Blend with panel */
+            border-bottom: 1px solid var(--color-surface); /* Matches panel bg */
             background-color: var(--color-surface);
-            margin-bottom: -1px; /* Push over border */
+            margin-bottom: -1px;
             z-index: 2;
         }
         .service-tab.selected.viewing {
@@ -393,7 +398,8 @@
             font-weight: 700;
             text-transform: uppercase;
             color: var(--color-text);
-            background-color: #000;
+            /* Cards for choices - Level 2 Gray */
+            background-color: var(--color-card);
             border: 1px solid var(--color-border);
             position: relative;
             transition: all 0.3s ease;
@@ -402,7 +408,7 @@
             min-height: 44px;
             border-radius: 0;
         }
-        .choice-label:hover { border-color: var(--color-text-muted); }
+        .choice-label:hover { border-color: var(--color-text-muted); background-color: #222; }
         .choice-input:checked + .choice-label {
             background-color: var(--color-surface);
             border-color: var(--color-primary);
@@ -410,7 +416,7 @@
             box-shadow: inset 0 0 10px rgba(255, 59, 48, 0.1);
         }
         
-        /* --- BUTTONS (WIKD STANDARD) --- */
+        /* --- BUTTONS --- */
         .btn-group {
             display: flex;
             justify-content: space-between;
@@ -439,7 +445,6 @@
             gap: 0.5rem;
             z-index: 1;
             border-radius: 0;
-            /* WIKD Standard Clip */
             clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 85%);
         }
         .btn span, .choice-label span, .btn i, .btn animated-icons { position: relative; z-index: 2; }
@@ -476,17 +481,15 @@
         
         .hidden-field { display: none !important; }
 
-        /* --- SUMMARY BOX --- */
+        /* --- SUMMARY BOX (Level 0 Black for Contrast) --- */
+        /* --- SUMMARY BOX (Seamless with Divider) --- */
         .estimate-summary { 
             text-align: center;
             margin-bottom: 2rem;
-            padding: 1rem 1.5rem;
-            background-color: #000;
-            border: 1px solid var(--color-border);
-            border-radius: 0;
+            padding: 0;
+            background-color: transparent;
+            border: none;
             transition: all 0.3s ease;
-            /* Angular cut bottom right small */
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
         }
 
         .summary-main {
@@ -495,6 +498,7 @@
             align-items: center;
             gap: 1rem;
             width: 100%;
+            padding-top: 0.5rem; /* Slight spacing from divider */
         }
 
         .estimate-summary h3 { 
@@ -654,14 +658,14 @@
             transform: translateX(-50%) translateY(-5px);
         }
 
-        /* --- SLIDER STYLES (MATCHING PACKAGES) --- */
+        /* --- SLIDER STYLES (Matching Theme) --- */
         .slider-container { padding: 1rem 0.5rem; }
         .tint-slider, .hue-slider, .budget-slider-input {
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
             height: 12px;
-            background: #000;
+            background: var(--color-input); /* Hole black */
             border: 1px solid var(--color-border);
             outline: none;
             opacity: 1;
@@ -670,13 +674,13 @@
             margin: 0;
         }
 
-        /* Triangle Thumb */
-        .tint-slider::-webkit-slider-thumb, .hue-slider::-webkit-slider-thumb, .budget-slider-input::-webkit-slider-thumb {
+        /* --- TINT & HUE SLIDERS (Triangle Thumb - White Default) --- */
+        .tint-slider::-webkit-slider-thumb, .hue-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 28px;
             height: 24px;
-            background: var(--color-primary);
+            background: #EAEAEA; /* White Default */
             cursor: pointer;
             border: 0;
             margin-top: -8px; 
@@ -684,22 +688,49 @@
             clip-path: polygon(0 0, 100% 0, 50% 100%);
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
-        
-        .tint-slider.illegal-tint::-webkit-slider-thumb {
-            background-color: var(--color-danger);
-            animation: pulse-red 2s infinite;
-        }
-        .tint-slider::-moz-range-thumb, .hue-slider::-moz-range-thumb, .budget-slider-input::-moz-range-thumb {
+        .tint-slider::-moz-range-thumb, .hue-slider::-moz-range-thumb {
             width: 28px;
             height: 24px;
-            background: var(--color-primary);
+            background: #EAEAEA; /* White Default */
             cursor: pointer;
             border: 0;
             transition: background-color 0.3s ease;
             clip-path: polygon(0 0, 100% 0, 50% 100%);
         }
-        .hue-slider::-webkit-slider-thumb { background: #EAEAEA; }
-        .hue-slider::-moz-range-thumb { background: #EAEAEA; }
+
+        /* Illegal Tint State (Red Pulse) */
+        .tint-slider.illegal-tint::-webkit-slider-thumb {
+            background-color: var(--color-danger) !important;
+            animation: pulse-red 2s infinite;
+        }
+        .tint-slider.illegal-tint::-moz-range-thumb {
+             background-color: var(--color-danger) !important;
+             animation: pulse-red 2s infinite;
+        }
+
+        /* --- BUDGET SLIDER (Triangle Thumb - ALWAYS RED) --- */
+        .budget-slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 24px;
+            background: var(--color-primary) !important; /* Always Red */
+            cursor: pointer;
+            border: 0;
+            margin-top: -8px; 
+            transition: background-color 0.3s ease;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+        }
+        .budget-slider-input::-moz-range-thumb {
+            width: 28px;
+            height: 24px;
+            background: var(--color-primary) !important; /* Always Red */
+            cursor: pointer;
+            border: 0;
+            transition: background-color 0.3s ease;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
 
         @keyframes pulse-red {
             0% { filter: drop-shadow(0 0 0 rgba(255, 77, 77, 0.7)); }
@@ -726,11 +757,11 @@
             transition: color 0.3s ease;
         }
 
-        /* --- PACKAGE CARDS --- */
+        /* --- PACKAGE CARDS (Level 2 Lightest Gray) --- */
         .package-slider-container { color: var(--color-text); }
         
         .package-card {
-            background-color: #000 !important;
+            background-color: var(--color-card) !important; /* Level 2 Gray */
             border: 1px solid var(--color-border);
             color: var(--color-text);
             transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
@@ -740,6 +771,7 @@
             /* Custom Geometry: Cut bottom right 20px */
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
             filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+            border-radius: 0 !important;
         }
         .package-card.active {
             transform: scale(1);
@@ -750,7 +782,7 @@
         }
 
         .protection-meter-bg {
-            background-color: #222;
+            background-color: var(--color-input);
             border: 1px solid var(--color-border);
             height: 12px;
             border-radius: 0;
@@ -785,18 +817,27 @@
             clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 85%);
         }
         .package-btn:hover {
-            background-color: #ffc733; /* Lighter yellow/orange on hover */
+            background-color: #ffc733; 
             color: #000;
         }
         
         .parts-toggle-btn {
-             background-color: #000;
-             border: 1px solid var(--color-border);
-             color: var(--color-text);
+             background-color: transparent;
+             border: none;
+             color: var(--color-text-muted);
              border-radius: 0;
+             padding: 0;
+             width: 100%;
+             text-align: left;
+             font-family: var(--font-heading);
+             font-weight: 700;
+             text-transform: uppercase;
+             font-size: 0.85rem;
+             letter-spacing: 0.05em;
+             transition: color 0.3s ease;
          }
           .parts-toggle-btn:hover {
-             border-color: var(--color-text-muted);
+             color: var(--color-text);
          }
 
         /* Package Plus Badge */
@@ -1274,18 +1315,18 @@
             const packages = [
                 { id: 'tint-full', name: 'Full Car Tint', tagline: 'Interior Protection from UV Rays and Heat', description: 'NanoCeramic Window Tint for the Full Vehicle.', tag: 'Tint', ppfCoverage: null, protectionLevel: 10, prices: { '2Door': 495, '4Door': 595, 'SUV': 595, 'Oversize': 'call' }, discounts: [] },
                 { id: 'tint-complete', name: 'Complete Tint', tagline: 'Upgraded comfort and UV defense.', description: 'NanoCeramic Window Tint for the Full Vehicle and Windshield.', tag: 'Tint', ppfCoverage: null, protectionLevel: 15, prices: { '2Door': 945, '4Door': 1045, 'SUV': 1045, 'Oversize': 'call' }, discounts: [] },
-                { id: 'coating-essential', name: 'Essential Paint Coating', tagline: 'Gloss and protection where it matters most.', description: 'Includes Single Stage Polish & Paint Coating Installation. Additional Paint Correction Optional.', tag: 'Coating', ppfCoverage: null, protectionLevel: 25, prices: { '2Door': 995, '4Door': 1195, 'SUV': 1395, 'Oversize': 1695 }, discounts: [] },
+                { id: 'coating-essential', name: 'Essential Paint', tagline: 'Gloss and protection where it matters most.', description: 'Includes Single Stage Polish & Paint Coating Installation. Additional Paint Correction Optional.', tag: 'Coating', ppfCoverage: null, protectionLevel: 25, prices: { '2Door': 995, '4Door': 1195, 'SUV': 1395, 'Oversize': 1695 }, discounts: [] },
                 { id: 'tint-panoramic', name: 'Panoramic Tint', tagline: 'Total heat and UV rejection from every angle.', description: 'NanoCeramic Window Tint for the Full Vehicle, Windshield, and Sunroof.', tag: 'Tint', ppfCoverage: null, protectionLevel: 20, prices: { '2Door': 1240, '4Door': 1340, 'SUV': 1340, 'Oversize': 'call' }, discounts: [] },
                 { id: 'coating-advanced', name: 'Advanced Exterior Coating', tagline: 'Exterior Protection Beyond Just Paint.', description: 'Includes Single Stage Polish & Paint, Full Wheel, and Windshield Coatings.', tag: 'Coating', ppfCoverage: null, protectionLevel: 40, prices: { '2Door': 1395, '4Door': 1595, 'SUV': 1795, 'Oversize': 2095 }, discounts: ['$150 Coating Bundle'] },
-                { id: 'coating-ultimate', name: 'Ultimate Ceramic Package', tagline: 'Every surface shielded, inside and out.', description: 'Includes Full Vehicle Detail, as well as installation of Paint, Glass, Trim, Full Wheels, and Interior Coatings.', tag: 'Coating', ppfCoverage: null, protectionLevel: 55, prices: { '2Door': 1915, '4Door': 2245, 'SUV': 2595, 'Oversize': 2995 }, discounts: ['$150 Coating Bundle', 'FREE Trim Coating'] },
+                { id: 'coating-ultimate', name: 'Ultimate Ceramic', tagline: 'Every surface shielded, inside and out.', description: 'Includes Full Vehicle Detail, as well as installation of Paint, Glass, Trim, Full Wheels, and Interior Coatings.', tag: 'Coating', ppfCoverage: null, protectionLevel: 55, prices: { '2Door': 1915, '4Door': 2245, 'SUV': 2595, 'Oversize': 2995 }, discounts: ['$150 Coating Bundle', 'FREE Trim Coating'] },
                 { id: 'ppf-front', name: 'Full Front PPF', tagline: 'The Best Value in Impact Protection.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, and Mirrors.', tag: 'PPF', ppfCoverage: 'Full Front', protectionLevel: 60, prices: { '2Door': 2495, '4Door': 2495, 'SUV': 2495, 'Oversize': 2495 }, discounts: [] },
-                { id: 'bundle-essential', name: 'Essential Protection Package', tagline: 'Smart combo of PPF and coating for daily drivers.', description: 'Full Front PPF & Full body paint & ppf ceramic coating.', tag: 'Bundle', ppfCoverage: 'Full Front', protectionLevel: 70, prices: { '2Door': 3195, '4Door': 3395, 'SUV': 3595, 'Oversize': 3895 }, discounts: ['$295 PPF & Coating Bundle'] },
-                { id: 'ppf-track', name: 'Track Package PPF', tagline: 'Extended high-impact coverage for spirited or daily driving.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, Mirrors, Rocker Panels, A-Pillars, and a Roof Strip.', tag: 'PPF', ppfCoverage: 'Track Pack', protectionLevel: 75, prices: { '2Door': 3295, '4Door': 3295, 'SUV': 3295, 'Oversize': 3295 }, discounts: [] },
-                { id: 'bundle-track-pro', name: 'Track Pro Package', tagline: 'Upgraded Protection Everywhere it Counts.', description: 'Track Pack PPF, Paint & PPF Coating, & Windshield Film.', tag: 'Bundle', ppfCoverage: 'Track Pack', protectionLevel: 80, prices: { '2Door': 4345, '4Door': 4545, 'SUV': 4745, 'Oversize': 5045 }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'bundle-essential', name: 'Essential Protection', tagline: 'Smart combo of PPF and coating for daily drivers.', description: 'Full Front PPF & Full body paint & ppf ceramic coating.', tag: 'Bundle', ppfCoverage: 'Full Front', protectionLevel: 70, prices: { '2Door': 3195, '4Door': 3395, 'SUV': 3595, 'Oversize': 3895 }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'ppf-track', name: 'Track PPF', tagline: 'Extended high-impact coverage for spirited or daily driving.', description: 'PPF Coverage on Front Bumper, Fenders, Hood, Mirrors, Rocker Panels, A-Pillars, and a Roof Strip.', tag: 'PPF', ppfCoverage: 'Track Pack', protectionLevel: 75, prices: { '2Door': 3295, '4Door': 3295, 'SUV': 3295, 'Oversize': 3295 }, discounts: [] },
+                { id: 'bundle-track-pro', name: 'Track Pro', tagline: 'Upgraded Protection Everywhere it Counts.', description: 'Track Pack PPF, Paint & PPF Coating, & Windshield Film.', tag: 'Bundle', ppfCoverage: 'Track Pack', protectionLevel: 80, prices: { '2Door': 4345, '4Door': 4545, 'SUV': 4745, 'Oversize': 5045 }, discounts: ['$295 PPF & Coating Bundle'] },
                 { id: 'ppf-full', name: 'Full Car PPF', tagline: 'Complete Protection for Every Painted Surface.', description: 'Full Car PPF.', tag: 'PPF', ppfCoverage: 'Full Car', protectionLevel: 90, prices: { '2Door': 6495, '4Door': 7295, 'SUV': 7995, 'Oversize': 'call' }, discounts: [] },
-                { id: 'bundle-gt3', name: 'GT3 Package', tagline: 'Complete Impact Protection & Weathering Resistance.', description: 'Full Car PPF, PPF Coating, & Windshield Film.', tag: 'Bundle', ppfCoverage: 'Full Car', protectionLevel: 95, prices: { '2Door': 7545, '4Door': 8545, 'SUV': 9445, 'Oversize': 'call' }, discounts: ['$295 PPF & Coating Bundle'] },
-                { id: 'bundle-presidential', name: 'Presidential Package', tagline: 'Ultimate Peace of Mind.', description: 'Full Paint Restoration Prior to PPF Installation; Full car PPF; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', ppfCoverage: 'Full Car', protectionLevel: 98, prices: { '2Door': 10405, '4Door': 11635, 'SUV': 12685, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle', 'FREE Trim Coating'] },
-                { id: 'bundle-f1', name: 'Formula 1 Package', tagline: 'No Compromises, Maximum Protection.', description: 'Full Paint Restoration Prior to PPF Installation; Track Package in 10 mil PPF with Full car 8 mil PPF on top; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', ppfCoverage: 'Track Pack', isF1: true, protectionLevel: 100, prices: { '2Door': 13905, '4Door': 15135, 'SUV': 16185, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle', 'FREE Trim Coating'] }
+                { id: 'bundle-gt3', name: 'GT3', tagline: 'Complete Impact Protection & Weathering Resistance.', description: 'Full Car PPF, PPF Coating, & Windshield Film.', tag: 'Bundle', ppfCoverage: 'Full Car', protectionLevel: 95, prices: { '2Door': 7545, '4Door': 8545, 'SUV': 9445, 'Oversize': 'call' }, discounts: ['$295 PPF & Coating Bundle'] },
+                { id: 'bundle-presidential', name: 'Presidential', tagline: 'Ultimate Peace of Mind.', description: 'Full Paint Restoration Prior to PPF Installation; Full car PPF; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', ppfCoverage: 'Full Car', protectionLevel: 98, prices: { '2Door': 10405, '4Door': 11635, 'SUV': 12685, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle', 'FREE Trim Coating'] },
+                { id: 'bundle-f1', name: 'Formula 1', tagline: 'No Compromises, Maximum Protection.', description: 'Full Paint Restoration Prior to PPF Installation; Track Package in 10 mil PPF with Full car 8 mil PPF on top; Windshield Film; PPF, Trim, Glass, Full Wheel, and Interior Coatings; Full Ceramic Window Tint Incl. Windshield & Sunroof.', tag: 'Bundle', ppfCoverage: 'Track Pack', isF1: true, protectionLevel: 100, prices: { '2Door': 13905, '4Door': 15135, 'SUV': 16185, 'Oversize': 'call' }, discounts: ['$395 PPF, Tint, Coating Bundle', '$150 Coating Bundle', 'FREE Trim Coating'] }
             ];
 
             // --- PACKAGE SELECTION MAPPING ---
@@ -1630,6 +1671,7 @@ Please get in touch with me to discuss this further.`;
             function renderSummaryBox(container) {
                 const summaryHtml = `
                     <div class="estimate-summary">
+                        <div class="w-full h-px mb-2" style="background-color: var(--color-primary); opacity: 0.5;"></div>
                         <div class="summary-main">
                             <h3 id="summary-header">Starting At:</h3>
                             <div id="price-display" class="total-price">$0.00</div>
@@ -2148,13 +2190,6 @@ Please get in touch with me to discuss this further.`;
                     });
                 }
                 
-                // This is for Package Maximizer, which is handled in renderPackageCards
-                if (currentlyViewingService === 'Packages') {
-                    // Price calculation is handled by renderPackageCards
-                    selectionsNextBtn.disabled = false; // Always enabled on package tab
-                    return; // Don't override price animation
-                }
-
                 // --- Standard A-La-Carte Price Display ---
                 const selectedServicesCount = Object.values(servicesState).filter(s => s.selected && s.coverage).length;
                 
@@ -2348,7 +2383,8 @@ Please get in touch with me to discuss this further.`;
                 
                 isMaximized = false;
                 userSelections.maximizedItems = []; // Store for summary
-                selectedPackageId = activePackage.id; // Store for logic
+                selectedPackageId = activePackage.id === selectedPackageId ? activePackage.id : selectedPackageId; // Maintain selection if match, otherwise rely on manual click
+                // NOTE: logic changed - we do NOT auto-select packageId here anymore for the summary box.
                 
                 // --- Ticker Logic ---
                 const newPackageId = activePackage.id;
@@ -2401,17 +2437,30 @@ Please get in touch with me to discuss this further.`;
                 }
                 
                 budgetValue.textContent = `$${Math.round(budget).toLocaleString('en-US')}`;
+                
+                // --- PROTECTION LEVEL LOGIC ---
+                function getProtectionTier(level) {
+                    if (level <= 20) return "Basic";
+                    if (level <= 40) return "Standard";
+                    if (level <= 60) return "Enhanced";
+                    if (level <= 80) return "Premium";
+                    return "Ultimate";
+                }
+
                 if (activePackage) {
                     protectionMeterFill.style.width = `${activePackage.protectionLevel}%`;
-                    protectionLevelTag.textContent = activePackage.tag;
+                    const tierName = getProtectionTier(activePackage.protectionLevel);
+                    protectionLevelTag.textContent = tierName;
 
-                    const tagColorClasses = {
-                        'Tint': 'text-blue-400',
-                        'Coating': 'text-green-400',
-                        'PPF': 'text-yellow-400',
-                        'Bundle': 'text-purple-400'
+                    // Color mapping based on Tier instead of Tag
+                    const tierColorClasses = {
+                        'Basic': 'text-gray-400',
+                        'Standard': 'text-blue-400',
+                        'Enhanced': 'text-green-400',
+                        'Premium': 'text-yellow-400',
+                        'Ultimate': 'text-purple-400'
                     };
-                    protectionLevelTag.className = `ml-2 font-bold ${tagColorClasses[activePackage.tag] || 'text-gray-400'}`;
+                    protectionLevelTag.className = `ml-2 font-bold ${tierColorClasses[tierName] || 'text-gray-400'}`;
                 }
 
 
@@ -2435,13 +2484,13 @@ Please get in touch with me to discuss this further.`;
                     const [tagBg, tagText] = (tagBgClasses[pkg.tag] || 'bg-gray-700 text-gray-200').split(' ');
 
                     const packageCard = document.createElement('div');
-                    packageCard.className = `package-card rounded-lg border shadow-sm overflow-hidden ${isActiveCard ? 'active' : ''}`;
+                    packageCard.className = `package-card border shadow-sm overflow-hidden ${isActiveCard ? 'active' : ''}`;
 
                     packageCard.innerHTML = `
                         <div class="p-6">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-xl font-bold text-white">${pkg.name}</h3>
-                                <span class="plus-badge ${tagBg} ${tagText} text-xs font-semibold px-2.5 py-0.5 rounded-full ${isMaximized && isActiveCard ? 'maximized' : ''}">
+                                <span class="plus-badge ${tagBg} ${tagText} text-xs font-semibold px-2.5 py-0.5 ${isMaximized && isActiveCard ? 'maximized' : ''}">
                                     ${pkg.tag}<span class="plus-badge-plus">+</span>
                                 </span>
                             </div>
@@ -2450,17 +2499,18 @@ Please get in touch with me to discuss this further.`;
                                 <p class="text-sm" style="color: var(--color-text-muted);">${pkg.tagline}</p>
                             </div>
                             
-                            <div class="mb-4">
-                                <button class="parts-toggle-btn w-full flex justify-between items-center py-2 px-4 rounded-lg transition">
-                                    <span class="font-medium">Package Details</span>
-                                    <i class="fas fa-chevron-down text-xs transition-transform"></i>
+                            <div class="mb-4 mt-6">
+                                <div class="w-full h-px mb-3" style="background-color: var(--color-primary); opacity: 0.5;"></div>
+                                <button class="parts-toggle-btn w-full flex justify-between items-center transition group">
+                                    <span class="group-hover:text-white">Package Details</span>
+                                    <i class="fas fa-chevron-down text-xs transition-transform group-hover:text-white"></i>
                                 </button>
-                                <div class="parts-content mt-3 pl-2 hidden">
-                                    <p class="mb-3">${pkg.description}</p>
+                                <div class="parts-content mt-3 hidden">
+                                    <p class="text-sm text-gray-400 mb-3 leading-relaxed">${pkg.description}</p>
                                     ${pkg.discounts && pkg.discounts.length > 0 ? `
-                                    <h4 class="font-semibold text-green-400 text-sm mb-1">Applicable Discounts:</h4>
-                                    <ul class="list-disc text-green-400 space-y-1 pl-5 text-sm">
-                                        ${pkg.discounts.map(d => `<li>${d}</li>`).join('')}
+                                    <h4 class="font-semibold text-green-400 text-xs uppercase mb-2 mt-4">Includes:</h4>
+                                    <ul class="space-y-1 pl-0 text-sm">
+                                        ${pkg.discounts.map(d => `<li class="flex items-start text-gray-400"><span class="text-green-500 mr-2 text-xs">●</span> ${d}</li>`).join('')}
                                     </ul>` : ''}
                                 </div>
                             </div>
@@ -2554,26 +2604,6 @@ Please get in touch with me to discuss this further.`;
 
                 });
 
-                // --- Final Price & Summary Update for Packages ---
-                const priceDisplay = document.getElementById('price-display');
-                const summaryContainer = document.querySelector('.estimate-summary');
-                const summaryHeader = document.getElementById('summary-header');
-
-                if (priceDisplay && summaryContainer) {
-                    // Update Header
-                    summaryHeader.textContent = `Estimate for: ${activePackage.name}`;
-
-                    // This view is only for packages with numeric prices.
-                    // "Call" packages are handled as the "next" inactive card.
-                    priceDisplay.classList.remove('consultation');
-                    animatePrice(newTotalPrice);
-                    
-                    // NEW: Use dynamic breakdown generator here too!
-                    userSelections.selectedItems = generatePackageBreakdown(activePackage.id, selectedVehicleType);
-                    
-                    const allItems = [...userSelections.selectedItems, ...userSelections.maximizedItems.map(a => ({ name: `+ ${a.name}`, price: a.price }))];
-                    updateSummaryList(allItems, summaryContainer);
-                }
                 selectionsNextBtn.disabled = false; // Always enabled
             }
 
@@ -2583,7 +2613,7 @@ Please get in touch with me to discuss this further.`;
 
                 container.innerHTML = `
                     <div class="package-slider-container">
-                        <div class="bg-transparent rounded-lg p-0 mb-8" id="control-panel">
+                        <div class="bg-transparent p-0 mb-8" id="control-panel">
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                                 <div class="mb-4 md:mb-0">
                                     <h3 class="text-lg font-semibold mb-3 uppercase" style="color: var(--color-text);">Your Budget</h3>
@@ -2593,7 +2623,7 @@ Please get in touch with me to discuss this further.`;
                                 </div>
                             </div>
                             <div class="relative">
-                                <input type="range" min="0" max="1000" step="1" value="200" class="w-full h-2 rounded-lg appearance-none cursor-pointer budget-slider-input" id="budget-slider">
+                                <input type="range" min="0" max="1000" step="1" value="200" class="w-full h-2 appearance-none cursor-pointer budget-slider-input" id="budget-slider">
                                 <div id="package-slider-labels" class="relative mt-2 h-4"></div>
                             </div>
                         </div>
@@ -2603,7 +2633,7 @@ Please get in touch with me to discuss this further.`;
                                 <span id="protection-level-tag" class="ml-2 font-bold">Basic</span>
                             </div>
                             <div class="flex justify-between text-xs" style="color: var(--color-text-muted);"><span class="uppercase">Basic</span><span class="uppercase">Ultimate</span></div>
-                            <div class="protection-meter-bg relative h-2 rounded">
+                            <div class="protection-meter-bg relative h-2">
                                 <div id="protection-meter-fill" class="protection-meter-fill" style="width: 5%"></div>
                             </div>
                         </div>
@@ -2780,10 +2810,20 @@ Please get in touch with me to discuss this further.`;
                                 (servicesState['Tint'].selected && servicesState['Tint'].coverage);
 
                 if (hasTint && tintImageSrc) {
-                    const tintIndex = servicesState['Tint'].option !== null ? servicesState['Tint'].option : '1'; // Default to 35%
+                    let tintIndex = servicesState['Tint'].option;
+                    
+                    // Fallback to default '1' (35%) if null
+                    if (tintIndex === null || tintIndex === undefined) {
+                        tintIndex = 1; 
+                    }
+                    
+                    // Parse as int to be safe for array access
+                    const index = parseInt(tintIndex, 10);
+                    
                     coverageImageTintOverlay.src = tintImageSrc;
                     coverageImageTintOverlay.style.display = 'block';
-                    coverageImageTintOverlay.style.opacity = tintOpacityMap[tintIndex] || '0.65';
+                    // Ensure opacity map is accessed safely
+                    coverageImageTintOverlay.style.opacity = tintOpacityMap[index] !== undefined ? tintOpacityMap[index] : '0.65';
                 }
                 // --- End Tint Logic ---
 
