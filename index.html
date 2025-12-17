@@ -16,7 +16,6 @@
             --color-background: #050505;
             --color-text: #EAEAEA;
             --color-text-muted: #888888;
-            /* REVERTED TO ORIGINAL RED */
             --color-primary: #FF3B30;
             --color-surface: #141414;
             --color-border: #2A2A2A;
@@ -27,12 +26,8 @@
         }
 
         /* General Styles */
-        html {
-            box-sizing: border-box;
-        }
-        *, *:before, *:after {
-            box-sizing: inherit;
-        }
+        html { box-sizing: border-box; }
+        *, *:before, *:after { box-sizing: inherit; }
         body {
             background-color: var(--color-background);
             color: var(--color-text);
@@ -95,22 +90,16 @@
             transition: all 0.3s ease;
             object-fit: contain;
         }
-        #coverage-image-base {
-            z-index: 10; /* Image base is on top of ticker */
-        }
-        #coverage-image-overlay, #coverage-image-tint-overlay {
-            pointer-events: none;
-        }
-        #coverage-image-overlay {
-            z-index: 15;
-        }
+        #coverage-image-base { z-index: 10; }
+        #coverage-image-overlay, #coverage-image-tint-overlay { pointer-events: none; }
+        #coverage-image-overlay { z-index: 15; }
         #coverage-image-tint-overlay {
             mix-blend-mode: overlay;
             opacity: 0;
             z-index: 20;
         }
 
-        /* Added for video overlays */
+        /* Video Overlays */
         #video-overlay-container, #polish-video-overlay-container {
             position: absolute;
             top: 0;
@@ -120,8 +109,6 @@
             pointer-events: none;
             border-radius: 0;
             overflow: hidden;
-            
-            /* Mask properties */
             -webkit-mask-size: contain;
             mask-size: contain;
             -webkit-mask-position: center;
@@ -131,13 +118,13 @@
         }
 
         #video-overlay-container {
-            mix-blend-mode: screen; /* Correct blend mode for this effect */
+            mix-blend-mode: screen; 
             z-index: 25;
         }
 
         #polish-video-overlay-container {
             mix-blend-mode: screen; 
-            z-index: 22; /* Between tint and coating */
+            z-index: 22; 
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -145,9 +132,8 @@
         #coverage-video-overlay, #coverage-polish-video-overlay {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Cover the container */
+            object-fit: cover;
         }
-
 
         #configurator-wrapper {
             flex: 1 1 60%;
@@ -157,51 +143,34 @@
         /* --- Ticker Styles --- */
         #ticker-container {
             position: absolute;
-            top: 1rem; /* This will be dynamically adjusted by JS */
+            top: 1rem; 
             left: 1rem;
-            z-index: 5; /* Behind the base image (z-index: 10) */
+            z-index: 5;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             gap: 0.25rem;
             pointer-events: none;
-            transition: top 0.4s ease-out; /* Smooth slide for container to fix "teleporting up" */
+            transition: top 0.4s ease-out; 
         }
         .ticker-item {
             font-family: var(--font-heading);
-            font-size: 0.8rem; /* Use a small font size */
+            font-size: 0.8rem; 
             font-weight: 600;
             text-shadow: 0 1px 3px rgba(0,0,0,0.7);
             animation: ticker-fade-in-up 0.5s ease forwards;
         }
-        .ticker-item.add {
-            color: var(--color-success);
-        }
-        .ticker-item.remove {
-            color: var(--color-danger);
-        }
+        .ticker-item.add { color: var(--color-success); }
+        .ticker-item.remove { color: var(--color-danger); }
 
         @keyframes ticker-fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        /* MODIFIED: Simple fade out for natural expiry. */
         @keyframes ticker-fade-out {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-            }
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
-        /* --- End Ticker Styles --- */
-
 
         .panel {
             background-color: var(--color-surface);
@@ -211,9 +180,7 @@
             border: 1px solid var(--color-border);
         }
         
-        .form-step, #welcome-container, #thank-you-container {
-            display: none;
-        }
+        .form-step, #welcome-container, #thank-you-container { display: none; }
         .form-step.active, #welcome-container.active, #thank-you-container.active {
             display: block;
             animation: fadeIn 0.5s ease-in-out;
@@ -410,15 +377,9 @@
             background-color: rgba(0,0,0,0.2);
         }
         
-        .service-tab.selected .close-btn {
-            display: block;
-        }
-        .service-tab.selected.viewing .close-btn {
-            color: var(--color-text);
-        }
-        .service-tab.selected.viewing .close-btn:hover {
-            background-color: var(--color-border);
-        }
+        .service-tab.selected .close-btn { display: block; }
+        .service-tab.selected.viewing .close-btn { color: var(--color-text); }
+        .service-tab.selected.viewing .close-btn:hover { background-color: var(--color-border); }
 
         .choice-input { display: none; }
         .choice-label {
@@ -480,9 +441,7 @@
             position: relative;
             z-index: 2;
         }
-        .btn span {
-            top: 1px;
-        }
+        .btn span { top: 1px; }
         
         .btn::before {
             content: '';
@@ -505,9 +464,7 @@
             font-weight: 700;
             border-color: var(--color-primary);
         }
-        .btn-primary:hover::before {
-            width: 100%;
-        }
+        .btn-primary:hover::before { width: 100%; }
 
         .btn:disabled {
             border-color: var(--color-border);
@@ -531,6 +488,12 @@
         .summary-main {
             display: flex;
             justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-direction: column;
+        }
+        .summary-header-row {
+            display: flex;
             align-items: center;
             gap: 1rem;
         }
@@ -1151,7 +1114,7 @@
                     <div id="step-1" class="form-step active">
                         <div class="panel">
                             <div class="step-header">
-                                <h2>VEHICLE PROTECTION CONFIGURATOR </h2>
+                                <h2>VEHICLE PROTECTION CONFIGURATOR </h2>
                                 <div class="header-subtext-container">
                                     <p id="welcome-message">Tell us what you drive and what you'd like to protect.</p>
                                     <div class="call-link-container" id="call-link-welcome">
@@ -1282,7 +1245,7 @@
             // NOTE: Base pricing data is modified by augmentPricingData() on init to add addon structures for packages.
             let pricingData = {
                 '2Door': {
-                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 6295.00 } },
+                    'PPF': { 'Partial': { price: 600.00 }, 'Full Front': { price: 2495.00 }, 'Track Pack': { price: 3295.00 }, 'Full Car': { price: 6495.00 } }, // Adjusted Full Car to match Package price
                     'Tint': { 'Rollups': { price: 175.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Full Car': { price: 495.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } }, 'Windshield': { price: 450.00, options: { '80%': 0, '35%': { price: 0, tooltip: 'Legal limit in TX for front windows' }, '20%': 0, '5%': 0 } } },
                     'Coating': { 'Paint': { base: 'Requires 1 box checked', options: { '1 Step Polish': 995.00, '2 Step Polish/PC': 1295.00, '3+ Step Polish/PC': 'Call For Free Consultation' } }, 'Wheels': { base: 'Requires 1 box checked', options: { 'Face Only': 200.00, 'Face & Barrels': 400.00 } }, 'Windshield': { price: 155.00 } },
                     'Vinyl': { 'Color Change': { price: 3495.00 }, 'Custom Graphic': { price: 'Call For Free Consultation' } }
@@ -1377,9 +1340,9 @@
             };
 
             const polishOpacityMap = {
-                '1 Step Polish': '0.5',  // 50%
+                '1 Step Polish': '0.5',  // 50%
                 '2 Step Polish/PC': '0.75', // 75%
-                '3+ Step Polish/PC': '1.0'    // 100%
+                '3+ Step Polish/PC': '1.0'    // 100%
             };
 
 
@@ -1490,10 +1453,10 @@
             };
 
             const sliderMap = [
-                { slider: 0,    budget: 0 },
-                { slider: 100,  budget: 1500 },
-                { slider: 300,  budget: 4000 },
-                { slider: 700,  budget: 10000 },
+                { slider: 0,    budget: 0 },
+                { slider: 100,  budget: 1500 },
+                { slider: 300,  budget: 4000 },
+                { slider: 700,  budget: 10000 },
                 { slider: 1000, budget: 18000 }
             ];
             
@@ -1759,7 +1722,7 @@ Please get in touch with me to discuss this further.`;
                 const summaryHtml = `
                     <div class="estimate-summary">
                         <div class="summary-main">
-                            <h3>Starting At:</h3>
+                            <h3 id="summary-header">Starting At:</h3>
                             <div id="price-display" class="total-price">$0.00</div>
                             <button type="button" id="toggle-summary-btn" class="hidden-field" title="View Details">
                                 <i class="fas fa-chevron-down"></i>
@@ -1999,8 +1962,8 @@ Please get in touch with me to discuss this further.`;
                 }
                 
                 const isAdvancedCoating = hasCoating &&
-                                            state['Coating'].addons.includes('Add Wheels (Face & Barrels)') &&
-                                            state['Coating'].addons.includes('Add Windshield');
+                                              state['Coating'].addons.includes('Add Wheels (Face & Barrels)') &&
+                                              state['Coating'].addons.includes('Add Windshield');
 
                 if (isAdvancedCoating) {
                     appliedDiscounts.push({ name: 'Coating Bundle', value: -150 });
@@ -2094,12 +2057,86 @@ Please get in touch with me to discuss this further.`;
             }
 
 
+            function generatePackageBreakdown(packageId, vehicleType) {
+                // 1. Check for hardcoded breakdown (complex packages)
+                if (packageBreakdowns[packageId] && packageBreakdowns[packageId][vehicleType]) {
+                    return [...packageBreakdowns[packageId][vehicleType]];
+                }
+
+                // 2. Generate dynamic breakdown from data
+                const selection = packageSelections[packageId];
+                if (!selection) return [];
+
+                const items = [];
+                const pkg = packages.find(p => p.id === packageId);
+                
+                let calculatedSum = 0;
+
+                Object.keys(selection).forEach(serviceKey => {
+                    const serviceSel = selection[serviceKey];
+                    if (!serviceSel.selected || !serviceSel.coverage) return;
+
+                    const serviceData = pricingData[vehicleType][serviceKey] ? pricingData[vehicleType][serviceKey][serviceSel.coverage] : null;
+                    if (!serviceData) return;
+
+                    let itemPrice = serviceData.price || 0;
+                    let itemName = `${serviceKey} - ${serviceSel.coverage}`;
+
+                    // Handle Options (Coating/Tint)
+                    if (serviceData.options && serviceSel.option) {
+                         // For Tint, options usually 0. For Coating, option is the price.
+                         if (serviceKey === 'Coating') {
+                             const optPrice = serviceData.options[serviceSel.option];
+                             if (typeof optPrice === 'number') {
+                                 itemPrice = optPrice; // Override base price
+                             }
+                             itemName = `${serviceKey} - ${serviceSel.coverage} (${serviceSel.option})`;
+                         } else if (serviceKey === 'Tint') {
+                             itemName = `${serviceKey} - ${serviceSel.coverage}`;
+                         }
+                    }
+                    
+                    if (typeof itemPrice === 'number') {
+                        items.push({ name: itemName, price: itemPrice });
+                        calculatedSum += itemPrice;
+                    }
+
+                    // Handle Addons
+                    if (serviceSel.addons && serviceSel.addons.length > 0 && serviceData.addons) {
+                        serviceSel.addons.forEach(addonName => {
+                            const addonPrice = serviceData.addons[addonName];
+                            if (typeof addonPrice === 'number') {
+                                items.push({ name: `+ ${addonName}`, price: addonPrice });
+                                calculatedSum += addonPrice;
+                            }
+                        });
+                    }
+                });
+
+                // 3. Add explicit discounts defined in the package
+                if (pkg.discounts) {
+                    pkg.discounts.forEach(d => {
+                         const val = (d.match(/-?\$([\d,]+)/) || [])[1];
+                         if (val) {
+                             const discountAmount = parseFloat(val.replace(/,/g, ''));
+                             items.push({ name: d, price: -discountAmount });
+                             calculatedSum -= discountAmount;
+                         } else if (d.includes("FREE")) {
+                             items.push({ name: d, price: 0 }); // Free item
+                         }
+                    });
+                }
+
+                return items;
+            }
+
+
             function calculateEstimate() {
                 const priceDisplay = document.getElementById('price-display');
                 const summaryContainer = document.querySelector('.estimate-summary');
+                const summaryHeader = document.getElementById('summary-header');
 
                 if (!priceDisplay || !summaryContainer) {
-                    console.log("Waiting for summary box to render...");
                     return;
                 }
                 
@@ -2108,6 +2145,7 @@ Please get in touch with me to discuss this further.`;
                 if (currentlyViewingService === 'Packages' && !nonPackageServicesSelected && !selectedPackageId) {
                     priceDisplay.textContent = '$0.00';
                     priceDisplay.classList.remove('consultation');
+                    summaryHeader.textContent = "Starting At:"; // Reset header
                     updateSummaryList([], summaryContainer);
                     selectionsNextBtn.disabled = true;
                     return;
@@ -2120,31 +2158,22 @@ Please get in touch with me to discuss this further.`;
 
                 if(selectedPackageId) {
                     const pkg = packages.find(p => p.id === selectedPackageId);
-                    const breakdown = packageBreakdowns[selectedPackageId] ? packageBreakdowns[selectedPackageId][vehicleType] : null;
                     
                     if (pkg) {
+                        // Update Header
+                        summaryHeader.textContent = `Estimate for: ${pkg.name}`;
+
                         const price = pkg.prices[vehicleType];
                         if (typeof price === 'number') {
                             total = price;
-                            if(breakdown) {
-                                userSelections.selectedItems = [...breakdown];
-                            } else {
-                                // Fallback for simple packages without detailed breakdown
-                                userSelections.selectedItems.push({ name: pkg.name, price: price });
-                                // Add discounts from package data if they exist
-                                pkg.discounts?.forEach(discountName => {
-                                     const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
-                                     userSelections.selectedItems.push({ 
-                                         name: discountName, 
-                                         price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
-                                     });
-                                });
-                            }
+                            // NEW: Use dynamic breakdown generator for all packages
+                            userSelections.selectedItems = generatePackageBreakdown(selectedPackageId, vehicleType);
                         } else {
                             isConsultationNeeded = true;
                         }
                     }
                 } else {
+                    summaryHeader.textContent = "Custom Build Estimate:";
                     for (const service of allServices) {
                         if (service === 'Packages') continue;
                         const state = servicesState[service];
@@ -2475,8 +2504,8 @@ Please get in touch with me to discuss this further.`;
                     // Use the maximized price for the active card display
                     const displayPrice = isActiveCard
                         ? `$${newTotalPrice.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`
-                        : (typeof pkg.currentPrice === 'number'
-                            ? `$${pkg.currentPrice.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`
+                        : (typeof pkg.currentPrice === 'number' 
+                            ? `$${pkg.currentPrice.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}` 
                             : pkg.currentPrice);
 
                     const tagBgClasses = {
@@ -2611,24 +2640,19 @@ Please get in touch with me to discuss this further.`;
                 // --- Final Price & Summary Update for Packages ---
                 const priceDisplay = document.getElementById('price-display');
                 const summaryContainer = document.querySelector('.estimate-summary');
+                const summaryHeader = document.getElementById('summary-header');
 
                 if (priceDisplay && summaryContainer) {
+                    // Update Header
+                    summaryHeader.textContent = `Estimate for: ${activePackage.name}`;
+
                     // This view is only for packages with numeric prices.
                     // "Call" packages are handled as the "next" inactive card.
                     priceDisplay.classList.remove('consultation');
                     animatePrice(newTotalPrice);
                     
-                    // Create summary list from base package + maximized addons
-                    const basePkg = packages.find(p => p.id === activePackage.id);
-                    const basePrice = basePkg.prices[selectedVehicleType];
-                    userSelections.selectedItems = [{ name: basePkg.name, price: basePrice }];
-                    basePkg.discounts?.forEach(discountName => {
-                           const discountValue = (discountName.match(/-?\$([\d,]+)/) || [])[1];
-                           userSelections.selectedItems.push({ 
-                               name: discountName, 
-                               price: discountValue ? -parseFloat(discountValue.replace(/,/g, '')) : 0 
-                           });
-                    });
+                    // NEW: Use dynamic breakdown generator here too!
+                    userSelections.selectedItems = generatePackageBreakdown(activePackage.id, selectedVehicleType);
                     
                     const allItems = [...userSelections.selectedItems, ...userSelections.maximizedItems.map(a => ({ name: `+ ${a.name}`, price: a.price }))];
                     updateSummaryList(allItems, summaryContainer);
@@ -2724,7 +2748,7 @@ Please get in touch with me to discuss this further.`;
                         currentlyViewingService = 'Packages';
                     }
                 } else {
-                     servicesState['Packages'].selected = false;
+                      servicesState['Packages'].selected = false;
                 }
 
                 renderTabs();
@@ -2848,7 +2872,7 @@ Please get in touch with me to discuss this further.`;
 
                 // --- Coating Video Logic ---
                 const hasCoating = (packageToDisplay && (packageToDisplay.tag === 'Coating' || (packageToDisplay.tag === 'Bundle' && packageSelections[packageToDisplay.id] && packageSelections[packageToDisplay.id]['Coating']))) ||
-                                           (servicesState['Coating'].selected && servicesState['Coating'].coverage);
+                                             (servicesState['Coating'].selected && servicesState['Coating'].coverage);
 
                 if (hasCoating && coatingVideoSrc) {
                     coverageVideoContainer.style.display = 'block';
