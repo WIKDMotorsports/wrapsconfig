@@ -3136,6 +3136,14 @@ Please get in touch with me to discuss this further.`;
                         
                         calculateEstimate();
                         updateImageDisplay();
+
+                        // Auto-switch to Services tab on mobile
+                        if (window.innerWidth <= 640) {
+                            const servicesTab = document.querySelector('.mobile-tab[data-target="mobile-services-section"]');
+                            if (servicesTab) {
+                                servicesTab.click();
+                            }
+                        }
                     });
                 });
                 serviceTabsContainer.addEventListener('click', handleTabClick);
