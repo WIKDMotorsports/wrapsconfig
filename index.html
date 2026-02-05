@@ -969,6 +969,11 @@
             .btn-group { flex-direction: column; }
             #image-display-container { max-width: 100%; }
             #vehicle-choice-group { grid-template-columns: repeat(2, 1fr); }
+            #progress-bar { display: none; } /* Hide progress bar on mobile */
+            .mobile-hidden-text { display: none; } /* Hide "or" text */
+
+            /* Hide redundant labels in mobile sections */
+            .mobile-section .form-group > label { display: none; }
 
             /* Mobile Tabs Styling */
             .mobile-tab-controls {
@@ -1136,7 +1141,7 @@
                                     <div class="call-link-container" id="call-link-welcome">
                                         <a href="tel:4696251127" class="call-link">
                                             <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                                            <span>or give us a ring, we're open!</span>
+                                            <span><span class="mobile-hidden-text">or </span>give us a ring, we're open!</span>
                                         </a>
                                         <div class="qr-tooltip">
                                             <canvas class="qr-code-canvas"></canvas>
@@ -3100,6 +3105,16 @@ Please get in touch with me to discuss this further.`;
                 updateAspectRatio();
                 
                 document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
+                    // Handle clicks on already-selected radios for mobile tab switching
+                    radio.addEventListener('click', () => {
+                        if (radio.checked && window.innerWidth <= 640) {
+                            const servicesTab = document.querySelector('.mobile-tab[data-target="mobile-services-section"]');
+                            if (servicesTab) {
+                                servicesTab.click();
+                            }
+                        }
+                    });
+
                     radio.addEventListener('change', () => {
                         updateAspectRatio();
                         const wasPackageSelected = !!selectedPackageId;
