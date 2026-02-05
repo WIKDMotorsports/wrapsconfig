@@ -948,14 +948,15 @@
         }
 
         @media (max-width: 992px) {
-             .widget-container { flexDirection: column; }
+             .widget-container { flex-direction: column; }
             #image-display-container {
                 position: static;
                 transform: none;
                 width: 100%;
-                max-width: 60%;
+                max-width: 100%;
                 margin: 0 auto 2rem auto;
             }
+            #configurator-wrapper { width: 100%; }
         }
         @media (max-width: 640px) {
             body { padding: 1rem 0; }
