@@ -948,21 +948,62 @@
         }
 
         @media (max-width: 992px) {
-             .widget-container { flexDirection: column; }
+             .widget-container { flex-direction: column; }
             #image-display-container {
                 position: static;
                 transform: none;
                 width: 100%;
-                max-width: 60%;
+                max-width: 100%;
                 margin: 0 auto 2rem auto;
             }
+            #configurator-wrapper { width: 100%; }
         }
+        /* --- MOBILE TABS (Hidden on Desktop) --- */
+        .mobile-tab-controls { display: none; }
+
         @media (max-width: 640px) {
             body { padding: 1rem 0; }
             .panel { padding: 1.5rem 1rem; }
-            .step-header h2 { font-size: 2rem; }
+            .step-header h2 { font-size: 1.1rem !important; } /* Scaled to match Vehicle Type label */
+            #welcome-message { display: none; } /* Hide welcome message */
             .btn-group { flex-direction: column; }
             #image-display-container { max-width: 100%; }
+            #vehicle-choice-group { grid-template-columns: repeat(2, 1fr); }
+            #progress-bar { display: none; } /* Hide progress bar on mobile */
+            .mobile-hidden-text { display: none; } /* Hide "or" text */
+
+            /* Hide redundant labels in mobile sections */
+            .mobile-section .form-group > label { display: none; }
+
+            /* Mobile Tabs Styling */
+            .mobile-tab-controls {
+                display: flex;
+                width: 100%;
+                margin-bottom: 1.5rem;
+                border-bottom: 1px solid var(--color-border);
+            }
+            .mobile-tab {
+                flex: 1;
+                padding: 12px;
+                background: transparent;
+                border: none;
+                color: var(--color-text-muted);
+                font-family: var(--font-heading);
+                font-weight: 700;
+                text-transform: uppercase;
+                cursor: pointer;
+                border-bottom: 2px solid transparent;
+                transition: all 0.3s;
+                font-size: 0.9rem;
+            }
+            .mobile-tab.active {
+                color: var(--color-primary);
+                border-bottom-color: var(--color-primary);
+            }
+
+            /* Section Toggling */
+            .mobile-section { display: none; }
+            .mobile-section.active { display: block; animation: fadeIn 0.3s ease; }
         }
 
         /* --- PRELOADER --- */
@@ -1100,7 +1141,7 @@
                                     <div class="call-link-container" id="call-link-welcome">
                                         <a href="tel:4696251127" class="call-link">
                                             <animated-icons src="https://animatedicons.co/get-icon?name=Calling%20V3&style=minimalistic&token=66ff3706-138c-41fa-a993-dee03566e48c" trigger="loop" attributes='{"variationThumbColour":"#FF3B30","variationName":"Dark","variationNumber":4,"numberOfGroups":2,"strokeWidth":1.5,"backgroundIsGroup":true,"defaultColours":{"group-1":"#FF3B30","group-2":"#FF3B30","background":"#0A0A0A"}}' height="22" width="22"></animated-icons>
-                                            <span>or give us a ring, we're open!</span>
+                                            <span><span class="mobile-hidden-text">or </span>give us a ring, we're open!</span>
                                         </a>
                                         <div class="qr-tooltip">
                                             <canvas class="qr-code-canvas"></canvas>
@@ -1113,22 +1154,34 @@
                             <!-- Price Summary will be dynamically added here -->
                             <div id="dynamic-summary-container"></div>
                             
-                            <div class="form-group">
-                                <label>Vehicle Type</label>
-                                <div class="choice-group">
-                                    <div><input type="radio" id="vehicle-2door" name="vehicle" value="2Door" class="choice-input" checked><label for="vehicle-2door" class="choice-label"><span>2 Door</span></label></div>
-                                    <div><input type="radio" id="vehicle-4door" name="vehicle" value="4Door" class="choice-input"><label for="vehicle-4door" class="choice-label"><span>4 Door</span></label></div>
-                                    <div><input type="radio" id="vehicle-suv" name="vehicle" value="SUV" class="choice-input"><label for="vehicle-suv" class="choice-label"><span>SUV</span></label></div>
-                                    <div><input type="radio" id="vehicle-oversize" name="vehicle" value="Oversize" class="choice-input"><label for="vehicle-oversize" class="choice-label"><span>Oversize</span></label></div>
+                            <!-- Mobile Tab Controls -->
+                            <div class="mobile-tab-controls">
+                                <button type="button" class="mobile-tab active" data-target="mobile-vehicle-section">Vehicle Type</button>
+                                <button type="button" class="mobile-tab" data-target="mobile-services-section">Services</button>
+                            </div>
+
+                            <div id="mobile-vehicle-section" class="mobile-section active">
+                                <div class="form-group">
+                                    <label>Vehicle Type</label>
+                                    <div class="choice-group" id="vehicle-choice-group">
+                                        <div><input type="radio" id="vehicle-2door" name="vehicle" value="2Door" class="choice-input" checked><label for="vehicle-2door" class="choice-label"><span>2 Door</span></label></div>
+                                        <div><input type="radio" id="vehicle-4door" name="vehicle" value="4Door" class="choice-input"><label for="vehicle-4door" class="choice-label"><span>4 Door</span></label></div>
+                                        <div><input type="radio" id="vehicle-suv" name="vehicle" value="SUV" class="choice-input"><label for="vehicle-suv" class="choice-label"><span>SUV</span></label></div>
+                                        <div><input type="radio" id="vehicle-oversize" name="vehicle" value="Oversize" class="choice-input"><label for="vehicle-oversize" class="choice-label"><span>Oversize</span></label></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Services</label>
-                                <div class="service-tabs-container" id="service-tabs-container">
-                                    <!-- Tabs will be dynamically controlled by JS -->
+
+                            <div id="mobile-services-section" class="mobile-section">
+                                <div class="form-group">
+                                    <label>Services</label>
+                                    <div class="service-tabs-container" id="service-tabs-container">
+                                        <!-- Tabs will be dynamically controlled by JS -->
+                                    </div>
                                 </div>
+                                <div id="dynamic-services-container"></div>
                             </div>
-                            <div id="dynamic-services-container"></div>
+
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary next-btn btn-right" id="selections-next-btn" disabled>
                                     <span>Continue to Contact</span>
@@ -2653,8 +2706,8 @@ Please get in touch with me to discuss this further.`;
                 container.innerHTML = `
                     <div class="package-slider-container">
                         <div class="bg-transparent p-0 mb-8" id="control-panel">
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                                <div class="mb-4 md:mb-0">
+                            <div class="flex flex-row items-center justify-between mb-6">
+                                <div>
                                     <h3 class="text-lg font-semibold mb-3 uppercase" style="color: var(--color-text);">Your Budget</h3>
                                 </div>
                                 <div class="text-right">
@@ -3017,6 +3070,26 @@ Please get in touch with me to discuss this further.`;
 
             // --- INITIALIZATION & EVENT LISTENERS ---
             function initializeApp() {
+                // Mobile Tabs Logic
+                const mobileTabs = document.querySelectorAll('.mobile-tab');
+                mobileTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        // Remove active class from all tabs and sections
+                        document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.mobile-section').forEach(s => s.classList.remove('active'));
+
+                        // Add active to clicked tab
+                        tab.classList.add('active');
+
+                        // Show target section
+                        const targetId = tab.dataset.target;
+                        const targetSection = document.getElementById(targetId);
+                        if(targetSection) {
+                            targetSection.classList.add('active');
+                        }
+                    });
+                });
+
                 augmentPricingData();
                 initializeState();
                 
@@ -3032,6 +3105,16 @@ Please get in touch with me to discuss this further.`;
                 updateAspectRatio();
                 
                 document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
+                    // Handle clicks on already-selected radios for mobile tab switching
+                    radio.addEventListener('click', () => {
+                        if (radio.checked && window.innerWidth <= 640) {
+                            const servicesTab = document.querySelector('.mobile-tab[data-target="mobile-services-section"]');
+                            if (servicesTab) {
+                                servicesTab.click();
+                            }
+                        }
+                    });
+
                     radio.addEventListener('change', () => {
                         updateAspectRatio();
                         const wasPackageSelected = !!selectedPackageId;
@@ -3068,6 +3151,14 @@ Please get in touch with me to discuss this further.`;
                         
                         calculateEstimate();
                         updateImageDisplay();
+
+                        // Auto-switch to Services tab on mobile
+                        if (window.innerWidth <= 640) {
+                            const servicesTab = document.querySelector('.mobile-tab[data-target="mobile-services-section"]');
+                            if (servicesTab) {
+                                servicesTab.click();
+                            }
+                        }
                     });
                 });
                 serviceTabsContainer.addEventListener('click', handleTabClick);
