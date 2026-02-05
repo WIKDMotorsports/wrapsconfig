@@ -964,6 +964,7 @@
             .step-header h2 { font-size: 2rem; }
             .btn-group { flex-direction: column; }
             #image-display-container { max-width: 100%; }
+            #vehicle-choice-group { grid-template-columns: repeat(2, 1fr); }
         }
 
         /* --- PRELOADER --- */
@@ -1116,7 +1117,7 @@
                             
                             <div class="form-group">
                                 <label>Vehicle Type</label>
-                                <div class="choice-group">
+                                <div class="choice-group" id="vehicle-choice-group">
                                     <div><input type="radio" id="vehicle-2door" name="vehicle" value="2Door" class="choice-input" checked><label for="vehicle-2door" class="choice-label"><span>2 Door</span></label></div>
                                     <div><input type="radio" id="vehicle-4door" name="vehicle" value="4Door" class="choice-input"><label for="vehicle-4door" class="choice-label"><span>4 Door</span></label></div>
                                     <div><input type="radio" id="vehicle-suv" name="vehicle" value="SUV" class="choice-input"><label for="vehicle-suv" class="choice-label"><span>SUV</span></label></div>
